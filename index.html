@@ -33,7 +33,20 @@
 	
 	<script src="https://smtpjs.com/v3/smtp.js"></script>
 	
-	
+	<script>
+
+Email.send({
+    SecureToken : "82328a82-72bf-453b-b933-fc7fe64e7b76",
+    To : 'admin@mrakashkumar.in',
+    From : "no.reply@mrakashkumar.in",
+    Subject : "Some One Sent A Message",
+    Body : " Here Is The Message"
+}).then(
+  message => alert(message)
+);
+
+
+</script>
 	
 	
 	<style type="text/css">
