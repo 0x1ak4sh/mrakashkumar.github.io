@@ -1,0 +1,2221 @@
+<!doctype html>
+<html lang="en-US">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <link rel="profile" href="https://gmpg.org/xfn/11">
+    <link media="all"
+        href="/css/11.css"
+        rel="stylesheet" />
+    <title>Akash&#8211; Penetration Tester&#8211; System Administrator &#8211; Don't Be Serious
+    </title>
+    	<script src="https://kit.fontawesome.com/8d67cb621b.js" crossorigin="anonymous"></script>
+    <meta name='robots' content='noindex, nofollow' />
+    <link rel="stylesheet" href="http://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css"/>
+    <link rel='dns-prefetch' href='//fonts.googleapis.com' />
+    <link rel="alternate" type="application/rss+xml"
+        title="Akash - Penetration Tester - System Administrator &raquo; Feed"
+        href="https://mrakashkumar.in/" />
+    <link rel="alternate" type="application/rss+xml"
+        title="Akash - Penetration Tester - System Administrator &raquo; Comments Feed"
+        href="https://mrakashkumar.in" />
+    
+    	<script src="https://kit.fontawesome.com/8d67cb621b.js" crossorigin="anonymous"></script>
+        <script defer
+        src="data:text/javascript;base64,CndpbmRvdy5fd3BlbW9qaVNldHRpbmdzID0geyJiYXNlVXJsIjoiaHR0cHM6XC9cL3Mudy5vcmdcL2ltYWdlc1wvY29yZVwvZW1vamlcLzE0LjAuMFwvNzJ4NzJcLyIsImV4dCI6Ii5wbmciLCJzdmdVcmwiOiJodHRwczpcL1wvcy53Lm9yZ1wvaW1hZ2VzXC9jb3JlXC9lbW9qaVwvMTQuMC4wXC9zdmdcLyIsInN2Z0V4dCI6Ii5zdmciLCJzb3VyY2UiOnsiY29uY2F0ZW1vamkiOiJodHRwczpcL1wvYnNsdGhlbWVzLmNvbVwvcnlhbmN2XC9zeXN0ZW0tZGVtb1wvd3AtaW5jbHVkZXNcL2pzXC93cC1lbW9qaS1yZWxlYXNlLm1pbi5qcz92ZXI9Ni4xLjEifX07Ci8qISBUaGlzIGZpbGUgaXMgYXV0by1nZW5lcmF0ZWQgKi8KIWZ1bmN0aW9uKGUsYSx0KXt2YXIgbixyLG8saT1hLmNyZWF0ZUVsZW1lbnQoImNhbnZhcyIpLHA9aS5nZXRDb250ZXh0JiZpLmdldENvbnRleHQoIjJkIik7ZnVuY3Rpb24gcyhlLHQpe3ZhciBhPVN0cmluZy5mcm9tQ2hhckNvZGUsZT0ocC5jbGVhclJlY3QoMCwwLGkud2lkdGgsaS5oZWlnaHQpLHAuZmlsbFRleHQoYS5hcHBseSh0aGlzLGUpLDAsMCksaS50b0RhdGFVUkwoKSk7cmV0dXJuIHAuY2xlYXJSZWN0KDAsMCxpLndpZHRoLGkuaGVpZ2h0KSxwLmZpbGxUZXh0KGEuYXBwbHkodGhpcyx0KSwwLDApLGU9PT1pLnRvRGF0YVVSTCgpfWZ1bmN0aW9uIGMoZSl7dmFyIHQ9YS5jcmVhdGVFbGVtZW50KCJzY3JpcHQiKTt0LnNyYz1lLHQuZGVmZXI9dC50eXBlPSJ0ZXh0L2phdmFzY3JpcHQiLGEuZ2V0RWxlbWVudHNCeVRhZ05hbWUoImhlYWQiKVswXS5hcHBlbmRDaGlsZCh0KX1mb3Iobz1BcnJheSgiZmxhZyIsImVtb2ppIiksdC5zdXBwb3J0cz17ZXZlcnl0aGluZzohMCxldmVyeXRoaW5nRXhjZXB0RmxhZzohMH0scj0wO3I8by5sZW5ndGg7cisrKXQuc3VwcG9ydHNbb1tyXV09ZnVuY3Rpb24oZSl7aWYocCYmcC5maWxsVGV4dClzd2l0Y2gocC50ZXh0QmFzZWxpbmU9InRvcCIscC5mb250PSI2MDAgMzJweCBBcmlhbCIsZSl7Y2FzZSJmbGFnIjpyZXR1cm4gcyhbMTI3OTg3LDY1MDM5LDgyMDUsOTg5NSw2NTAzOV0sWzEyNzk4Nyw2NTAzOSw4MjAzLDk4OTUsNjUwMzldKT8hMTohcyhbNTUzNTYsNTY4MjYsNTUzNTYsNTY4MTldLFs1NTM1Niw1NjgyNiw4MjAzLDU1MzU2LDU2ODE5XSkmJiFzKFs1NTM1Niw1NzMzMiw1NjEyOCw1NjQyMyw1NjEyOCw1NjQxOCw1NjEyOCw1NjQyMSw1NjEyOCw1NjQzMCw1NjEyOCw1NjQyMyw1NjEyOCw1NjQ0N10sWzU1MzU2LDU3MzMyLDgyMDMsNTYxMjgsNTY0MjMsODIwMyw1NjEyOCw1NjQxOCw4MjAzLDU2MTI4LDU2NDIxLDgyMDMsNTYxMjgsNTY0MzAsODIwMyw1NjEyOCw1NjQyMyw4MjAzLDU2MTI4LDU2NDQ3XSk7Y2FzZSJlbW9qaSI6cmV0dXJuIXMoWzEyOTc3NywxMjc5OTUsODIwNSwxMjk3NzgsMTI3OTk5XSxbMTI5Nzc3LDEyNzk5NSw4MjAzLDEyOTc3OCwxMjc5OTldKX1yZXR1cm4hMX0ob1tyXSksdC5zdXBwb3J0cy5ldmVyeXRoaW5nPXQuc3VwcG9ydHMuZXZlcnl0aGluZyYmdC5zdXBwb3J0c1tvW3JdXSwiZmxhZyIhPT1vW3JdJiYodC5zdXBwb3J0cy5ldmVyeXRoaW5nRXhjZXB0RmxhZz10LnN1cHBvcnRzLmV2ZXJ5dGhpbmdFeGNlcHRGbGFnJiZ0LnN1cHBvcnRzW29bcl1dKTt0LnN1cHBvcnRzLmV2ZXJ5dGhpbmdFeGNlcHRGbGFnPXQuc3VwcG9ydHMuZXZlcnl0aGluZ0V4Y2VwdEZsYWcmJiF0LnN1cHBvcnRzLmZsYWcsdC5ET01SZWFkeT0hMSx0LnJlYWR5Q2FsbGJhY2s9ZnVuY3Rpb24oKXt0LkRPTVJlYWR5PSEwfSx0LnN1cHBvcnRzLmV2ZXJ5dGhpbmd8fChuPWZ1bmN0aW9uKCl7dC5yZWFkeUNhbGxiYWNrKCl9LGEuYWRkRXZlbnRMaXN0ZW5lcj8oYS5hZGRFdmVudExpc3RlbmVyKCJET01Db250ZW50TG9hZGVkIixuLCExKSxlLmFkZEV2ZW50TGlzdGVuZXIoImxvYWQiLG4sITEpKTooZS5hdHRhY2hFdmVudCgib25sb2FkIixuKSxhLmF0dGFjaEV2ZW50KCJvbnJlYWR5c3RhdGVjaGFuZ2UiLGZ1bmN0aW9uKCl7ImNvbXBsZXRlIj09PWEucmVhZHlTdGF0ZSYmdC5yZWFkeUNhbGxiYWNrKCl9KSksKGU9dC5zb3VyY2V8fHt9KS5jb25jYXRlbW9qaT9jKGUuY29uY2F0ZW1vamkpOmUud3BlbW9qaSYmZS50d2Vtb2ppJiYoYyhlLnR3ZW1vamkpLGMoZS53cGVtb2ppKSkpfSh3aW5kb3csZG9jdW1lbnQsd2luZG93Ll93cGVtb2ppU2V0dGluZ3MpOwo="></script>
+    <style type="text/css">
+        img.wp-smiley,
+        img.emoji {
+            display: inline !important;
+            border: none !important;
+            box-shadow: none !important;
+            height: 1em !important;
+            width: 1em !important;
+            margin: 0 0.07em !important;
+            vertical-align: -0.1em !important;
+            background: none !important;
+            padding: 0 !important;
+        }
+    </style>
+    <style id='global-styles-inline-css' type='text/css'>
+        body {
+            --wp--preset--color--black: #000000;
+            --wp--preset--color--cyan-bluish-gray: #abb8c3;
+            --wp--preset--color--white: #ffffff;
+            --wp--preset--color--pale-pink: #f78da7;
+            --wp--preset--color--vivid-red: #cf2e2e;
+            --wp--preset--color--luminous-vivid-orange: #ff6900;
+            --wp--preset--color--luminous-vivid-amber: #fcb900;
+            --wp--preset--color--light-green-cyan: #7bdcb5;
+            --wp--preset--color--vivid-green-cyan: #00d084;
+            --wp--preset--color--pale-cyan-blue: #8ed1fc;
+            --wp--preset--color--vivid-cyan-blue: #0693e3;
+            --wp--preset--color--vivid-purple: #9b51e0;
+            --wp--preset--gradient--vivid-cyan-blue-to-vivid-purple: linear-gradient(135deg, rgba(6, 147, 227, 1) 0%, rgb(155, 81, 224) 100%);
+            --wp--preset--gradient--light-green-cyan-to-vivid-green-cyan: linear-gradient(135deg, rgb(122, 220, 180) 0%, rgb(0, 208, 130) 100%);
+            --wp--preset--gradient--luminous-vivid-amber-to-luminous-vivid-orange: linear-gradient(135deg, rgba(252, 185, 0, 1) 0%, rgba(255, 105, 0, 1) 100%);
+            --wp--preset--gradient--luminous-vivid-orange-to-vivid-red: linear-gradient(135deg, rgba(255, 105, 0, 1) 0%, rgb(207, 46, 46) 100%);
+            --wp--preset--gradient--very-light-gray-to-cyan-bluish-gray: linear-gradient(135deg, rgb(238, 238, 238) 0%, rgb(169, 184, 195) 100%);
+            --wp--preset--gradient--cool-to-warm-spectrum: linear-gradient(135deg, rgb(74, 234, 220) 0%, rgb(151, 120, 209) 20%, rgb(207, 42, 186) 40%, rgb(238, 44, 130) 60%, rgb(251, 105, 98) 80%, rgb(254, 248, 76) 100%);
+            --wp--preset--gradient--blush-light-purple: linear-gradient(135deg, rgb(255, 206, 236) 0%, rgb(152, 150, 240) 100%);
+            --wp--preset--gradient--blush-bordeaux: linear-gradient(135deg, rgb(254, 205, 165) 0%, rgb(254, 45, 45) 50%, rgb(107, 0, 62) 100%);
+            --wp--preset--gradient--luminous-dusk: linear-gradient(135deg, rgb(255, 203, 112) 0%, rgb(199, 81, 192) 50%, rgb(65, 88, 208) 100%);
+            --wp--preset--gradient--pale-ocean: linear-gradient(135deg, rgb(255, 245, 203) 0%, rgb(182, 227, 212) 50%, rgb(51, 167, 181) 100%);
+            --wp--preset--gradient--electric-grass: linear-gradient(135deg, rgb(202, 248, 128) 0%, rgb(113, 206, 126) 100%);
+            --wp--preset--gradient--midnight: linear-gradient(135deg, rgb(2, 3, 129) 0%, rgb(40, 116, 252) 100%);
+            --wp--preset--duotone--dark-grayscale: url('#wp-duotone-dark-grayscale');
+            --wp--preset--duotone--grayscale: url('#wp-duotone-grayscale');
+            --wp--preset--duotone--purple-yellow: url('#wp-duotone-purple-yellow');
+            --wp--preset--duotone--blue-red: url('#wp-duotone-blue-red');
+            --wp--preset--duotone--midnight: url('#wp-duotone-midnight');
+            --wp--preset--duotone--magenta-yellow: url('#wp-duotone-magenta-yellow');
+            --wp--preset--duotone--purple-green: url('#wp-duotone-purple-green');
+            --wp--preset--duotone--blue-orange: url('#wp-duotone-blue-orange');
+            --wp--preset--font-size--small: 13px;
+            --wp--preset--font-size--medium: 20px;
+            --wp--preset--font-size--large: 36px;
+            --wp--preset--font-size--x-large: 42px;
+            --wp--preset--spacing--20: 0.44rem;
+            --wp--preset--spacing--30: 0.67rem;
+            --wp--preset--spacing--40: 1rem;
+            --wp--preset--spacing--50: 1.5rem;
+            --wp--preset--spacing--60: 2.25rem;
+            --wp--preset--spacing--70: 3.38rem;
+            --wp--preset--spacing--80: 5.06rem;
+        }
+
+        :where(.is-layout-flex) {
+            gap: 0.5em;
+        }
+
+        body .is-layout-flow>.alignleft {
+            float: left;
+            margin-inline-start: 0;
+            margin-inline-end: 2em;
+        }
+
+        body .is-layout-flow>.alignright {
+            float: right;
+            margin-inline-start: 2em;
+            margin-inline-end: 0;
+        }
+
+        body .is-layout-flow>.aligncenter {
+            margin-left: auto !important;
+            margin-right: auto !important;
+        }
+
+        body .is-layout-constrained>.alignleft {
+            float: left;
+            margin-inline-start: 0;
+            margin-inline-end: 2em;
+        }
+
+        body .is-layout-constrained>.alignright {
+            float: right;
+            margin-inline-start: 2em;
+            margin-inline-end: 0;
+        }
+
+        body .is-layout-constrained>.aligncenter {
+            margin-left: auto !important;
+            margin-right: auto !important;
+        }
+
+        body .is-layout-constrained> :where(:not(.alignleft):not(.alignright):not(.alignfull)) {
+            max-width: var(--wp--style--global--content-size);
+            margin-left: auto !important;
+            margin-right: auto !important;
+        }
+
+        body .is-layout-constrained>.alignwide {
+            max-width: var(--wp--style--global--wide-size);
+        }
+
+        body .is-layout-flex {
+            display: flex;
+        }
+
+        body .is-layout-flex {
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        body .is-layout-flex>* {
+            margin: 0;
+        }
+
+        :where(.wp-block-columns.is-layout-flex) {
+            gap: 2em;
+        }
+
+        .has-black-color {
+            color: var(--wp--preset--color--black) !important;
+        }
+
+        .has-cyan-bluish-gray-color {
+            color: var(--wp--preset--color--cyan-bluish-gray) !important;
+        }
+
+        .has-white-color {
+            color: var(--wp--preset--color--white) !important;
+        }
+
+        .has-pale-pink-color {
+            color: var(--wp--preset--color--pale-pink) !important;
+        }
+
+        .has-vivid-red-color {
+            color: var(--wp--preset--color--vivid-red) !important;
+        }
+
+        .has-luminous-vivid-orange-color {
+            color: var(--wp--preset--color--luminous-vivid-orange) !important;
+        }
+
+        .has-luminous-vivid-amber-color {
+            color: var(--wp--preset--color--luminous-vivid-amber) !important;
+        }
+
+        .has-light-green-cyan-color {
+            color: var(--wp--preset--color--light-green-cyan) !important;
+        }
+
+        .has-vivid-green-cyan-color {
+            color: var(--wp--preset--color--vivid-green-cyan) !important;
+        }
+
+        .has-pale-cyan-blue-color {
+            color: var(--wp--preset--color--pale-cyan-blue) !important;
+        }
+
+        .has-vivid-cyan-blue-color {
+            color: var(--wp--preset--color--vivid-cyan-blue) !important;
+        }
+
+        .has-vivid-purple-color {
+            color: var(--wp--preset--color--vivid-purple) !important;
+        }
+
+        .has-black-background-color {
+            background-color: var(--wp--preset--color--black) !important;
+        }
+
+        .has-cyan-bluish-gray-background-color {
+            background-color: var(--wp--preset--color--cyan-bluish-gray) !important;
+        }
+
+        .has-white-background-color {
+            background-color: var(--wp--preset--color--white) !important;
+        }
+
+        .has-pale-pink-background-color {
+            background-color: var(--wp--preset--color--pale-pink) !important;
+        }
+
+        .has-vivid-red-background-color {
+            background-color: var(--wp--preset--color--vivid-red) !important;
+        }
+
+        .has-luminous-vivid-orange-background-color {
+            background-color: var(--wp--preset--color--luminous-vivid-orange) !important;
+        }
+
+        .has-luminous-vivid-amber-background-color {
+            background-color: var(--wp--preset--color--luminous-vivid-amber) !important;
+        }
+
+        .has-light-green-cyan-background-color {
+            background-color: var(--wp--preset--color--light-green-cyan) !important;
+        }
+
+        .has-vivid-green-cyan-background-color {
+            background-color: var(--wp--preset--color--vivid-green-cyan) !important;
+        }
+
+        .has-pale-cyan-blue-background-color {
+            background-color: var(--wp--preset--color--pale-cyan-blue) !important;
+        }
+
+        .has-vivid-cyan-blue-background-color {
+            background-color: var(--wp--preset--color--vivid-cyan-blue) !important;
+        }
+
+        .has-vivid-purple-background-color {
+            background-color: var(--wp--preset--color--vivid-purple) !important;
+        }
+
+        .has-black-border-color {
+            border-color: var(--wp--preset--color--black) !important;
+        }
+
+        .has-cyan-bluish-gray-border-color {
+            border-color: var(--wp--preset--color--cyan-bluish-gray) !important;
+        }
+
+        .has-white-border-color {
+            border-color: var(--wp--preset--color--white) !important;
+        }
+
+        .has-pale-pink-border-color {
+            border-color: var(--wp--preset--color--pale-pink) !important;
+        }
+
+        .has-vivid-red-border-color {
+            border-color: var(--wp--preset--color--vivid-red) !important;
+        }
+
+        .has-luminous-vivid-orange-border-color {
+            border-color: var(--wp--preset--color--luminous-vivid-orange) !important;
+        }
+
+        .has-luminous-vivid-amber-border-color {
+            border-color: var(--wp--preset--color--luminous-vivid-amber) !important;
+        }
+
+        .has-light-green-cyan-border-color {
+            border-color: var(--wp--preset--color--light-green-cyan) !important;
+        }
+
+        .has-vivid-green-cyan-border-color {
+            border-color: var(--wp--preset--color--vivid-green-cyan) !important;
+        }
+
+        .has-pale-cyan-blue-border-color {
+            border-color: var(--wp--preset--color--pale-cyan-blue) !important;
+        }
+
+        .has-vivid-cyan-blue-border-color {
+            border-color: var(--wp--preset--color--vivid-cyan-blue) !important;
+        }
+
+        .has-vivid-purple-border-color {
+            border-color: var(--wp--preset--color--vivid-purple) !important;
+        }
+
+        .has-vivid-cyan-blue-to-vivid-purple-gradient-background {
+            background: var(--wp--preset--gradient--vivid-cyan-blue-to-vivid-purple) !important;
+        }
+
+        .has-light-green-cyan-to-vivid-green-cyan-gradient-background {
+            background: var(--wp--preset--gradient--light-green-cyan-to-vivid-green-cyan) !important;
+        }
+
+        .has-luminous-vivid-amber-to-luminous-vivid-orange-gradient-background {
+            background: var(--wp--preset--gradient--luminous-vivid-amber-to-luminous-vivid-orange) !important;
+        }
+
+        .has-luminous-vivid-orange-to-vivid-red-gradient-background {
+            background: var(--wp--preset--gradient--luminous-vivid-orange-to-vivid-red) !important;
+        }
+
+        .has-very-light-gray-to-cyan-bluish-gray-gradient-background {
+            background: var(--wp--preset--gradient--very-light-gray-to-cyan-bluish-gray) !important;
+        }
+
+        .has-cool-to-warm-spectrum-gradient-background {
+            background: var(--wp--preset--gradient--cool-to-warm-spectrum) !important;
+        }
+
+        .has-blush-light-purple-gradient-background {
+            background: var(--wp--preset--gradient--blush-light-purple) !important;
+        }
+
+        .has-blush-bordeaux-gradient-background {
+            background: var(--wp--preset--gradient--blush-bordeaux) !important;
+        }
+
+        .has-luminous-dusk-gradient-background {
+            background: var(--wp--preset--gradient--luminous-dusk) !important;
+        }
+
+        .has-pale-ocean-gradient-background {
+            background: var(--wp--preset--gradient--pale-ocean) !important;
+        }
+
+        .has-electric-grass-gradient-background {
+            background: var(--wp--preset--gradient--electric-grass) !important;
+        }
+
+        .has-midnight-gradient-background {
+            background: var(--wp--preset--gradient--midnight) !important;
+        }
+
+        .has-small-font-size {
+            font-size: var(--wp--preset--font-size--small) !important;
+        }
+
+        .has-medium-font-size {
+            font-size: var(--wp--preset--font-size--medium) !important;
+        }
+
+        .has-large-font-size {
+            font-size: var(--wp--preset--font-size--large) !important;
+        }
+
+        .has-x-large-font-size {
+            font-size: var(--wp--preset--font-size--x-large) !important;
+        }
+
+        .wp-block-navigation a:where(:not(.wp-element-button)) {
+            color: inherit;
+        }
+
+        :where(.wp-block-columns.is-layout-flex) {
+            gap: 2em;
+        }
+
+        .wp-block-pullquote {
+            font-size: 1.5em;
+            line-height: 1.6;
+        }
+    </style>
+    <link rel='stylesheet' id='bslthms-advanced-btns-style-css'
+        href='/css/2.css' type='text/css' media='all' />
+    <link rel='stylesheet' id='ryancv-fonts-css'
+        href='//fonts.googleapis.com/css?family=Poppins%3A100%2C100i%2C200%2C200i%2C300%2C300i%2C400%2C400i%2C500%2C500i%2C600%2C600i%2C700%2C700i%2C800%2C800i%2C900%2C900i&#038;subset=latin%2Clatin-ext'
+        type='text/css' media='all' />
+    <link rel='stylesheet' id='ryancv_heading_font-css'
+        href='https://fonts.googleapis.com/css?family=Space+Grotesk%3A300%2Cregular%2C500%2C600%2C700&#038;subset=latin,latin-ext,vietnamese&#038;display=swap'
+        type='text/css' media='all' />
+    <link rel='stylesheet' id='ryancv_paragraph_font-css'
+        href='https://fonts.googleapis.com/css?family=Space+Grotesk%3A300%2Cregular%2C500%2C600%2C700&#038;subset=latin,latin-ext,vietnamese&#038;display=swap'
+        type='text/css' media='all' />
+    <link rel='stylesheet' id='elementor-post-7-css'
+        href='/css/3.css'
+        type='text/css' media='all' />
+    <link rel='stylesheet' id='google-fonts-1-css'
+        href='https://fonts.googleapis.com/css?family=Roboto%3A100%2C100italic%2C200%2C200italic%2C300%2C300italic%2C400%2C400italic%2C500%2C500italic%2C600%2C600italic%2C700%2C700italic%2C800%2C800italic%2C900%2C900italic%7CRoboto+Slab%3A100%2C100italic%2C200%2C200italic%2C300%2C300italic%2C400%2C400italic%2C500%2C500italic%2C600%2C600italic%2C700%2C700italic%2C800%2C800italic%2C900%2C900italic&#038;display=auto&#038;ver=6.1.1'
+        type='text/css' media='all' />
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
+    <script defer type='text/javascript'
+        src='/js/27.js'
+        id='jquery-core-js'></script>
+    <script defer type='text/javascript'
+        src='/js/28.js'
+        id='jquery-migrate-js'></script>
+    <link rel="https://api.w.org/" href="https://mrakashkumar.in" />   
+    <!-- https://bslthemes.com/ryancv/system-demo/wp-json/ -->
+    <link rel="alternate" type="application/json"
+        href="https://bslthemes.com/ryancv/system-demo/wp-json/wp/v2/pages/40" />
+    <link rel="EditURI" type="application/rsd+xml" title="RSD"
+        href="#" />
+    <link rel="wlwmanifest" type="application/wlwmanifest+xml"
+        href="#" />
+    <meta name="generator" content="WordPress 6.1.1" />
+    <link rel="canonical" href="https://mrakashkumar.in" />
+    <link rel='shortlink' href='https://mrakashkumar.in' />
+    
+    <script defer
+        src="data:text/javascript;base64,CgkJCWRvY3VtZW50LmRvY3VtZW50RWxlbWVudC5jbGFzc05hbWUgPSBkb2N1bWVudC5kb2N1bWVudEVsZW1lbnQuY2xhc3NOYW1lLnJlcGxhY2UoICduby1qcycsICdqcycgKTsKCQk="></script>
+    <style>
+        .no-js img.lazyload {
+            display: none;
+        }
+
+        figure.wp-block-image img.lazyloading {
+            min-width: 150px;
+        }
+
+        .lazyload {
+            opacity: 0;
+        }
+
+        .lazyloading {
+            border: 0 !important;
+            opacity: 1;
+            background: rgba(255, 255, 255, 0) url('/media/smush-lazyloader-2.gif') no-repeat center !important;
+            background-size: 16px auto !important;
+            min-width: 16px;
+        }
+    </style>
+    <style>
+        /*
+		Primary Color
+	*/
+
+        .preloader .spinner .double-bounce1,
+        .preloader .spinner .double-bounce2,
+        .lnk:hover .arrow:before,
+        .button:hover .arrow:before,
+        .lnk:hover .arrow:after,
+        .button:hover .arrow:after,
+        .resume-items .resume-item.active .date:before,
+        .skills-list ul li .progress .percentage,
+        .single-post-text ul>li:before,
+        .comment-text ul>li:before,
+        .content-sidebar .main-menu ul li.page_item_has_children.current_page_item>a:before,
+        .content-sidebar .main-menu ul li.page_item_has_children.current_page_item>a:after,
+        .content-sidebar .main-menu ul li.page_item_has_children:hover>a:before,
+        .content-sidebar .main-menu ul li.page_item_has_children:hover>a:after,
+        .content-sidebar .main-menu ul li.page_item_has_children.current_page_parent>a:before,
+        .content-sidebar .main-menu ul li.page_item_has_children.current_page_parent>a:after,
+        .content-sidebar .main-menu ul li.page_item_has_children.current_page_ancestor>a:before,
+        .content-sidebar .main-menu ul li.page_item_has_children.current_page_ancestor>a:after,
+        .content-sidebar .close:hover:before,
+        .content-sidebar .close:hover:after,
+        .header .menu-btn:hover span,
+        .header .menu-btn:hover span:before,
+        .header .menu-btn:hover span:after,
+        .info-list ul li strong,
+        .profile .main-menu ul li.page_item_has_children.current_page_item>a:before,
+        .profile .main-menu ul li.page_item_has_children.current_page_item>a:after,
+        .profile .main-menu ul li.page_item_has_children:hover>a:before,
+        .profile .main-menu ul li.page_item_has_children:hover>a:after,
+        .profile .main-menu ul li.page_item_has_children.current_page_parent>a:before,
+        .profile .main-menu ul li.page_item_has_children.current_page_parent>a:after,
+        .profile .main-menu ul li.page_item_has_children.current_page_ancestor>a:before,
+        .profile .main-menu ul li.page_item_has_children.current_page_ancestor>a:after,
+        .service-items .service-item .icon,
+        .revs-carousel .owl-dot.active,
+        .custom-content-reveal span.custom-content-close,
+        .fc-calendar .fc-row>div.fc-today,
+        .fc-calendar .fc-content:hover span.fc-date,
+        .fc-calendar .fc-row>div.fc-today span.fc-date,
+        .skills-list.dotted ul li .progress .percentage .da span,
+        .preloader .spinner.default-circle:before,
+        .preloader .spinner.default-circle:after,
+        .preloader .spinner.clock:before,
+        .preloader .spinner.box-rotation:after,
+        .header .cart-btn .cart-icon .cart-count,
+        .woocommerce span.onsale,
+        .woocommerce #respond input#submit.alt,
+        .woocommerce a.button.alt,
+        .woocommerce button.button.alt,
+        .woocommerce input.button.alt,
+        .woocommerce #respond input#submit.alt:hover,
+        .woocommerce a.button.alt:hover,
+        .woocommerce button.button.alt:hover,
+        .woocommerce input.button.alt:hover,
+        .woocommerce ul.products li.product .button.add_to_cart_button.added,
+        .popup-box .preloader .spinner.default-circle:before,
+        .popup-box .preloader .spinner.default-circle:after,
+        .popup-box .preloader-popup .spinner.default-circle:before,
+        .popup-box .preloader-popup .spinner.default-circle:after,
+        .single-post-text ul>li:before,
+        .comment-text ul>li:before,
+        .blog-content ul>li:before,
+        .revs-carousel .swiper-pagination-bullet.swiper-pagination-bullet-active,
+        .woocommerce #respond input#submit,
+        .woocommerce a.button,
+        .woocommerce button.button,
+        .woocommerce input.button .woocommerce-mini-cart__buttons #respond input#submit,
+        .woocommerce-mini-cart__buttons a.button,
+        .woocommerce-mini-cart__buttons button.button,
+        .woocommerce-mini-cart__buttons input.button,
+        .woocommerce .woocommerce-ordering select,
+        .woocommerce div.product .woocommerce-tabs ul.tabs li.active,
+        .woocommerce a.remove:hover,
+        .solid-icons-style .service-items .service-item .icon,
+        .solid-icons-style .pricing-items .pricing-item .icon,
+        .solid-icons-style .fuct-items .fuct-item .icon,
+        .solid-icons-style .resume-title .icon,
+        .solid-icons-style .skill-title .icon,
+        .card-started .profile .lnk.solid-style .ion,
+        .header .top-menu.menu-minimal ul li a .name {
+            background: #a4ff91;
+        }
+
+        .lnk:hover,
+        .button:hover,
+        .lnk:hover .ion,
+        .button:hover .ion,
+        a,
+        a:hover,
+        input:focus,
+        textarea:focus,
+        .header .top-menu ul li:hover a,
+        .header .top-menu ul li.active a,
+        .header .top-menu ul li.current-menu-item a,
+        .header .top-menu ul li:hover a .icon,
+        .header .top-menu ul li.active a .icon,
+        .header .top-menu ul li:hover a .link,
+        .header .top-menu ul li.active a .link,
+        .header .top-menu ul li.current-menu-item a .icon,
+        .header .top-menu ul li.current-menu-item a .link,
+        .header .profile .subtitle,
+        .card-started .profile .subtitle,
+        .content-sidebar .profile .subtitle,
+        .card-started .profile .social a:hover .ion,
+        .card-started .profile .social a:hover .fab,
+        .card-started .profile .social a:hover .fas,
+        .content-sidebar .profile .social a:hover .ion,
+        .content-sidebar .profile .social a:hover .fab,
+        .content-sidebar .profile .social a:hover .fas,
+        .pricing-items .pricing-item .icon,
+        .fuct-items .fuct-item .icon,
+        .resume-title .icon,
+        .skill-title .icon,
+        .resume-items .resume-item.active .date,
+        .content.works .filter-menu .f_btn.active,
+        .box-item:hover .desc .name,
+        .single-post-text p a,
+        .comment-text p a,
+        .post-text-bottom span.cat-links a,
+        .post-text-bottom .tags-links a,
+        .post-text-bottom .tags-links span,
+        .page-numbers.current,
+        .page-links a,
+        .post-comments .post-comment .desc .name,
+        .post-comments .post-comment .desc span.comment-reply a:hover,
+        .content-sidebar .main-menu ul li.current_page_item>a,
+        .content-sidebar .main-menu ul li:hover>a,
+        .content-sidebar .main-menu ul li.current_page_parent>a,
+        .content-sidebar .main-menu ul li.current_page_ancestor>a,
+        .content-sidebar .widget ul li a:hover,
+        .content-sidebar .tagcloud a,
+        .card-started .profile .subtitle,
+        .content-sidebar .profile .subtitle,
+        .content-sidebar .profile .typed-cursor,
+        .card-started .profile .typed-cursor,
+        .content .title .first-word,
+        .content .title::first-letter,
+        .content .title .first-letter::first-letter,
+        .content-sidebar h2.widget-title .first-word,
+        .content-sidebar h2.widget-title::first-letter,
+        .content-sidebar h2.widget-title .first-letter::first-letter,
+        .box-item .date,
+        .profile .main-menu ul li.current-menu-item a,
+        .profile .main-menu ul li.current_page_item>a,
+        .profile .main-menu ul li:hover>a,
+        .profile .main-menu ul li.current_page_parent>a,
+        .profile .main-menu ul li.current_page_ancestor>a,
+        .custom-header nav span:before,
+        .fc-calendar .fc-row>div.fc-content:hover:after,
+        .skills-list.list ul li .name:before,
+        .preloader .spinner.recursive-circle,
+        .woocommerce nav.woocommerce-pagination ul li a:focus,
+        .woocommerce nav.woocommerce-pagination ul li a:hover,
+        .woocommerce nav.woocommerce-pagination ul li span.current,
+        .woocommerce .star-rating,
+        strong.woocommerce-review__author,
+        .woocommerce-message::before,
+        .single-post-text p a,
+        .comment-text p a,
+        .blog-content p a,
+        .minimal-icons-style .service-items .service-item .icon,
+        .minimal-icons-style .pricing-items .pricing-item .icon,
+        .minimal-icons-style .fuct-items .fuct-item .icon,
+        .minimal-icons-style .resume-title .icon,
+        .minimal-icons-style .skill-title .icon,
+        .border-icons-style .service-items .service-item .icon,
+        .border-icons-style .pricing-items .pricing-item .icon,
+        .border-icons-style .fuct-items .fuct-item .icon,
+        .border-icons-style .resume-title .icon,
+        .border-icons-style .skill-title .icon,
+        .lnk:hover .ion,
+        .button:hover .ion,
+        .lnk:hover .fa,
+        .button:hover .fa {
+            color: #a4ff91;
+        }
+
+        .content .title .first-word,
+        .content .title:first-letter,
+        .content-sidebar h2.widget-title .first-word,
+        .content-sidebar h2.widget-title:first-letter {
+            color: #a4ff91 !important;
+        }
+
+        .card-started .profile .image:before,
+        .content-sidebar .profile .image:before,
+        .content .title:before,
+        .box-item .image .info:before,
+        .content-sidebar h2.widget-title:before {
+            background: -moz-linear-gradient(-45deg, rgba(164, 255, 145, 0.15) 0%, rgba(164, 255, 145, 0.01) 100%);
+            background: -webkit-linear-gradient(-45deg, rgba(164, 255, 145, 0.15) 0%, rgba(164, 255, 145, 0.01) 100%);
+            background: linear-gradient(135deg, rgba(164, 255, 145, 0.15) 0%, rgba(164, 255, 145, 0.01) 100%);
+        }
+
+        .card-started:after {
+            background: -moz-linear-gradient(-45deg, rgba(164, 255, 145, 0.4) 0%, rgba(164, 255, 145, 0.01) 100%);
+            background: -webkit-linear-gradient(-45deg, rgba(164, 255, 145, 0.4) 0%, rgba(164, 255, 145, 0.01) 100%);
+            background: linear-gradient(135deg, rgba(164, 255, 145, 0.4) 0%, rgba(164, 255, 145, 0.01) 100%);
+        }
+
+        .box-item .image .info:before {
+            background: -moz-linear-gradient(-45deg, rgba(164, 255, 145, 0.5) 0%, rgba(164, 255, 145, 0.01) 100%);
+            background: -webkit-linear-gradient(-45deg, rgba(164, 255, 145, 0.5) 0%, rgba(164, 255, 145, 0.01) 100%);
+            background: linear-gradient(135deg, rgba(164, 255, 145, 0.5) 0%, rgba(164, 255, 145, 0.01) 100%);
+        }
+
+        .card-started .profile .slide,
+        .content-sidebar .profile .slide {
+            background-color: rgba(164, 255, 145, 0.1);
+        }
+
+        .pricing-items .pricing-item .feature-list ul li strong {
+            background: rgba(164, 255, 145, 0.15);
+        }
+
+        .cursor {
+            background-color: rgba(164, 255, 145, 0.25);
+        }
+
+        .cursor.cursor-zoom {
+            border-color: rgba(164, 255, 145, 1);
+        }
+
+        input:focus,
+        textarea:focus,
+        .revs-carousel .owl-dots .owl-dot,
+        .custom-header,
+        .post-text-bottom .tags-links a,
+        .post-text-bottom .tags-links span,
+        .content-sidebar .tagcloud a,
+        .resume-items .resume-item.active .date,
+        .box-item .date,
+        .content.skills .skills-list.circles .progress .bar,
+        .content.skills .skills-list.circles .progress .fill,
+        .preloader .spinner.clock,
+        .preloader .spinner.box-rotation,
+        .skills-list.circles .progress .bar,
+        .skills-list.circles .progress.p51 .fill,
+        .skills-list.circles .progress.p52 .fill,
+        .skills-list.circles .progress.p53 .fill,
+        .skills-list.circles .progress.p54 .fill,
+        .skills-list.circles .progress.p55 .fill,
+        .skills-list.circles .progress.p56 .fill,
+        .skills-list.circles .progress.p57 .fill,
+        .skills-list.circles .progress.p58 .fill,
+        .skills-list.circles .progress.p59 .fill,
+        .skills-list.circles .progress.p60 .fill,
+        .skills-list.circles .progress.p61 .fill,
+        .skills-list.circles .progress.p62 .fill,
+        .skills-list.circles .progress.p63 .fill,
+        .skills-list.circles .progress.p64 .fill,
+        .skills-list.circles .progress.p65 .fill,
+        .skills-list.circles .progress.p66 .fill,
+        .skills-list.circles .progress.p67 .fill,
+        .skills-list.circles .progress.p68 .fill,
+        .skills-list.circles .progress.p69 .fill,
+        .skills-list.circles .progress.p70 .fill,
+        .skills-list.circles .progress.p71 .fill,
+        .skills-list.circles .progress.p72 .fill,
+        .skills-list.circles .progress.p73 .fill,
+        .skills-list.circles .progress.p74 .fill,
+        .skills-list.circles .progress.p75 .fill,
+        .skills-list.circles .progress.p76 .fill,
+        .skills-list.circles .progress.p77 .fill,
+        .skills-list.circles .progress.p78 .fill,
+        .skills-list.circles .progress.p79 .fill,
+        .skills-list.circles .progress.p80 .fill,
+        .skills-list.circles .progress.p81 .fill,
+        .skills-list.circles .progress.p82 .fill,
+        .skills-list.circles .progress.p83 .fill,
+        .skills-list.circles .progress.p84 .fill,
+        .skills-list.circles .progress.p85 .fill,
+        .skills-list.circles .progress.p86 .fill,
+        .skills-list.circles .progress.p87 .fill,
+        .skills-list.circles .progress.p88 .fill,
+        .skills-list.circles .progress.p89 .fill,
+        .skills-list.circles .progress.p90 .fill,
+        .skills-list.circles .progress.p91 .fill,
+        .skills-list.circles .progress.p92 .fill,
+        .skills-list.circles .progress.p93 .fill,
+        .skills-list.circles .progress.p94 .fill,
+        .skills-list.circles .progress.p95 .fill,
+        .skills-list.circles .progress.p96 .fill,
+        .skills-list.circles .progress.p97 .fill,
+        .skills-list.circles .progress.p98 .fill,
+        .skills-list.circles .progress.p99 .fill,
+        .skills-list.circles .progress.p100 .fill,
+        .revs-carousel .swiper-pagination-bullet,
+        .border-icons-style .service-items .service-item .icon,
+        .border-icons-style .pricing-items .pricing-item .icon,
+        .border-icons-style .fuct-items .fuct-item .icon,
+        .border-icons-style .resume-title .icon,
+        .border-icons-style .skill-title .icon {
+            border-color: #a4ff91;
+        }
+
+        .preloader .spinner.recursive-circle,
+        .preloader .spinner.recursive-circle:after {
+            border-color: #a4ff91;
+            border-top-color: transparent;
+        }
+
+        blockquote {
+            border-left-color: #a4ff91;
+        }
+
+        .preloader .spinner.simple-circle {
+            border-right-color: #a4ff91;
+        }
+
+        .preloader .spinner.quantum-spinner,
+        .preloader .spinner.quantum-spinner:before,
+        .preloader .spinner.quantum-spinner:after {
+            border-top-color: #a4ff91;
+        }
+
+
+
+        /*
+		Heading Font Family
+	*/
+
+        .content .title {
+            font-family: 'Space Grotesk';
+        }
+
+        /*
+		Text Font Family
+	*/
+
+        body {
+            font-family: 'Space Grotesk';
+        }
+
+
+
+
+
+
+
+
+        /*
+		Classic Version Style
+	*/
+
+        .service-items .service-item .icon {
+            background: -moz-linear-gradient(-45deg, rgba(164, 255, 145, 0.15) 0%, rgba(164, 255, 145, 0.01) 100%);
+            background: -webkit-linear-gradient(-45deg, rgba(164, 255, 145, 0.15) 0%, rgba(164, 255, 145, 0.01) 100%);
+            background: linear-gradient(135deg, rgba(164, 255, 145, 0.15) 0%, rgba(164, 255, 145, 0.01) 100%);
+        }
+
+        .service-items .service-item .icon {
+            color: #a4ff91;
+        }
+
+        /*
+		Classic Version Style
+	*/
+        .card-started:after,
+        .card-started .profile .image:before,
+        .content-sidebar .profile .image:before,
+        .content .title:before,
+        .box-item .image .info:before,
+        .content-sidebar h2.widget-title:before {
+            background: -moz-linear-gradient(-45deg, rgba(164, 255, 145, 0.4) 0%, rgba(164, 255, 145, 0.01) 100%);
+            background: -webkit-linear-gradient(-45deg, rgba(164, 255, 145, 0.4) 0%, rgba(164, 255, 145, 0.01) 100%);
+            background: linear-gradient(135deg, rgba(164, 255, 145, 0.4) 0%, rgba(164, 255, 145, 0.01) 100%);
+        }
+
+        /*
+		Dark Version Style
+	*/
+        .card-started:after,
+        .card-started .profile .image:before,
+        .content-sidebar .profile .image:before,
+        .content .title:before,
+        .box-item .image .info:before,
+        .content-sidebar h2.widget-title:before {
+            background: -moz-linear-gradient(-45deg, rgba(164, 255, 145, 0.4) 0%, rgba(164, 255, 145, 0.01) 100%);
+            background: -webkit-linear-gradient(-45deg, rgba(164, 255, 145, 0.4) 0%, rgba(164, 255, 145, 0.01) 100%);
+            background: linear-gradient(135deg, rgba(164, 255, 145, 0.4) 0%, rgba(164, 255, 145, 0.01) 100%);
+        }
+
+
+        body .header .menu-btn,
+        body .card-started .profile,
+        body .card-started .profile .slide:before,
+        body .card-started .profile .slide:after,
+        body .card-inner,
+        body .card-inner:before,
+        body .card-inner:after,
+        body .skills-list.circles .progress:after,
+        body .mfp-wrap.popup-box-inline,
+        body .info-list ul li strong:after,
+        body .content-sidebar,
+        body .profile .main-menu-fixed:before,
+        body .header .cart-btn,
+        body .header .cart-btn .cart-widget,
+        body .header .top-menu {
+            background: #1d252c;
+        }
+
+        body .header .cart-btn .cart-widget:before {
+            border-right-color: #1d252c;
+        }
+
+        .card-started .profile .image img,
+        .content-sidebar .profile .image img {
+            border-color: #1d252c;
+        }
+
+        @media (max-width: 1240px) {
+            body .header {
+                background: #1d252c;
+            }
+        }
+
+        @media (max-width: 680px) {
+            body .header .top-menu ul.menu {
+                background: #1d252c;
+            }
+        }
+
+        /*
+		profile_photo_radius
+	*/
+
+        .card-started .profile .image img,
+        .content-sidebar .profile .image img,
+        .card-started .profile .image:before,
+        .content-sidebar .profile .image:before {
+            -webkit-border-radius: 10%;
+            border-radius: 10%;
+        }
+    </style>
+</head>
+
+<body
+    class="home page-template page-template-template-elementor-builder page-template-template-elementor-builder-php page page-id-40 elementor-default elementor-kit-7 elementor-page elementor-page-40">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 0 0" width="0" height="0" focusable="false" role="none"
+        style="visibility: hidden; position: absolute; left: -9999px; overflow: hidden;">
+        <defs>
+            <filter id="wp-duotone-dark-grayscale">
+                <feColorMatrix color-interpolation-filters="sRGB" type="matrix"
+                    values=" .299 .587 .114 0 0 .299 .587 .114 0 0 .299 .587 .114 0 0 .299 .587 .114 0 0 " />
+                <feComponentTransfer color-interpolation-filters="sRGB">
+                    <feFuncR type="table" tableValues="0 0.49803921568627" />
+                    <feFuncG type="table" tableValues="0 0.49803921568627" />
+                    <feFuncB type="table" tableValues="0 0.49803921568627" />
+                    <feFuncA type="table" tableValues="1 1" />
+                </feComponentTransfer>
+                <feComposite in2="SourceGraphic" operator="in" />
+            </filter>
+        </defs>
+    </svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 0 0" width="0" height="0" focusable="false" role="none"
+        style="visibility: hidden; position: absolute; left: -9999px; overflow: hidden;">
+        <defs>
+            <filter id="wp-duotone-grayscale">
+                <feColorMatrix color-interpolation-filters="sRGB" type="matrix"
+                    values=" .299 .587 .114 0 0 .299 .587 .114 0 0 .299 .587 .114 0 0 .299 .587 .114 0 0 " />
+                <feComponentTransfer color-interpolation-filters="sRGB">
+                    <feFuncR type="table" tableValues="0 1" />
+                    <feFuncG type="table" tableValues="0 1" />
+                    <feFuncB type="table" tableValues="0 1" />
+                    <feFuncA type="table" tableValues="1 1" />
+                </feComponentTransfer>
+                <feComposite in2="SourceGraphic" operator="in" />
+            </filter>
+        </defs>
+    </svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 0 0" width="0" height="0" focusable="false" role="none"
+        style="visibility: hidden; position: absolute; left: -9999px; overflow: hidden;">
+        <defs>
+            <filter id="wp-duotone-purple-yellow">
+                <feColorMatrix color-interpolation-filters="sRGB" type="matrix"
+                    values=" .299 .587 .114 0 0 .299 .587 .114 0 0 .299 .587 .114 0 0 .299 .587 .114 0 0 " />
+                <feComponentTransfer color-interpolation-filters="sRGB">
+                    <feFuncR type="table" tableValues="0.54901960784314 0.98823529411765" />
+                    <feFuncG type="table" tableValues="0 1" />
+                    <feFuncB type="table" tableValues="0.71764705882353 0.25490196078431" />
+                    <feFuncA type="table" tableValues="1 1" />
+                </feComponentTransfer>
+                <feComposite in2="SourceGraphic" operator="in" />
+            </filter>
+        </defs>
+    </svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 0 0" width="0" height="0" focusable="false" role="none"
+        style="visibility: hidden; position: absolute; left: -9999px; overflow: hidden;">
+        <defs>
+            <filter id="wp-duotone-blue-red">
+                <feColorMatrix color-interpolation-filters="sRGB" type="matrix"
+                    values=" .299 .587 .114 0 0 .299 .587 .114 0 0 .299 .587 .114 0 0 .299 .587 .114 0 0 " />
+                <feComponentTransfer color-interpolation-filters="sRGB">
+                    <feFuncR type="table" tableValues="0 1" />
+                    <feFuncG type="table" tableValues="0 0.27843137254902" />
+                    <feFuncB type="table" tableValues="0.5921568627451 0.27843137254902" />
+                    <feFuncA type="table" tableValues="1 1" />
+                </feComponentTransfer>
+                <feComposite in2="SourceGraphic" operator="in" />
+            </filter>
+        </defs>
+    </svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 0 0" width="0" height="0" focusable="false" role="none"
+        style="visibility: hidden; position: absolute; left: -9999px; overflow: hidden;">
+        <defs>
+            <filter id="wp-duotone-midnight">
+                <feColorMatrix color-interpolation-filters="sRGB" type="matrix"
+                    values=" .299 .587 .114 0 0 .299 .587 .114 0 0 .299 .587 .114 0 0 .299 .587 .114 0 0 " />
+                <feComponentTransfer color-interpolation-filters="sRGB">
+                    <feFuncR type="table" tableValues="0 0" />
+                    <feFuncG type="table" tableValues="0 0.64705882352941" />
+                    <feFuncB type="table" tableValues="0 1" />
+                    <feFuncA type="table" tableValues="1 1" />
+                </feComponentTransfer>
+                <feComposite in2="SourceGraphic" operator="in" />
+            </filter>
+        </defs>
+    </svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 0 0" width="0" height="0" focusable="false" role="none"
+        style="visibility: hidden; position: absolute; left: -9999px; overflow: hidden;">
+        <defs>
+            <filter id="wp-duotone-magenta-yellow">
+                <feColorMatrix color-interpolation-filters="sRGB" type="matrix"
+                    values=" .299 .587 .114 0 0 .299 .587 .114 0 0 .299 .587 .114 0 0 .299 .587 .114 0 0 " />
+                <feComponentTransfer color-interpolation-filters="sRGB">
+                    <feFuncR type="table" tableValues="0.78039215686275 1" />
+                    <feFuncG type="table" tableValues="0 0.94901960784314" />
+                    <feFuncB type="table" tableValues="0.35294117647059 0.47058823529412" />
+                    <feFuncA type="table" tableValues="1 1" />
+                </feComponentTransfer>
+                <feComposite in2="SourceGraphic" operator="in" />
+            </filter>
+        </defs>
+    </svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 0 0" width="0" height="0" focusable="false" role="none"
+        style="visibility: hidden; position: absolute; left: -9999px; overflow: hidden;">
+        <defs>
+            <filter id="wp-duotone-purple-green">
+                <feColorMatrix color-interpolation-filters="sRGB" type="matrix"
+                    values=" .299 .587 .114 0 0 .299 .587 .114 0 0 .299 .587 .114 0 0 .299 .587 .114 0 0 " />
+                <feComponentTransfer color-interpolation-filters="sRGB">
+                    <feFuncR type="table" tableValues="0.65098039215686 0.40392156862745" />
+                    <feFuncG type="table" tableValues="0 1" />
+                    <feFuncB type="table" tableValues="0.44705882352941 0.4" />
+                    <feFuncA type="table" tableValues="1 1" />
+                </feComponentTransfer>
+                <feComposite in2="SourceGraphic" operator="in" />
+            </filter>
+        </defs>
+    </svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 0 0" width="0" height="0" focusable="false" role="none"
+        style="visibility: hidden; position: absolute; left: -9999px; overflow: hidden;">
+        <defs>
+            <filter id="wp-duotone-blue-orange">
+                <feColorMatrix color-interpolation-filters="sRGB" type="matrix"
+                    values=" .299 .587 .114 0 0 .299 .587 .114 0 0 .299 .587 .114 0 0 .299 .587 .114 0 0 " />
+                <feComponentTransfer color-interpolation-filters="sRGB">
+                    <feFuncR type="table" tableValues="0.098039215686275 1" />
+                    <feFuncG type="table" tableValues="0 0.66274509803922" />
+                    <feFuncB type="table" tableValues="0.84705882352941 0.41960784313725" />
+                    <feFuncA type="table" tableValues="1 1" />
+                </feComponentTransfer>
+                <feComposite in2="SourceGraphic" operator="in" />
+            </filter>
+        </defs>
+    </svg>
+    <div class="page page_wrap theme-style-classic theme-style-dark">
+        <div class="preloader" style="background-color: #0b1115;">
+            <div class="centrize full-width">
+                <div class="vertical-center">
+                    <div class="spinner quantum-spinner"></div>
+                </div>
+            </div>
+        </div>
+        <div id="canvas_snake" class="canvas canvas-snake" data-colorone="#0b1115" data-colortwo="#a4ff91"></div>
+        <div class="container opened
+ minimal-icons-style" data-animation-in="rollIn" data-animation-out="rollOut">
+            <header class="header">
+                <div class="profile">
+                    <div class="image"> <a href="https://mrakashkumar.in"> <img alt="Akash Kumar"
+                                data-src="https://mrakashkumar.in/avatar.png"
+                                class="lazyload"
+                                src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" /><noscript><img
+                                    src="/media/avatar.png"
+                                    alt="Akash Kumar" /></noscript></a> </a></div>
+                    <div class="title">Akash Kumar</div>
+                    <div class="subtitle subtitle-typed">
+                        <div class="typing-title">
+                            <p>System Administrator</p>
+                            <p>Penetration Tester</p>
+                            <p>Web Developer</p>
+                            <p>Network Engineer</p>
+                            <p>Cyber Security</p>
+                            <p>Red Teamer</p>
+                        </div> <span class="r-typed"></span>
+                    </div>
+                </div> <a href="#" class="menu-btn"><span></span></a>
+                <div class="top-menu top-menu-onepage">
+                    <div class="menu-main-menu-container">
+                        <ul id="menu-main-menu" class="menu">
+                            <li data-id="menu-item-107"
+                                class=" menu-item menu-item-type-post_type menu-item-object-page menu-item-home current-menu-item page_item page-item-40 current_page_item">
+                                <a href="" class="one-page-menu-item"><span
+                                        class="icon ion-ios-person-outline"></span><span class="name">About</span></a>
+                            </li>
+                            <li data-id="menu-item-108"
+                                class=" menu-item menu-item-type-post_type menu-item-object-page"><a href="#resume"
+                                    class="one-page-menu-item"><span class="icon ion-ios-list-outline"></span><span
+                                        class="name">Resume</span></a></li>
+                            <li data-id="menu-item-109"
+                                class=" menu-item menu-item-type-post_type menu-item-object-page"><a href="#works"
+                                    class="one-page-menu-item"><span class="icon ion-ios-folder-outline"></span><span
+                                        class="name">Projects</span></a></li>
+                            <li data-id="menu-item-110"
+                                class=" menu-item menu-item-type-post_type menu-item-object-page"><a href="#blog"
+                                    class="one-page-menu-item"><span class="icon ion-ios-paper-outline"></span><span
+                                        class="name">Articles</span></a></li>
+                            <li data-id="menu-item-111"
+                                class=" menu-item menu-item-type-post_type menu-item-object-page"><a href="#contact"
+                                    class="one-page-menu-item"><span class="icon ion-ios-email-outline"></span><span
+                                        class="name">Contact</span></a></li>
+                        </ul>
+                    </div>
+                </div>
+            </header>
+            <div class="card-started" id="home-card">
+                <div class="profile
+ rabbet-style				">
+                    <div class="profile-content">
+                        <div class="slide"><video autoplay muted loop controls playsinline id="myVideo">
+                                <source
+                                    src="/media/pexels-mikhail-nilov-6963744.mp4"
+                                    type="video/mp4">
+                            </video></div>
+                        <div class="image"> <a href="https://mrakashkumar.in"> <img
+                                    alt="Akash Kumar"
+                                    data-src="https://mrakashkumar.in/avatar.png"
+                                    class="lazyload"
+                                    src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" /><noscript><img
+                                        src="/media/avatar.png"
+                                        alt="Akash Kumar" /></noscript> </a></div>
+                        <div class="title">Akash</div>
+                        <div class="subtitle subtitle-typed">
+                            <div class="typing-title">
+                                <p>Red Teamer</p>
+                                <p>System Administrator</p>
+                                <p>Web Developer</p>
+                                <p>Network Engineer</p>
+                                <p>Penetration Tester</p>
+                                <p>Cyber Security</p>
+                            </div> <span class="r-typed"></span>
+                        </div>
+                        <div class="social"> <a target="_blank" href="https://t.me/ak4sh7"> <span
+                                    class="fab fa-telegram"></span> </a> <a target="_blank" href="https://wa.me/+393312464342">
+                                <span class="fab fa-whatsapp"></span> </a> <a target="_blank"
+                                href="https://twitter.com/0x1ak4sh/"> <span class="fab fa-twitter"></span> </a> <a
+                                target="_blank" href="https://www.instagram.com/0x1ak4sh/"> <span
+                                    class="fab fa-instagram"></span> </a> <a target="_blank"
+                                href="https://github.com/0x1ak4sh/"> <span class="fab fa-github"></span> </a></div>
+                    </div>
+                    <div class="lnks"> <a
+                            href="#resume"
+                            class="lnk" target="_blank"> <span class="text">Download CV</span> <span
+                                class="ion ion-ios-cloud-download-outline"></span> </a> <a
+                            href="  #contact" class="lnk"> <span class="text">Contact Me</span> <span
+                                class="ion ion-ios-paperplane-outline"></span> </a></div>
+                </div>
+            </div>
+            <div class="s_overlay"></div>
+            <div class="content-sidebar">
+                <div class="sidebar-wrap">
+                    <aside id="secondary" class="widget-area">
+                        <p>Apologies for any inconvenience, new services being added to the website</p>
+                    </aside>
+                </div> <span class="close"></span>
+            </div>
+            <div class="card-inner animated active" id="card-home">
+                <div class="card-wrap">
+                    <div id="post-40" class="post-40 page type-page status-publish hentry">
+                        <div data-elementor-type="wp-page" data-elementor-id="40" class="elementor elementor-40">
+                            <section
+                                class="elementor-section elementor-top-section elementor-element elementor-element-1368f2f elementor-section-full_width elementor-section-height-default elementor-section-height-default"
+                                data-id="1368f2f" data-element_type="section">
+                                <div class="elementor-container elementor-column-gap-no">
+                                    <div class="elementor-column elementor-col-100 elementor-top-column elementor-element elementor-element-8d69b8b"
+                                        data-id="8d69b8b" data-element_type="column">
+                                        <div class="elementor-widget-wrap elementor-element-populated">
+                                            <div class="elementor-element elementor-element-b939dc4 elementor-widget elementor-widget-ryancv-about-me"
+                                                data-id="b939dc4" data-element_type="widget"
+                                                data-widget_type="ryancv-about-me.default">
+                                                <div class="elementor-widget-container">
+                                                    <div class="content about">
+                                                        <div class="title"> <span>About Me</span></div>
+                                                        <div class="row">
+                                                            <div class="col col-d-6 col-t-12 col-m-12 border-line-v">
+                                                                <div class="text-box">
+                                                                    <div>
+                                                                        <h5 style="margin-bottom: 10px">hey, there <img
+                                                                                decoding="async" role="img" alt="hi"
+                                                                                data-src="https://s.w.org/images/core/emoji/14.0.0/svg/1f44b.svg"
+                                                                                class="emoji lazyload"
+                                                                                src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" /><noscript><img
+                                                                                    decoding="async" class="emoji"
+                                                                                    role="img"
+                                                                                    src="https://s.w.org/images/core/emoji/14.0.0/svg/1f44b.svg"
+                                                                                    alt="hi" /></noscript></h5>
+                                                                        <p>A Penetration Tester, System Administrator, Web 
+																			Developer, Network engineer from Italy, Bari.
+																			I have rich experience in Cyber Security,
+																			troubleshooting, Web Developing and 
+																			Securing Networks.</p>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col col-d-6 col-t-12 col-m-12 border-line-v">
+                                                                <div class="info-list">
+                                                                    <ul>
+                                                                        <li> <strong> <span> Age: </span> </strong>
+                                                                            <span> 18 </span></li>
+                                                                        <li> <strong> <span> Residence: </span>
+                                                                            </strong> <span> Italy </span></li>
+                                                                        <li> <strong> <span> Freelance: </span>
+                                                                            </strong> <span> Available </span></li>
+                                                                        <li> <strong> <span> Address: </span> </strong>
+                                                                            <span> Bitetto, BA </span></li>
+                                                                    </ul>
+                                                                </div>
+                                                            </div>
+                                                            <div class="clear"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+                            <section
+                                class="elementor-section elementor-top-section elementor-element elementor-element-ac2a78f elementor-section-full_width elementor-section-height-default elementor-section-height-default"
+                                data-id="ac2a78f" data-element_type="section">
+                                <div class="elementor-container elementor-column-gap-no">
+                                    <div class="elementor-column elementor-col-100 elementor-top-column elementor-element elementor-element-15d3f26"
+                                        data-id="15d3f26" data-element_type="column">
+                                        <div class="elementor-widget-wrap elementor-element-populated">
+                                            <div class="elementor-element elementor-element-7412363 elementor-widget elementor-widget-ryancv-services"
+                                                data-id="7412363" data-element_type="widget"
+                                                data-widget_type="ryancv-services.default">
+                                                <div class="elementor-widget-container">
+                                                    <div class="content services">
+                                                        <div class="title"> <span>My Services</span></div>
+                                                        <div class="row service-items border-line-v">
+                                                            <div class="col col-d-6 col-t-6 col-m-12 border-line-h">
+                                                                <div class="service-item">
+                                                                    <div class="icon"> <i aria-hidden="true"
+                                                                            class="fas fa-server"></i></div>
+                                                                    <div class="name"> <span> Server Configuration
+                                                                        </span></div>
+                                                                    <div class="desc">
+                                                                        <div>
+                                                                            <p>Setting up and optimizing servers for optimal performance and security.</p>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col col-d-6 col-t-6 col-m-12 border-line-h">
+                                                                <div class="service-item">
+                                                                    <div class="icon"> <i aria-hidden="true"
+                                                                            class="fas fa-chart-bar"></i></div>
+                                                                    <div class="name"> <span> Web Hosting and Maintenance </span></div>
+                                                                    <div class="desc">
+                                                                        <div>
+                                                                            <p>Hosting and maintaining websites on reliable servers.</p>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col col-d-6 col-t-6 col-m-12 border-line-h">
+                                                                <div class="service-item">
+                                                                    <div class="icon"> <i aria-hidden="true"
+                                                                            class="fas fa-shield-alt"></i></div>
+                                                                    <div class="name"> <span>Business Email Solutions </span>
+                                                                    </div>
+                                                                    <div class="desc">
+                                                                        <div>
+                                                                            <p>Setting up and managing professional business email accounts.</p>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col col-d-6 col-t-6 col-m-12 border-line-h">
+                                                                <div class="service-item">
+                                                                    <div class="icon"> <i aria-hidden="true"
+                                                                            class="fas fa-bezier-curve"></i></div>
+                                                                    <div class="name"> <span>Device unlocking services</span>
+                                                                    </div>
+                                                                    <div class="desc">
+                                                                        <div>
+                                                                            <p>Unlocking and jailbreaking services for android and apple devices to unlock full potential</p>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="clear"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+
+
+
+
+
+
+
+                            <section
+                                class="elementor-section elementor-top-section elementor-element elementor-element-18b4760 elementor-section-full_width elementor-section-height-default elementor-section-height-default"
+                                data-id="18b4760" data-element_type="section">
+                                <div class="elementor-container elementor-column-gap-no">
+                                    <div class="elementor-column elementor-col-100 elementor-top-column elementor-element elementor-element-094a289"
+                                        data-id="094a289" data-element_type="column">
+                                        <div class="elementor-widget-wrap elementor-element-populated">
+                                            <div class="elementor-element elementor-element-35e1624 elementor-widget elementor-widget-ryancv-fun-facts"
+                                                data-id="35e1624" data-element_type="widget"
+                                                data-widget_type="ryancv-fun-facts.default">
+                                                <div class="elementor-widget-container">
+                                                    <div class="content fuct">
+                                                        <div class="title text-box"> <span>Fun Facts</span></div>
+                                                        <div class="row fuct-items col col-d-6 col-t-12 col-m-12 ">
+                                                            <p  style="padding: 0 0 5% 2%;">
+															Hello Guys, As a Cyber Security and Penetration Tester Enthusiast, I 
+                                                            am Dedicated to Honing my Skills and Creating a Professional Portfoflio
+                                                            Website to showcase my expertise in the field. This Website, While 
+                                                            currently serving as a Demonstration or Assignment, it servers as a Glimpse of what
+                                                            my Professional Portfolio will look like in the near Future. I am Committed To Continuously 
+                                                            Improving my abilities and Building a Website that truely Reflects My passion for the Field.
+														</p>
+                                                            <div class="clear"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-inner" id="card-resume">
+                <div class="card-wrap">
+                    <div id="post-42" class="post-42 page type-page status-publish hentry">
+                        <div data-elementor-type="wp-page" data-elementor-id="42" class="elementor elementor-42">
+                            <section
+                                class="elementor-section elementor-top-section elementor-element elementor-element-59895bb elementor-section-full_width elementor-section-height-default elementor-section-height-default"
+                                data-id="59895bb" data-element_type="section">
+                                <div class="elementor-container elementor-column-gap-no">
+                                    <div class="elementor-column elementor-col-100 elementor-top-column elementor-element elementor-element-be20ba8"
+                                        data-id="be20ba8" data-element_type="column">
+                                        <div class="elementor-widget-wrap elementor-element-populated">
+                                            <div class="elementor-element elementor-element-26b97d8 elementor-widget elementor-widget-ryancv-custom-text"
+                                                data-id="26b97d8" data-element_type="widget"
+                                                data-widget_type="ryancv-custom-text.default">
+                                                <div class="elementor-widget-container">
+                                                    <div class="content custom-text">
+                                                        <div class="title"> <span>Resume</span></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+                            <section
+                                class="elementor-section elementor-top-section elementor-element elementor-element-2926877 elementor-section-full_width row elementor-section-height-default elementor-section-height-default"
+                                data-id="2926877" data-element_type="section">
+                                <div class="elementor-container elementor-column-gap-no">
+                                    <div class="elementor-column elementor-col-50 elementor-top-column elementor-element elementor-element-24104fa col"
+                                        data-id="24104fa" data-element_type="column">
+                                        <div class="elementor-widget-wrap elementor-element-populated">
+                                            <div class="elementor-element elementor-element-a38a935 elementor-widget elementor-widget-ryancv-resume"
+                                                data-id="a38a935" data-element_type="widget"
+                                                data-widget_type="ryancv-resume.default">
+                                                <div class="elementor-widget-container">
+                                                    <div class="resume-item">
+                                                        <div class="resume-title border-line-h">
+                                                            <div class="icon"> <i aria-hidden="true"
+                                                                    class="fas fa-briefcase"></i></div>
+                                                            <div class="name"> <span>Experience</span></div>
+                                                        </div>
+
+
+                                                        <p>Till Yet, I don't have any Industrial Job Experience. Otherwise this section was of Experience.</p>
+
+
+
+
+
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="elementor-column elementor-col-50 elementor-top-column elementor-element elementor-element-845c1d0 col border-line-v"
+                                        data-id="845c1d0" data-element_type="column">
+                                        <div class="elementor-widget-wrap elementor-element-populated">
+                                            <div class="elementor-element elementor-element-a64937a elementor-widget elementor-widget-ryancv-resume"
+                                                data-id="a64937a" data-element_type="widget"
+                                                data-widget_type="ryancv-resume.default">
+                                                <div class="elementor-widget-container">
+                                                    <div class="resume-item">
+                                                        <div class="resume-title border-line-h">
+                                                            <div class="icon"> <i aria-hidden="true"
+                                                                    class="fas fa-university"></i></div>
+                                                            <div class="name"> <span>Education</span></div>
+                                                        </div>
+                                                        <div class="resume-items">
+                                                            <div class="resume-item border-line-h ">
+                                                                <div class="date"> <span> 2023 </span></div>
+                                                                <div class="name"> <span> IISS G.Marconi M.Hack - Bari </span></div>
+                                                                <div class="company"> <span> Bari </span></div>
+                                                                <div class="single-post-text">
+                                                                    <div>
+                                                                        <p>IISS G.Marconi M.Hack - Bari offers a
+																			Diploma in Computer Science.</p>
+                                                                    </div>
+                                                                </div> 
+                                                            </div>
+                                                            <div class="resume-item border-line-h ">
+                                                                <div class="date"> <span> 2020 </span></div>
+                                                                <div class="name"> <span> Fortinet NSE Institute </span>
+                                                                </div>
+                                                                <div class="company"> <span> India </span></div>
+                                                                <div class="single-post-text">
+                                                                    <div> NSE 1 Network Security Associate</div>
+                                                                </div> <a target="_blank"
+                                                                    href="/media/nse.jpeg"
+                                                                    class="lnk lnk-2"> <span class="text"> Certificate
+                                                                    </span> <i class="fas fa-angle-right"></i> </a>
+                                                            </div>
+                                                            <div class="resume-item border-line-h ">
+                                                                <div class="date"> <span> 2020 </span></div>
+                                                                <div class="name"> <span> ICSI
+                                                                    </span></div>
+                                                                <div class="company"> <span> India </span></div>
+                                                                <div class="single-post-text">
+                                                                    <div>
+                                                                        <p>ICSI | CyberSecurity Essentials.</p>
+                                                                    </div>
+                                                                </div> <a target="_blank"
+                                                                    href="/media/icsi.jpeg"
+                                                                    class="lnk lnk-2"> <span class="text"> Certificate
+                                                                    </span> <i class="fas fa-angle-right"></i> </a>
+                                                            </div>
+                                                            <div class="resume-item border-line-h ">
+                                                                <div class="date"> <span> 2021 </span></div>
+                                                                <div class="name"> <span> Alison University </span>
+                                                                </div>
+                                                                <div class="company"> <span> India </span></div>
+                                                                <div class="single-post-text">
+                                                                    <div> Ethical Hacker</div>
+                                                                </div> <a target="_blank"
+                                                                    href="/media/alison.jpeg"
+                                                                    class="lnk lnk-2"> <span class="text"> Certificate
+                                                                    </span> <i class="fas fa-angle-right"></i> </a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+                            <section
+                                class="elementor-section elementor-top-section elementor-element elementor-element-0631c8a elementor-section-full_width elementor-section-height-default elementor-section-height-default"
+                                data-id="0631c8a" data-element_type="section">
+                                <div class="elementor-container elementor-column-gap-no">
+                                    <div class="elementor-column elementor-col-100 elementor-top-column elementor-element elementor-element-573fdc8"
+                                        data-id="573fdc8" data-element_type="column">
+                                        <div class="elementor-widget-wrap elementor-element-populated">
+                                            <div class="elementor-element elementor-element-3952aad elementor-widget elementor-widget-spacer"
+                                                data-id="3952aad" data-element_type="widget"
+                                                data-widget_type="spacer.default">
+                                                <div class="elementor-widget-container">
+                                                    <style>
+                                                        /*! elementor - v3.10.0 - 09-01-2023 */
+                                                        .elementor-column .elementor-spacer-inner {
+                                                            height: var(--spacer-size)
+                                                        }
+
+                                                        .e-con {
+                                                            --container-widget-width: 100%
+                                                        }
+
+                                                        .e-con-inner>.elementor-widget-spacer,
+                                                        .e-con>.elementor-widget-spacer {
+                                                            width: var(--container-widget-width, var(--spacer-size));
+                                                            --align-self: var(--container-widget-align-self, initial);
+                                                            --flex-shrink: 0
+                                                        }
+
+                                                        .e-con-inner>.elementor-widget-spacer>.elementor-widget-container,
+                                                        .e-con-inner>.elementor-widget-spacer>.elementor-widget-container>.elementor-spacer,
+                                                        .e-con>.elementor-widget-spacer>.elementor-widget-container,
+                                                        .e-con>.elementor-widget-spacer>.elementor-widget-container>.elementor-spacer {
+                                                            height: 100%
+                                                        }
+
+                                                        .e-con-inner>.elementor-widget-spacer>.elementor-widget-container>.elementor-spacer>.elementor-spacer-inner,
+                                                        .e-con>.elementor-widget-spacer>.elementor-widget-container>.elementor-spacer>.elementor-spacer-inner {
+                                                            height: var(--container-widget-height, var(--spacer-size))
+                                                        }
+                                                    </style>
+                                                    <div class="elementor-spacer">
+                                                        <div class="elementor-spacer-inner"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+                            <section
+                                class="elementor-section elementor-top-section elementor-element elementor-element-deefe3f elementor-section-full_width elementor-section-height-default elementor-section-height-default"
+                                data-id="deefe3f" data-element_type="section">
+                                <div class="elementor-container elementor-column-gap-no">
+                                    <div class="elementor-column elementor-col-100 elementor-top-column elementor-element elementor-element-8ec419d"
+                                        data-id="8ec419d" data-element_type="column">
+                                        <div class="elementor-widget-wrap elementor-element-populated">
+                                            <div class="elementor-element elementor-element-cae1473 elementor-widget elementor-widget-ryancv-custom-text"
+                                                data-id="cae1473" data-element_type="widget"
+                                                data-widget_type="ryancv-custom-text.default">
+                                                <div class="elementor-widget-container">
+                                                    <div class="content custom-text">
+                                                        <div class="title"> <span>Skills</span></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+                            <section
+                                class="elementor-section elementor-top-section elementor-element elementor-element-77e9f37 elementor-section-full_width row elementor-section-height-default elementor-section-height-default"
+                                data-id="77e9f37" data-element_type="section">
+                                <div class="elementor-container elementor-column-gap-no">
+                                    <div class="elementor-column elementor-col-50 elementor-top-column elementor-element elementor-element-552e9ac col"
+                                        data-id="552e9ac" data-element_type="column">
+                                        <div class="elementor-widget-wrap elementor-element-populated">
+                                            <div class="elementor-element elementor-element-2808be1 elementor-widget elementor-widget-ryancv-skills"
+                                                data-id="2808be1" data-element_type="widget"
+                                                data-widget_type="ryancv-skills.default">
+                                                <div class="elementor-widget-container">
+                                                    <div class="skills-item">
+                                                        <div class="skills-list percent">
+                                                            <div class="skill-title border-line-h">
+                                                                <div class="icon"> <i aria-hidden="true"
+                                                                        class="fas fa-terminal"></i></div>
+                                                                <div class="name"> <span>Coding</span></div>
+                                                            </div>
+                                                            <ul>
+                                                                <li class="border-line-h">
+                                                                    <div class="name"> <span> Bash </span></div>
+                                                                    <div class="progress ">
+                                                                        <div class="percentage" style="width:90%;">
+                                                                        </div>
+                                                                    </div>
+                                                                </li>
+                                                                <li class="border-line-h">
+                                                                    <div class="name"> <span> C++ </span></div>
+                                                                    <div class="progress ">
+                                                                        <div class="percentage" style="width:65%;">
+                                                                        </div>
+                                                                    </div>
+                                                                </li>
+                                                                <li class="border-line-h">
+                                                                    <div class="name"> <span> PHP </span></div>
+                                                                    <div class="progress ">
+                                                                        <div class="percentage" style="width:75%;">
+                                                                        </div>
+                                                                    </div>
+                                                                </li>
+                                                                <li class="border-line-h">
+                                                                    <div class="name"> <span> MySQL </span></div>
+                                                                    <div class="progress ">
+                                                                        <div class="percentage" style="width:62%;">
+                                                                        </div>
+                                                                    </div>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="elementor-column elementor-col-50 elementor-top-column elementor-element elementor-element-3238565 col border-line-v"
+                                        data-id="3238565" data-element_type="column">
+                                        <div class="elementor-widget-wrap elementor-element-populated">
+                                            <div class="elementor-element elementor-element-af7804b elementor-widget elementor-widget-ryancv-skills"
+                                                data-id="af7804b" data-element_type="widget"
+                                                data-widget_type="ryancv-skills.default">
+                                                <div class="elementor-widget-container">
+                                                    <div class="skills-item">
+                                                        <div class="skills-list dotted">
+                                                            <div class="skill-title border-line-h">
+                                                                <div class="icon"> <i aria-hidden="true"
+                                                                        class="fas fa-language"></i></div>
+                                                                <div class="name"> <span>Languages</span></div>
+                                                            </div>
+                                                            <ul>
+                                                                <li class="border-line-h">
+                                                                    <div class="name"> <span> English </span></div>
+                                                                    <div class="progress ">
+                                                                        <div class="percentage" style="width:90%;">
+                                                                        </div>
+                                                                    </div>
+                                                                </li>
+                                                                <li class="border-line-h">
+                                                                    <div class="name"> <span> Hindi </span></div>
+                                                                    <div class="progress ">
+                                                                        <div class="percentage" style="width:80%;">
+                                                                        </div>
+                                                                    </div>
+                                                                </li>
+                                                                <li class="border-line-h">
+                                                                    <div class="name"> <span> Italian </span></div>
+                                                                    <div class="progress ">
+                                                                        <div class="percentage" style="width:30%;">
+                                                                        </div>
+                                                                    </div>
+                                                                </li>
+                                                                <li class="border-line-h">
+                                                                    <div class="name"> <span> Punjabi </span></div>
+                                                                    <div class="progress ">
+                                                                        <div class="percentage" style="width:100%;">
+                                                                        </div>
+                                                                    </div>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+                            <section
+                                class="elementor-section elementor-top-section elementor-element elementor-element-f74ec84 elementor-section-full_width row elementor-section-height-default elementor-section-height-default"
+                                data-id="f74ec84" data-element_type="section">
+                                <div class="elementor-container elementor-column-gap-no">
+                                    <div class="elementor-column elementor-col-50 elementor-top-column elementor-element elementor-element-c60c53c col"
+                                        data-id="c60c53c" data-element_type="column">
+                                        <div class="elementor-widget-wrap elementor-element-populated">
+                                            <div class="elementor-element elementor-element-fd65c59 elementor-widget elementor-widget-ryancv-skills"
+                                                data-id="fd65c59" data-element_type="widget"
+                                                data-widget_type="ryancv-skills.default">
+                                                <div class="elementor-widget-container">
+                                                    <div class="skills-item">
+                                                        <div class="skills-list circles">
+                                                            <div class="skill-title border-line-h">
+                                                                <div class="icon"> <i aria-hidden="true"
+                                                                        class="fas fa-cogs"></i></div>
+                                                                <div class="name"> <span>System</span></div>
+                                                            </div>
+                                                            <ul>
+                                                                <li class="border-line-h">
+                                                                    <div class="name"> <span> Linux </span></div>
+                                                                    <div class="progress p90">
+                                                                        <div class="percentage" style="width:90%;">
+                                                                        </div> <span>90%</span>
+                                                                    </div>
+                                                                </li>
+                                                                <li class="border-line-h">
+                                                                    <div class="name"> <span> Cloud </span></div>
+                                                                    <div class="progress p75">
+                                                                        <div class="percentage" style="width:75%;">
+                                                                        </div> <span>75%</span>
+                                                                    </div>
+                                                                </li>
+                                                                <li class="border-line-h">
+                                                                    <div class="name"> <span> Raspberry Pi </span></div>
+                                                                    <div class="progress p85">
+                                                                        <div class="percentage" style="width:85%;">
+                                                                        </div> <span>85%</span>
+                                                                    </div>
+                                                                </li>
+                                                                <li class="border-line-h">
+                                                                    <div class="name"> <span> Networking </span></div>
+                                                                    <div class="progress p95">
+                                                                        <div class="percentage" style="width:95%;">
+                                                                        </div> <span>95%</span>
+                                                                    </div>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="elementor-column elementor-col-50 elementor-top-column elementor-element elementor-element-9170935 col border-line-v"
+                                        data-id="9170935" data-element_type="column">
+                                        <div class="elementor-widget-wrap elementor-element-populated">
+                                            <div class="elementor-element elementor-element-7b18142 elementor-widget elementor-widget-ryancv-skills"
+                                                data-id="7b18142" data-element_type="widget"
+                                                data-widget_type="ryancv-skills.default">
+                                                <div class="elementor-widget-container">
+                                                    <div class="skills-item">
+                                                        <div class="skills-list list">
+                                                            <div class="skill-title border-line-h">
+                                                                <div class="icon"> <i aria-hidden="true"
+                                                                        class="fas fa-list-ul"></i></div>
+                                                                <div class="name"> <span>Knowledge</span></div>
+                                                            </div>
+                                                            <ul>
+                                                                <li class="border-line-h">
+                                                                    <div class="name"> <span> Preparing For CEH And OSCP
+                                                                        </span></div>
+                                                                    <div class="progress ">
+                                                                        <div class="percentage"></div>
+                                                                    </div>
+                                                                </li>
+                                                                <li class="border-line-h">
+                                                                    <div class="name"> <span> Expertise in various Linux distributions including Ubuntu, Kali, Parrot and Raspbian OS for Diverse Applications. </span></div>
+                                                                    <div class="progress ">
+                                                                        <div class="percentage"></div>
+                                                                    </div>
+                                                                </li>
+                                                                <li class="border-line-h">
+                                                                    <div class="name"> <span> Proficient in Utilizing Raspberry Pico, Pi4 and NodeMCU ESP8266 for various Projects and Applications </span>
+                                                                    </div>
+                                                                    <div class="progress ">
+                                                                        <div class="percentage"></div>
+                                                                    </div>
+                                                                </li>
+                                                                <li class="border-line-h">
+                                                                    <div class="name"> <span> Skilled In Website Development, Domain and Hosting Configuration, Buisness Email Setup and Advertising Campaigns for Buisnesses.
+                                                                        </span></div>
+                                                                    <div class="progress ">
+                                                                        <div class="percentage"></div>
+                                                                    </div>
+                                                                </li>
+                                                                <li class="border-line-h">
+                                                                    <div class="name"> <span> Proficient in Docker, Kubernates and Container Orchestration.
+                                                                        </span></div>
+                                                                    <div class="progress ">
+                                                                        <div class="percentage"></div>
+                                                                    </div>
+                                                                </li>
+                                                                <li class="border-line-h">
+                                                                    <div class="name"> <span> Skilled in SQl databases and Variations such a NoSql, MongoDB and Proficient in PHPMyAdmin Setup and Management.
+                                                                            management </span></div>
+                                                                    <div class="progress ">
+                                                                        <div class="percentage"></div>
+                                                                    </div>
+                                                                </li>
+                                                                <li class="border-line-h">
+                                                                    <div class="name"> <span> Administering networks
+                                                                        </span></div>
+                                                                    <div class="progress ">
+                                                                        <div class="percentage"></div>
+                                                                    </div>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            
+            <div class="card-inner" id="card-works">
+                <div class="card-wrap">
+                    <div id="post-46" class="post-46 page type-page status-publish hentry">
+                        <div data-elementor-type="wp-page" data-elementor-id="46" class="elementor elementor-46">
+                            <section
+                                class="elementor-section elementor-top-section elementor-element elementor-element-484379f elementor-section-full_width elementor-section-height-default elementor-section-height-default"
+                                data-id="484379f" data-element_type="section">
+                                <div class="elementor-container elementor-column-gap-no">
+                                    <div class="elementor-column elementor-col-100 elementor-top-column elementor-element elementor-element-f31adcd"
+                                        data-id="f31adcd" data-element_type="column">
+                                        <div class="elementor-widget-wrap elementor-element-populated">
+                                            <div class="elementor-element elementor-element-91b90f8 elementor-widget elementor-widget-ryancv-portfolio"
+                                                data-id="91b90f8" data-element_type="widget"
+                                                data-widget_type="ryancv-portfolio.default">
+                                                <div class="elementor-widget-container">
+                                                    <div class="content works ">
+                                                        <div class="title"> <span>Works</span></div>
+                                                        <p>Projects are going to Be On This Website soon.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-inner" id="card-blog">
+                <div class="card-wrap">
+                    <div id="post-50" class="post-50 page type-page status-publish hentry">
+                        <div data-elementor-type="wp-page" data-elementor-id="50" class="elementor elementor-50">
+                            <section
+                                class="elementor-section elementor-top-section elementor-element elementor-element-2baaf94 elementor-section-boxed elementor-section-height-default elementor-section-height-default"
+                                data-id="2baaf94" data-element_type="section">
+                                <div class="elementor-container elementor-column-gap-default">
+                                    <div class="elementor-column elementor-col-100 elementor-top-column elementor-element elementor-element-e6200bb"
+                                        data-id="e6200bb" data-element_type="column">
+                                        <div class="elementor-widget-wrap elementor-element-populated">
+                                            <div class="elementor-element elementor-element-3148a7f elementor-widget elementor-widget-ryancv-blog"
+                                                data-id="3148a7f" data-element_type="widget"
+                                                data-widget_type="ryancv-blog.default">
+                                                <div class="elementor-widget-container">
+                                                    <div class="content blog">
+                                                        <div class="title"> <span>Blog</span></div>
+                                                        <div class="row border-line-v">
+                                                            <div class="col col-d-6 col-t-6 col-m-12">
+                                                                <div class="box-item">
+
+                                                                    <p>Blogs are Also Coming. </p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                                                </div>
+                                                            </div>
+                                                            <div class="col col-d-6 col-t-6 col-m-12">
+                                                                <div class="box-item">
+                                                                   
+                                                                </div>
+                                                            </div>
+                                                            <div class="col col-d-6 col-t-6 col-m-12">
+                                                                <div class="box-item">
+                                                                    
+                                                                </div>
+                                                            </div>
+                                                            <div class="col col-d-6 col-t-6 col-m-12">
+                                                                <div class="box-item">
+                                                                    
+                                                                </div>
+                                                            </div>
+                                                            <div class="clear"></div>
+                                                        </div>
+                                                        <div class="pager">
+                                                            
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-inner" id="card-contact">
+                <div class="card-wrap">
+                    <div id="post-53" class="post-53 page type-page status-publish hentry">
+                        <div data-elementor-type="wp-page" data-elementor-id="53" class="elementor elementor-53">
+                            <section
+                                class="elementor-section elementor-top-section elementor-element elementor-element-22b6cc0 elementor-section-full_width elementor-section-height-default elementor-section-height-default"
+                                data-id="22b6cc0" data-element_type="section">
+                                <div class="elementor-container elementor-column-gap-no">
+                                    <div class="elementor-column elementor-col-100 elementor-top-column elementor-element elementor-element-7400cb2"
+                                        data-id="7400cb2" data-element_type="column">
+                                        <div class="elementor-widget-wrap elementor-element-populated">
+                                            <div class="elementor-element elementor-element-bc6e79d elementor-widget elementor-widget-ryancv-custom-text"
+                                                data-id="bc6e79d" data-element_type="widget"
+                                                data-widget_type="ryancv-custom-text.default">
+                                                <div class="elementor-widget-container">
+                                                    <div class="content custom-text">
+                                                        <div class="title"> <span>Get in Touch</span></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+                            <section
+                                class="elementor-section elementor-top-section elementor-element elementor-element-b1f83ef elementor-section-full_width elementor-section-height-default elementor-section-height-default"
+                                data-id="b1f83ef" data-element_type="section">
+                                <div class="elementor-container elementor-column-gap-no">
+                                    <div class="elementor-column elementor-col-100 elementor-top-column elementor-element elementor-element-e9080bc"
+                                        data-id="e9080bc" data-element_type="column">
+                                        <div class="elementor-widget-wrap elementor-element-populated">
+                                            <div class="elementor-element elementor-element-5fa6e40 elementor-widget elementor-widget-google_maps"
+                                                data-id="5fa6e40" data-element_type="widget"
+                                                data-widget_type="google_maps.default">
+                                                <div class="elementor-widget-container">
+                                                    <style>
+                                                        /*! elementor - v3.10.0 - 09-01-2023 */
+                                                        .elementor-widget-google_maps .elementor-widget-container {
+                                                            overflow: hidden
+                                                        }
+
+                                                        .elementor-widget-google_maps iframe {
+                                                            height: 300px
+                                                        }
+                                                    </style>
+                                                    <div class="elementor-custom-embed"> <iframe loading="lazy"
+                                                            title="Bitetto, Bari, United Italy"
+                                                            aria-label="Bitetto, Bari, United Italy"
+                                                            data-src="https://maps.google.com/maps?q=Bitetto%2C%20Bari%2C%20Italy&#038;t=m&#038;z=16&#038;output=embed&#038;iwloc=near"
+                                                            class="lazyload"
+                                                            src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=="></iframe>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+                            <section
+                                class="elementor-section elementor-top-section elementor-element elementor-element-2f63e83 elementor-section-full_width elementor-section-height-default elementor-section-height-default"
+                                data-id="2f63e83" data-element_type="section">
+                                <div class="elementor-container elementor-column-gap-no">
+                                    <div class="elementor-column elementor-col-100 elementor-top-column elementor-element elementor-element-fb174a3"
+                                        data-id="fb174a3" data-element_type="column">
+                                        <div class="elementor-widget-wrap elementor-element-populated">
+                                            <div class="elementor-element elementor-element-d76ea60 elementor-widget elementor-widget-ryancv-info-list"
+                                                data-id="d76ea60" data-element_type="widget"
+                                                data-widget_type="ryancv-info-list.default">
+                                                <div class="elementor-widget-container">
+                                                    <div class="row">
+                                                        <div
+                                                            class="col col-d-12 col-t-12 col-m-12 col-list-2 border-line-v">
+                                                            <div class="info-list">
+                                                                <ul>
+                                                                    <li> <strong> <span> Address: </span> </strong>
+                                                                        <span> Bitetto, BA </span></li>
+                                                                    <li> <strong> <span> Email: </span> </strong> <span>
+                                                                            admin@mrakashkumar.in </span></li>
+                                                                    <li> <strong> <span> Phone: </span> </strong> <span>
+                                                                            +39 331 246-4342 </span></li>
+                                                                    <li> <strong> <span> Freelance: </span> </strong>
+                                                                        <span> Available </span></li>
+                                                                </ul>
+                                                            </div>
+                                                        </div>
+                                                        <div class="clear"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+                            <section
+                                class="elementor-section elementor-top-section elementor-element elementor-element-3fc0411 elementor-section-full_width elementor-section-height-default elementor-section-height-default"
+                                data-id="3fc0411" data-element_type="section">
+                                <div class="elementor-container elementor-column-gap-no">
+                                    <div class="elementor-column elementor-col-100 elementor-top-column elementor-element elementor-element-7d1ea59"
+                                        data-id="7d1ea59" data-element_type="column">
+                                        <div class="elementor-widget-wrap elementor-element-populated">
+                                            <div class="elementor-element elementor-element-30bf3ee elementor-widget elementor-widget-spacer"
+                                                data-id="30bf3ee" data-element_type="widget"
+                                                data-widget_type="spacer.default">
+                                                <div class="elementor-widget-container">
+                                                    <div class="elementor-spacer">
+                                                        <div class="elementor-spacer-inner"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+                            <section
+                                class="elementor-section elementor-top-section elementor-element elementor-element-d642373 elementor-section-full_width elementor-section-height-default elementor-section-height-default"
+                                data-id="d642373" data-element_type="section">
+                                <div class="elementor-container elementor-column-gap-no">
+                                    <div class="elementor-column elementor-col-100 elementor-top-column elementor-element elementor-element-1b1aebf"
+                                        data-id="1b1aebf" data-element_type="column">
+                                        <div class="elementor-widget-wrap elementor-element-populated">
+                                            <div class="elementor-element elementor-element-6e2ae54 elementor-widget elementor-widget-ryancv-cf7-form"
+                                                data-id="6e2ae54" data-element_type="widget"
+                                                data-widget_type="ryancv-cf7-form.default">
+                                                <div class="elementor-widget-container">
+                                                    <div class="content contacts">
+                                                        <div class="title"> <span>Contact Form</span></div>
+                                                        <div class="row">
+                                                            <div class="col col-d-12 col-t-12 col-m-12 border-line-v">
+                                                                <div class="contact_form">
+                                                                    <div class="wpcf7 no-js" id="wpcf7-f62-o1"
+                                                                        lang="en-US" dir="ltr">
+                                                                        <div class="screen-reader-response">
+                                                                            <p role="status" aria-live="polite"
+                                                                                aria-atomic="true"></p>
+                                                                            <ul></ul>
+                                                                        </div>
+                                                                        <form action="/ryancv/system-demo/#wpcf7-f62-o1"
+                                                                            method="post" class="wpcf7-form init"
+                                                                            aria-label="Contact form"
+                                                                            novalidate="novalidate" data-status="init">
+                                                                            <div style="display: none;"> <input
+                                                                                    type="hidden" name="_wpcf7"
+                                                                                    value="62" /> <input type="hidden"
+                                                                                    name="_wpcf7_version"
+                                                                                    value="5.7.2" /> <input
+                                                                                    type="hidden" name="_wpcf7_locale"
+                                                                                    value="en_US" /> <input
+                                                                                    type="hidden" name="_wpcf7_unit_tag"
+                                                                                    value="wpcf7-f62-o1" /> <input
+                                                                                    type="hidden"
+                                                                                    name="_wpcf7_container_post"
+                                                                                    value="0" /> <input type="hidden"
+                                                                                    name="_wpcf7_posted_data_hash"
+                                                                                    value="" /></div>
+                                                                            <div class="row">
+                                                                                <div
+                                                                                    class="col col-d-6 col-t-6 col-m-12">
+                                                                                    <div class="group-val">
+                                                                                        <p><span class="wpcf7-form-control-wrap"
+                                                                                                data-name="your-name"><input
+                                                                                                    size="40"
+                                                                                                    class="wpcf7-form-control wpcf7-text wpcf7-validates-as-required"
+                                                                                                    aria-required="true"
+                                                                                                    aria-invalid="false"
+                                                                                                    placeholder="Full Name"
+                                                                                                    value="" type="text"
+                                                                                                    name="your-name" /></span>
+                                                                                        </p>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div
+                                                                                    class="col col-d-6 col-t-6 col-m-12">
+                                                                                    <div class="group-val">
+                                                                                        <p><span class="wpcf7-form-control-wrap"
+                                                                                                data-name="your-email"><input
+                                                                                                    size="40"
+                                                                                                    class="wpcf7-form-control wpcf7-text wpcf7-email wpcf7-validates-as-required wpcf7-validates-as-email"
+                                                                                                    aria-required="true"
+                                                                                                    aria-invalid="false"
+                                                                                                    placeholder="Email Address"
+                                                                                                    value=""
+                                                                                                    type="email"
+                                                                                                    name="your-email" /></span>
+                                                                                        </p>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div
+                                                                                    class="col col-d-12 col-t-12 col-m-12">
+                                                                                    <div class="group-val">
+                                                                                        <p><span class="wpcf7-form-control-wrap"
+                                                                                                data-name="your-message"><textarea
+                                                                                                    cols="40" rows="10"
+                                                                                                    class="wpcf7-form-control wpcf7-textarea wpcf7-validates-as-required"
+                                                                                                    aria-required="true"
+                                                                                                    aria-invalid="false"
+                                                                                                    placeholder="This Service Is Not Working Yet!"
+                                                                                                    name="your-message"></textarea></span>
+                                                                                        </p>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="align-left">
+                                                                                <p><button type="submit"
+                                                                                        class="button"><span
+                                                                                            class="text">Send
+                                                                                            Message</span><span
+                                                                                            class="arrow"></span></button>
+                                                                                </p>
+                                                                            </div>
+                                                                            <div class="wpcf7-response-output"
+                                                                                aria-hidden="true"></div>
+                                                                        </form>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="clear"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="bsl-popup" data-theme="ryancv" data-category="wordpress">
+        <div class="bsl-popup__buttons"></div>
+        <div class="bsl-popup__content bsl-popup__content-related">
+            <div class="bsl-popup__menu"></div>
+            <div class="bsl-popup__tabs">
+                <div class="bsl-popup__tab bsl-popup__tab-demo"></div>
+                <div class="bsl-popup__tab bsl-popup__tab-all"></div>
+                <div class="bsl-popup__tab bsl-popup__tab-related"></div>
+            </div>
+        </div>
+        <div class="bsl-popup__content bsl-popup__content-help"></div>
+    </div>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-125314689-11"></script>
+    <script defer
+        src="data:text/javascript;base64,CgkJCXdpbmRvdy5kYXRhTGF5ZXIgPSB3aW5kb3cuZGF0YUxheWVyIHx8IFtdOwoJCQlmdW5jdGlvbiBndGFnKCl7ZGF0YUxheWVyLnB1c2goYXJndW1lbnRzKTt9CgkJCWd0YWcoJ2pzJywgbmV3IERhdGUoKSk7CgkJCWd0YWcoJ2NvbmZpZycsICdVQS0xMjUzMTQ2ODktMTEnKTsKCQk="></script>
+    <link rel='stylesheet' id='elementor-post-42-css'
+        href='/js/1.js'
+        type='text/css' media='all' />
+    <link rel='stylesheet' id='elementor-post-53-css'
+        href='/js/2.js'
+        type='text/css' media='all' />
+    <script defer type='text/javascript'
+        src='/js/3.js'
+        id='ryancv-plugin-frontend-widgets-scripts-js'></script>
+    <script defer type='text/javascript' src='/js/4.js'
+        id='bslthms-advanced-btns-script-js'></script>
+    <script defer type='text/javascript'
+        src='/js/5.js'
+        id='swv-js'></script>
+    <script defer type='text/javascript'
+        src='/js/6.js'
+        id='contact-form-7-js'></script>
+    <script defer type='text/javascript'
+        src='/js/7.js'
+        id='ryancv-abp-snake-js'></script>
+    <script defer type='text/javascript'
+        src='/js/8.js'
+        id='ryancv-skip-link-focus-fix-js'></script>
+    <script defer type='text/javascript'
+        src='/js/9.js'
+        id='modernizr-js'></script>
+    <script defer type='text/javascript'
+        src='/js/10.js'
+        id='magnific-popup-js'></script>
+    <script defer type='text/javascript'
+        src='/js/11.js'
+        id='jquery-validate-js'></script>
+    <script defer type='text/javascript'
+        src='/js/12.js'
+        id='jquery-cookie-js'></script>
+    <script defer type='text/javascript'
+        src='/js/13.js'
+        id='imagesloaded-pkgd-js'></script>
+    <script defer type='text/javascript'
+        src='/js/14.js'
+        id='ryancv-isotope-js'></script>
+    <script defer type='text/javascript'
+        src='/js/15.js'
+        id='ryancv-typed-js'></script>
+    <script defer type='text/javascript'
+        src='/js/16.js'
+        id='swiper-js'></script>
+    <script defer type='text/javascript'
+        src='/js/17.js'
+        id='rrssb-js'></script>
+    <script defer type='text/javascript'
+        src='/js/18.js'
+        id='calendario-js'></script>
+    <script defer type='text/javascript'
+        src='/js/19.js'
+        id='ryancv-scripts-js'></script>
+    <script defer id="ajax-portfolio-content-js-extra"
+        src="data:text/javascript;base64,Ci8qIDwhW0NEQVRBWyAqLwp2YXIgcG9ydGZvbGlvX2FqYXhfbG9hZGluZ19kYXRhID0geyJ1cmwiOiJodHRwczpcL1wvbXJha2FzaGt1bWFyLmluIn07Ci8qIF1dPiAqLwo="></script>
+    <script defer type='text/javascript'
+        src='/js/20.js'
+        id='ajax-portfolio-content-js'></script>
+    <script defer type='text/javascript'
+        src='/js/21.js'
+        id='smush-lazy-load-js'></script>
+    <script defer type='text/javascript'
+        src='/js/22.js'
+        id='elementor-webpack-runtime-js'></script>
+    <script defer type='text/javascript'
+        src='/js/23.js'
+        id='elementor-frontend-modules-js'></script>
+    <script defer type='text/javascript'
+        src='/js/24.js'
+        id='elementor-waypoints-js'></script>
+    <script defer type='text/javascript'
+        src='/js/25.js'
+        id='jquery-ui-core-js'></script>
+    <script defer id="elementor-frontend-js-before"
+        src='/js/29.js'></script>
+    <script defer type='text/javascript'
+        src='/js/26.js'
+        id='elementor-frontend-js'></script>
+    <div class="cursor"></div>
+	<script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+	<script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+</body>
+
+</html>
