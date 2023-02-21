@@ -47,7 +47,7 @@
 	   jQuery(document).ready(function() {
       jQuery('form').submit(function(event) {
         event.preventDefault();
-        var formData = $(this).serialize();
+        var formData = jQuery(this).serialize();
         jQuery.ajax({
           type: 'POST',
           url: 'https://mrakashkumar.000webhostapp.com/send_email.php',
