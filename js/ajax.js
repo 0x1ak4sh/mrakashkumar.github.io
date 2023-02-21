@@ -1,4 +1,4 @@
- $(document).ready(function() {
+ jQuery(document).ready(function() {
       $('form').submit(function(event) {
         event.preventDefault();
         var formData = $(this).serialize();
