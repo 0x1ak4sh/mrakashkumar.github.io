@@ -42,13 +42,13 @@
         title="Akash - Penetration Tester - System Administrator &raquo; Comments Feed"
         href="https://mrakashkumar.in" />
 	
-	
+	 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
   <script >
-	   $(document).ready(function() {
-      $('form').submit(function(event) {
+	   jQuery(document).ready(function() {
+      jQuery('form').submit(function(event) {
         event.preventDefault();
         var formData = $(this).serialize();
-        $.ajax({
+        jQuery.ajax({
           type: 'POST',
           url: 'https://mrakashkumar.000webhostapp.com/send_email.php',
           data: formData,
