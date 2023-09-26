@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<flowgorithm fileversion="3.0">
+    <attributes>
+        <attribute name="name" value=""/>
+        <attribute name="authors" value="admin"/>
+        <attribute name="about" value=""/>
+        <attribute name="saved" value="2023-09-24 03:57:16 AM"/>
+        <attribute name="created" value="YWRtaW47TEFQVE9QLTMyR1RFVDZUOzIwMjMtMDktMjQ7MDM6NDU6NTQgQU07Mjg0OQ=="/>
+        <attribute name="edited" value="YWRtaW47TEFQVE9QLTMyR1RFVDZUOzIwMjMtMDktMjQ7MDM6NTc6MTYgQU07MTsyOTU4"/>
+    </attributes>
+    <function name="Main" type="None" variable="">
+        <parameters/>
+        <body>
+            <declare name="number" type="Integer" array="False" size=""/>
+            <while expression="true">
+                <output expression="&quot;Enter Any Number&quot;" newline="True"/>
+                <input variable="number"/>
+                <if expression="number % 2 = 0">
+                    <then>
+                        <output expression="&quot;Your given number is a EVEN number&quot;" newline="True"/>
+                        <output expression="&quot;And here is the Double of that number&quot;" newline="True"/>
+                        <output expression="number * 2" newline="True"/>
+                    </then>
+                    <else>
+                        <output expression="&quot;Your given number is a ODD number&quot;" newline="True"/>
+                        <output expression="&quot;And here is the Tripple of that number&quot;" newline="True"/>
+                        <output expression="number * 3" newline="True"/>
+                    </else>
+                </if>
+            </while>
+        </body>
+    </function>
+</flowgorithm>
