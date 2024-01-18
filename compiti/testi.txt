@@ -1,0 +1,61 @@
+Home
+
+La programmazione a oggetti (OOP, Object Oriented
+Programming) rappresenta il modello di programmazione
+più diffuso e utilizzato nel nuovo millennio.
+
+La OOP nasce alla fine degli anni Ottanta del secolo
+scorso come superamento della programmazione
+di tipo procedurale
+
+Oltre a essere una naturale evoluzione dei linguaggi di
+programmazione strutturata, è anche una vera e propria
+rivoluzione
+
+Modifica radicalmente il punto di vista dal quale si affronta
+il progetto di un’applicazione.
+
+
+Astrazione
+
+L’astrazione è il risultato di un processo,
+secondo il quale, assegnato un sistema,
+complesso quanto si voglia, si possono
+
+tenerne nascosti alcuni particolari
+
+si evidenziando quelli che si ritengono
+essenziali ai fini della corretta
+comprensione del sistema.
+
+
+Classi
+
+La classe è l’elemento base della OOP
+
+Un programma a oggetti è costituito da
+un insieme di classi che generano
+oggetti
+
+Questi comunicano tra loro con scambi
+di messaggi.
+
+Spesso le classi non hanno bisogno di
+essere scritte in quanto sono di dominio
+pubblico (“mattoni software”)
+
+
+UML
+
+I progettisti del modello a oggetti utilizzano un
+unico linguaggio di modellazione di tipo grafico,
+l’UML (Unified Modeling Language)
+
+L’UML è un linguaggio semiformale e grafico che
+utilizza specifici diagrammi per specificare,
+visualizzare, costruire e documentare un sistema
+software
+
+Non è solo un linguaggio per la modellazione, ma
+un linguaggio per la modellazione orientata agli
+oggetti

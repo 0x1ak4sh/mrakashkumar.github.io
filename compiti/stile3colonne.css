@@ -1,0 +1,117 @@
+* {
+  /* Le proprietà width e height includono contenuto, padding e bordo */	
+  box-sizing: border-box; 
+}
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+
+a:hover{
+  text-decoration: underline;
+  color: #555;
+}
+/* Stile per il tag header */
+header {
+  background-color: #FFF;
+  padding: 10px 10px 0px 10px;
+  text-align: center;
+  font-size: 15px;
+  color: black;
+  text-transform: uppercase;
+}
+
+#contenitore {
+	width: 100%;
+	margin-bottom: 0px;
+}
+
+nav {
+  text-align: center;
+}
+
+/* Stile della lista nel menu di navigazione */
+nav ul {
+  list-style-type: none;
+  background: #DDD;
+  margin: 0;
+  padding: 5px;
+}
+
+nav li{
+	display: inline; 
+	padding: 0px 25px;
+	border-right: 1px solid #000;
+}
+nav li:last-child {
+  border-right: none;
+}
+nav li a{
+  color: black;
+  text-decoration: none;
+}
+
+nav li a:hover {
+  text-decoration: underline;
+}
+
+section {
+  padding: 30px 10px 10px 10px;
+  width:100%;
+  background-color: #fff;
+}
+
+/* Crea 3 colonne uguali affiancate (float) */
+.colonna {
+  float: left;
+  width: 33.33%;
+  padding: 10px;
+  border-top: #555;
+}
+
+/* Alla fine dobbiamo eliminare l'affiancamento (il float) */
+section:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+section article img{
+	display: block; 
+	width: 50%; 
+	margin-left: auto; 
+	margin-right: auto;
+}
+
+section img{
+	display: block;
+	width: 10%;
+	margin-left: auto; 
+	margin-right: auto;
+}
+
+section h1{
+	text-align: center;
+}
+section p{
+  line-height: 2.3;
+}
+
+article h2{
+  text-align: center;
+  border-bottom: #555 solid 2.2px;
+}
+
+
+/* Stile del footer */
+footer {
+  background-color: #FFF;
+  padding: 10px;
+  text-align: center;
+  color: #555;
+  width: 100%;
+  border-top: 1px solid #555;
+}
+
+	
