@@ -31,8 +31,27 @@
     Oh, and that contact form? It's not just for show – it actually works flawlessly on this static site. Not a piece of cake, but not rocket science either. It's the magic of the web! 😉✉️
     
     If you're itching to uncover the secrets behind this creation or just fancy a chat about the wonderful world of web development, feel free to reach out. You'll find all my social links right here on the site. Have an amazing day, my fellow digital explorer! 😄🚀 -->
-    
-    
+
+<!-- i had some problem while setting up the contact form , which is at the end of this site.
+	this problem is that, as you know this site is hosted on github, static hosting. 
+	i had to use thirdparty services like formspreee, etc. but the problem is i don't liked the greeting or the thank u page, which is automatically redirected to the user.
+	i am worried about the experience of the user, everything from start to end matters for me. 
+	so i don't have too much time for thinking about this.
+	so i just hosted a php file, on webhost, where i used a phpmailer library, then used mine very own smtp, and crafted the mail, which then come to my mail.
+	but this was only for 1 year , like the free hosting was only for 1 year, and the forms was not working
+	so then i started again thinking how to solve this, 
+	and then i came across slack webhook, which receivves json and then sent directly to channel, which was great, i really wanted to do so
+	but as we know, the webhook is open to the internetl, anyone, can see the webhoook and some mates, can send unusual meesages.
+	that's why i thought just leave this, thing and just focus on the main thing
+	so i just used the getform.io, and then send the form to the slack, that was very fast as compare to php one
+	this way everything seems fine
+	
+	
+	
+	if you have any other suggestions , plz plz tell me, if you wanna be anonymous , just send it in the form :)  -->
+
+
+	
     
     
     <meta name="robots" content="index,follow">
@@ -85,23 +104,7 @@
     <link rel="alternate" type="application/rss+xml"
         title="Akash Kumar | IISS G.Marconi M.Hack | 0x1Ak4sh &raquo; Comments Feed" href="https://mrakashkumar.in" />
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
-    <script>
-        jQuery(document).ready(function () {
-            jQuery('form').submit(function (event) {
-                event.preventDefault();
-                var formData = jQuery(this).serialize();
-                jQuery.ajax({
-                    type: 'POST',
-                    url: 'https://mrakashkumar.000webhostapp.com/send_email.php',
-                    data: formData,
-                    success: function (response) {
-                        console.log(response);
-                    }
-                });
-            });
-        });
-    </script>
+
 
     <script src="https://kit.fontawesome.com/8d67cb621b.js" crossorigin="anonymous"></script>
     <script defer src="/js/30.js"></script>
@@ -967,6 +970,7 @@
   gtag('config', 'G-GCHL0J4VZ0');
 </script>
 
+<script src="https://js.hcaptcha.com/1/api.js" async defer></script>
 
 
 
@@ -2398,6 +2402,8 @@
                                                                                         </p>
                                                                                     </div>
                                                                                 </div>
+									 <div style="padding-left: 4%;" class="h-captcha" data-sitekey="008d655d-048c-4cf3-b0ec-c1cc540fc2e5"></div>
+
                                                                             </div>
                                                                             <div class="align-left">
                                                                                 <p><button type="submit" value="Send"
