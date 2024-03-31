@@ -2406,7 +2406,9 @@
                                                                                     <div class="group-val">
                                                                                         <div class="h-captcha" data-sitekey="008d655d-048c-4cf3-b0ec-c1cc540fc2e5" class="wpcf7-form-control-wrap">
                                                                                         </div>
-                                                                                
+                                                                                    </div>
+                                                                                    <div>
+                                                                                        <p id="captchaWasNotFilledBrotherWhatAreUdoing"></p>
                                                                                     </div>
 
                                                                             </div>
@@ -2451,6 +2453,25 @@
         </div>
         <div class="bsl-popup__content bsl-popup__content-help"></div>
     </div>
+
+    <!-- Yes, yes U are right, this is not the correct solution, but anyway, i dont have time -->
+
+    <script>
+        const form = document.getElementById('contactForm');
+        const messageElement  = document.getElementById('captchaWasNotFilledBrotherWhatAreUdoing');
+        
+        form.addEventListener('submit', function(e) {
+        
+            const hCaptcha = form.querySelector('textarea[name=h-captcha-response]').value;
+        
+            if (!hCaptcha) {
+                e.preventDefault();
+                messageElement.textContent = 'Stop right there! The captcha is waiting for you!';
+                return
+            }
+        });
+        </script>
+
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-125314689-11"></script>
     <script defer
         src="data:text/javascript;base64,CgkJCXdpbmRvdy5kYXRhTGF5ZXIgPSB3aW5kb3cuZGF0YUxheWVyIHx8IFtdOwoJCQlmdW5jdGlvbiBndGFnKCl7ZGF0YUxheWVyLnB1c2goYXJndW1lbnRzKTt9CgkJCWd0YWcoJ2pzJywgbmV3IERhdGUoKSk7CgkJCWd0YWcoJ2NvbmZpZycsICdVQS0xMjUzMTQ2ODktMTEnKTsKCQk="></script>
@@ -2486,6 +2507,7 @@
     <div class="cursor"></div>
     <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+
 </body>
 
 </html>
