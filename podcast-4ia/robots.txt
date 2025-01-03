@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /podcast-4ia/
+
+Sitemap: https://mrakashkumar.in/sitemap.xml

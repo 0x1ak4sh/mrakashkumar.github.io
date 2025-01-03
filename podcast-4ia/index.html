@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Il Podcast del 4IA - Cambiamento Climatico</title>
+    <meta name="description" content="Un podcast innovativo realizzato dagli studenti del 4IA che esplora l'impatto del cambiamento climatico attraverso analisi scientifiche e storie coinvolgenti.">
+    <meta name="keywords" content="podcast cambiamento climatico, 4IA, ambiente, sostenibilità, educazione ambientale">
+
+    <meta name="robots" content="index, follow">
+    <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+
+
+    <link rel="canonical" href="https://mrakashkumar.in/podcast-4ia/">
+
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Il Podcast del 4IA - Cambiamento Climatico">
+    <meta property="og:description" content="Un podcast innovativo realizzato dagli studenti del 4IA che esplora l'impatto del cambiamento climatico.">
+    <meta property="og:url" content="https://mrakashkumar.in/podcast-4ia/">
+    <meta property="og:image" content="https://mrakashkumar.in/podcast-4ia/logo.png">
+    <meta property="og:image:alt" content="Copertina del Podcast del 4IA sul Cambiamento Climatico">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Il Podcast del 4IA - Cambiamento Climatico">
+    <meta name="twitter:description" content="Un podcast innovativo realizzato dagli studenti del 4IA che esplora l'impatto del cambiamento climatico.">
+    <meta name="twitter:image" content="https://mrakashkumar.in/podcast-4ia/logo.png">
+
+    <!-- Structured Data - JSON-LD -->
+    <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "PodcastSeries",
+            "name": "Il Podcast del 4IA",
+            "description": "Un podcast innovativo realizzato dagli studenti del 4IA che esplora l'impatto del cambiamento climatico attraverso analisi scientifiche e storie coinvolgenti.",
+            "publisher": {
+                "@type": "Organization",
+                "name": "4IA Classe",
+                "logo": {
+                    "@type": "ImageObject",
+                    "url": "https://mrakashkumar.in/podcast-4ia/logo.png"
+                }
+            },
+            "creator": {
+                "@type": "EducationalOrganization",
+                "name": "4IA Classe"
+            }
+        }
+        </script>
+    
+        <!-- Additional SEO Optimization -->
+        <link rel="alternate" hreflang="it" href="https://mrakashkumar.in/podcast-4ia/">
+        <meta name="author" content="4IA Classe">
+    
+
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Syne:wght@400;500;600;700;800&display=swap');
+
+        :root {
+            --dark-bg: #080808;
+            --darker-bg: #030303;
+            --accent: #FF3D00;
+            --accent-dark: #CC3000;
+            --text: #F5F5F5;
+            --text-secondary: #A0A0A0;
+            --gradient: linear-gradient(135deg, #FF3D00, #FF8A00);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--dark-bg);
+            color: var(--text);
+            font-family: 'Space Grotesk', sans-serif;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4 {
+            font-family: 'Syne', sans-serif;
+            font-weight: 700;
+        }
+
+        .hero {
+            min-height: 100vh;
+            background:
+                linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.9)),
+                url('/api/placeholder/1920/1080');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 4rem 10%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 30%;
+            background: linear-gradient(transparent, var(--dark-bg));
+            pointer-events: none;
+        }
+
+        .hero h1 {
+            font-size: 5rem;
+            line-height: 1.1;
+            margin-bottom: 2rem;
+            max-width: 800px;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
+        }
+
+        .hero p {
+            font-size: 1.4rem;
+            max-width: 600px;
+            margin-bottom: 3rem;
+            color: var(--text-secondary);
+            font-weight: 300;
+        }
+
+        .spotify-btn {
+            background: #1DB954;
+            color: white;
+            padding: 1.2rem 3rem;
+            border-radius: 100px;
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 1rem;
+            transition: all 0.3s ease;
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .spotify-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(29, 185, 84, 0.3);
+        }
+
+        .episodes {
+            padding: 8rem 10%;
+            background-color: var(--darker-bg);
+            position: relative;
+        }
+
+        .section-title {
+            font-size: 3rem;
+            margin-bottom: 4rem;
+            position: relative;
+            display: inline-block;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 60%;
+            height: 4px;
+            background: var(--gradient);
+        }
+
+        .episode-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 3rem;
+        }
+
+        .episode-card {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 2.5rem;
+            border-radius: 20px;
+            transition: all 0.4s ease;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .episode-card:hover {
+            transform: translateY(-10px);
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--accent);
+        }
+
+        .episode-number {
+            font-size: 4rem;
+            font-weight: 800;
+            color: var(--accent);
+            opacity: 0.3;
+            line-height: 1;
+            margin-bottom: 1rem;
+        }
+
+        .episode-card h3 {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            color: var(--text);
+        }
+
+        .episode-card p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            line-height: 1.7;
+        }
+
+        .team {
+            padding: 8rem 10%;
+            background-color: var(--dark-bg);
+        }
+
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 4rem;
+        }
+
+        .team-member {
+            text-align: center;
+            position: relative;
+        }
+
+        .team-member img {
+            width: 200px;
+            height: 200px;
+            border-radius: 20px;
+            margin-bottom: 1.5rem;
+            filter: grayscale(100%) contrast(120%);
+            transition: all 0.4s ease;
+        }
+
+        .team-member:hover img {
+            filter: grayscale(0%);
+            transform: scale(1.05);
+        }
+
+        .team-member h3 {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .team-member::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 3px;
+            background: var(--gradient);
+            opacity: 0;
+            transition: all 0.4s ease;
+        }
+
+        .team-member:hover::before {
+            opacity: 1;
+            width: 100px;
+        }
+
+        .noise {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            opacity: 0.05;
+            z-index: 9999;
+        }
+
+        @media (max-width: 768px) {
+            .hero {
+                padding: 2rem 5%;
+                text-align: center;
+                align-items: center;
+            }
+
+            .hero h1 {
+                font-size: 3rem;
+            }
+
+            .hero p {
+                font-size: 1.1rem;
+            }
+
+            .episodes,
+            .team {
+                padding: 4rem 5%;
+            }
+
+            .section-title {
+                font-size: 2.5rem;
+            }
+
+            .episode-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .team-grid {
+                gap: 2rem;
+            }
+
+        }
+
+        .temp-viz {
+            height: 400px;
+            width: 100%;
+            margin: 4rem 0;
+            position: relative;
+        }
+
+        .visualization {
+            padding: 4rem 10%;
+            background-color: var(--darker-bg);
+        }
+
+        .axis line,
+        .axis path {
+            stroke: rgba(255, 255, 255, 0.1);
+        }
+
+        .axis text {
+            fill: rgba(255, 255, 255, 0.6);
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 12px;
+        }
+
+        .temp-line {
+            fill: none;
+            stroke: var(--accent);
+            stroke-width: 3;
+        }
+
+        .temp-area {
+            fill: url(#temp-gradient);
+            opacity: 0.2;
+        }
+
+        .climate-stats {
+            padding: 6rem 10%;
+            background: var(--darker-bg);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 3rem;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 20px;
+            padding: 3rem 2rem;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.4s ease;
+        }
+
+        .stat-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-10px);
+        }
+
+        .stat-icon {
+            font-size: 3rem;
+            color: var(--accent);
+            margin-bottom: 1.5rem;
+        }
+
+        .stat-number {
+            font-size: 3.5rem;
+            font-weight: 800;
+            font-family: 'Syne', sans-serif;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+        }
+
+        .stat-description {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .temp-viz {
+                height: 300px;
+                /* Adjusted height for smaller screens */
+            }
+        }
+
+        /* Tablet Styles */
+        @media (max-width: 1024px) {
+            .hero {
+                padding: 3rem 7%;
+            }
+
+            .episodes,
+            .team,
+            .visualization,
+            .climate-stats {
+                padding: 5rem 7%;
+            }
+
+            .hero h1 {
+                font-size: 4rem;
+            }
+        }
+
+        /* Ensure maximum width for better readability */
+        .hero,
+        .episodes,
+        .team,
+        .visualization,
+        .climate-stats {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="noise">
+        <svg viewBox="0 0 200 200" xmlns='http://www.w3.org/2000/svg'>
+            <filter id='noiseFilter'>
+                <feTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch' />
+            </filter>
+            <rect width='100%' height='100%' filter='url(#noiseFilter)' />
+        </svg>
+    </div>
+
+    <section  id="spotify-btn-forward" class="hero" data-aos="fade-up">
+        <h1>L'emergenza del cambiamento climatico</h1>
+        <p>Un'esplorazione profonda e inquietante della più grande sfida del nostro tempo. Un viaggio attraverso la
+            crisi climatica che sta trasformando il nostro pianeta.</p>
+        <a href="https://open.spotify.com/show/2Tw9QcwtZD5VLVFaiIS9ar" class="spotify-btn" >
+            <i class="fab fa-spotify"></i>
+            Ascolta su Spotify
+        </a>
+    </section>
+
+    <section class="episodes">
+        <h2 class="section-title" data-aos="fade-right">Episodi</h2>
+        <div class="episode-grid">
+            <div class="episode-card" data-aos="fade-up" data-aos-delay="100">
+                <div class="episode-number">01</div>
+                <h3>Introduzione</h3>
+                <p>Il primo passo nel nostro viaggio attraverso la crisi climatica. Scopri perché questa è la sfida
+                    definitiva della nostra generazione.</p>
+            </div>
+            <div class="episode-card" data-aos="fade-up" data-aos-delay="200">
+                <div class="episode-number">02</div>
+                <h3>Definizione del problema</h3>
+                <p>Un'analisi approfondita delle cause scientifiche e antropiche del cambiamento climatico globale.</p>
+            </div>
+            <div class="episode-card" data-aos="fade-up" data-aos-delay="300">
+                <div class="episode-number">03</div>
+                <h3>Conseguenze e impatti</h3>
+                <p>Esplorazione degli effetti devastanti sul nostro ecosistema, sulla biodiversità e sulle società
+                    umane.</p>
+            </div>
+            <div class="episode-card" data-aos="fade-up" data-aos-delay="400">
+                <div class="episode-number">04</div>
+                <h3>Soluzioni possibili</h3>
+                <p>Analisi delle strategie di mitigazione e adattamento per affrontare la crisi climatica.</p>
+            </div>
+            <div class="episode-card" data-aos="fade-up" data-aos-delay="500">
+                <div class="episode-number">05</div>
+                <h3>Conclusione</h3>
+                <p>Riflessioni finali e chiamata all'azione per un futuro sostenibile e resiliente.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="visualization">
+        <h2 class="section-title" data-aos="fade-right">Temperatura Globale (1880-2023)</h2>
+        <div class="temp-viz" id="temperature" data-aos="fade-up"></div>
+    </section>
+
+    <!-- Add Climate Stats Section -->
+    <section class="climate-stats">
+        <div class="stats-grid">
+            <div class="stat-card" data-aos="fade-up">
+                <div class="stat-icon">
+                    <i class="fas fa-temperature-high"></i>
+                </div>
+                <div class="stat-number">+1.5°C</div>
+                <h3>Aumento Critico</h3>
+                <p class="stat-description">La soglia di temperatura che, se superata, causerà danni irreversibili al
+                    nostro pianeta. Siamo pericolosamente vicini.</p>
+            </div>
+
+            <div class="stat-card" data-aos="fade-up" data-aos-delay="100">
+                <div class="stat-icon">
+                    <i class="fas fa-water"></i>
+                </div>
+                <div class="stat-number">3.3mm</div>
+                <h3>Innalzamento Mari</h3>
+                <p class="stat-description">L'aumento annuale del livello del mare. Le zone costiere sono sempre più a
+                    rischio di inondazioni.</p>
+            </div>
+
+            <div class="stat-card" data-aos="fade-up" data-aos-delay="200">
+                <div class="stat-icon">
+                    <i class="fas fa-globe-europe"></i>
+                </div>
+                <div class="stat-number">415ppm</div>
+                <h3>CO₂ Atmosferica</h3>
+                <p class="stat-description">Il livello attuale di CO₂ nell'atmosfera, il più alto degli ultimi 800,000
+                    anni.</p>
+            </div>
+        </div>
+    </section>
+    <section class="call-to-action" style="padding: 6rem 5%; text-align: center; background-color: var(--darker-bg);">
+        <h2 class="section-title" style="
+            background: var(--gradient); 
+            -webkit-background-clip: text; 
+            -webkit-text-fill-color: transparent; 
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        ">
+            Insieme per un futuro più sostenibile
+        </h2>
+        <p style="
+            color: var(--text-secondary); 
+            font-size: 1.2rem; 
+            max-width: 800px; 
+            margin: 1rem auto;
+            line-height: 1.6;
+        ">
+            Il cambiamento inizia con la consapevolezza. Agiamo oggi per proteggere il pianeta di domani.
+        </p>
+        <a href="#spotify-btn-forward" class="spotify-btn" style="margin-top: 2rem; display: inline-block;">
+            Unisciti alla Missione
+        </a>
+    </section>
+
+    <section class="team">
+        <h2 class="section-title" data-aos="fade-right">Il Team</h2>
+        <div class="team-grid">
+            <div class="team-member" data-aos="fade-up">
+                <img src="/api/placeholder/200/200" alt="Akash">
+                <h3>Akash</h3>
+            </div>
+            <div class="team-member" data-aos="fade-up" data-aos-delay="100">
+                <img src="/api/placeholder/200/200" alt="Alessio">
+                <h3>Alessio</h3>
+            </div>
+            <div class="team-member" data-aos="fade-up" data-aos-delay="200">
+                <img src="/api/placeholder/200/200" alt="Anna">
+                <h3>Anna</h3>
+            </div>
+            <div class="team-member" data-aos="fade-up" data-aos-delay="300">
+                <img src="/api/placeholder/200/200" alt="Cristian">
+                <h3>Cristian</h3>
+            </div>
+        </div>
+    </section>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.157.0/three.min.js"></script>
+    <script>
+        AOS.init({
+            duration: 1000,
+            once: true,
+            offset: 100
+        });
+    </script>
+    <script>
+        // Temperature Visualization
+        const tempData = Array.from({ length: 143 }, (_, i) => ({
+            year: 1880 + i,
+            temperature: Math.sin(i * 0.1) * 0.5 + (i * 0.01)
+        }));
+
+        const margin = { top: 20, right: 30, bottom: 30, left: 60 };
+        const width = document.querySelector('.temp-viz').clientWidth - margin.left - margin.right;
+        const height = document.querySelector('.temp-viz').clientHeight - margin.top - margin.bottom;
+
+        const svg = d3.select('#temperature')
+            .append('svg')
+            .attr('width', width + margin.left + margin.right)
+            .attr('height', height + margin.top + margin.bottom)
+            .append('g')
+            .attr('transform', `translate(${margin.left},${margin.top})`);
+
+        // Add gradient
+        const gradient = svg.append('defs')
+            .append('linearGradient')
+            .attr('id', 'temp-gradient')
+            .attr('gradientUnits', 'userSpaceOnUse')
+            .attr('x1', 0)
+            .attr('y1', height)
+            .attr('x2', 0)
+            .attr('y2', 0);
+
+        gradient.append('stop')
+            .attr('offset', '0%')
+            .attr('stop-color', '#FF3D00')
+            .attr('stop-opacity', 0);
+
+        gradient.append('stop')
+            .attr('offset', '100%')
+            .attr('stop-color', '#FF3D00')
+            .attr('stop-opacity', 0.5);
+
+        const x = d3.scaleLinear()
+            .domain(d3.extent(tempData, d => d.year))
+            .range([0, width]);
+
+        const y = d3.scaleLinear()
+            .domain(d3.extent(tempData, d => d.temperature))
+            .range([height, 0]);
+
+        // Add animated path
+        const line = d3.line()
+            .x(d => x(d.year))
+            .y(d => y(d.temperature))
+            .curve(d3.curveMonotoneX);
+
+        const area = d3.area()
+            .x(d => x(d.year))
+            .y0(height)
+            .y1(d => y(d.temperature))
+            .curve(d3.curveMonotoneX);
+
+        svg.append('g')
+            .attr('class', 'axis')
+            .attr('transform', `translate(0,${height})`)
+            .call(d3.axisBottom(x).tickFormat(d3.format('d')));
+
+        svg.append('g')
+            .attr('class', 'axis')
+            .call(d3.axisLeft(y).ticks(5));
+
+        const path = svg.append('path')
+            .datum(tempData)
+            .attr('class', 'temp-area')
+            .attr('d', area);
+
+        const tempLine = svg.append('path')
+            .datum(tempData)
+            .attr('class', 'temp-line')
+            .attr('d', line);
+
+        // Animate the line
+        const length = tempLine.node().getTotalLength();
+
+        tempLine
+            .attr("stroke-dasharray", length + " " + length)
+            .attr("stroke-dashoffset", length)
+            .transition()
+            .duration(3000)
+            .ease(d3.easeLinear)
+            .attr("stroke-dashoffset", 0);
+
+
+    </script>
+</body>
+
+</html>
