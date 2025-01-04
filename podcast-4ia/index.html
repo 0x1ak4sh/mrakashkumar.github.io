@@ -84,7 +84,7 @@
         * {
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
+           
         }
 
         body {
@@ -134,8 +134,6 @@
         .hero h1 {
             font-size: clamp(2.5rem, 5vw + 1rem, 5rem);
             line-height: 1.2;
-
-            margin: 0 auto 2rem;
             max-width: 90%;
             background: var(--gradient);
             word-wrap: break-word;
@@ -477,6 +475,49 @@
             max-width: 1600px;
             margin: 0 auto;
         }
+
+        .hero {
+        position: relative;
+        min-height: 100vh;
+        background-color: var(--dark-bg);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+    }
+
+    .hero-background {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-size: cover;
+        background-position: center;
+        opacity: 0;
+        z-index: 1;
+        transition: 
+            opacity 1.5s ease-in-out, 
+            transform 4s ease-in-out;
+    }
+
+    .hero-background.active {
+        opacity: 0.4;
+        transform: scale(1.2);
+    }
+
+    .hero-background.next {
+        opacity: 0;
+        transform: scale(1);
+    }
+
+    .hero-content {
+        position: relative;
+        z-index: 2;
+        text-align: center;
+        max-width: 90%;
+        padding: 2rem;
+    }
     </style>
 </head>
 
@@ -490,15 +531,19 @@
         </svg>
     </div>
 
-    <section id="spotify-btn-forward" class="hero" data-aos="fade-up">
-        <h1>L'emergenza del cambiamento climatico</h1>
-        <p>Un'esplorazione profonda e inquietante della più grande sfida del nostro tempo. Un viaggio attraverso la
-            crisi climatica che sta trasformando il nostro pianeta.</p>
-        <a href="https://open.spotify.com/show/2Tw9QcwtZD5VLVFaiIS9ar" class="spotify-btn">
-            <i class="fab fa-spotify"></i>
-            Ascolta su Spotify
-        </a>
+    <section class="hero">
+        <div class="hero-background" id="heroBackground1"></div>
+        <div class="hero-background" id="heroBackground2"></div>
+        <div class="hero-content">
+            <h1>L'emergenza del cambiamento climatico</h1>
+            <p>Un'esplorazione profonda e inquietante della più grande sfida del nostro tempo. Un viaggio attraverso la crisi climatica che sta trasformando il nostro pianeta.</p>
+            <a href="https://open.spotify.com/show/2Tw9QcwtZD5VLVFaiIS9ar" class="spotify-btn">
+                <i class="fab fa-spotify"></i>
+                Ascolta su Spotify
+            </a>
+        </div>
     </section>
+    
 
     <section class="episodes">
         <h2 class="section-title" data-aos="fade-right">Episodi</h2>
@@ -715,6 +760,61 @@
             .ease(d3.easeLinear)
             .attr("stroke-dashoffset", 0);
 
+            const backgroundImages = [
+        'https://images.unsplash.com/photo-1529414988992-52e2db9372b2',
+        'https://images.unsplash.com/photo-1473260079709-83c808703435',
+        'https://images.unsplash.com/photo-1693563920446-3e77e164827c',
+        'https://images.unsplash.com/photo-1547683905-f686c993aae5',
+        'https://images.unsplash.com/photo-1645430785800-d7d0daac9c5c',
+        'https://images.unsplash.com/photo-1552799446-159ba9523315'
+    ];
+
+    const heroBackground1 = document.getElementById('heroBackground1');
+    const heroBackground2 = document.getElementById('heroBackground2');
+    let currentImageIndex = 0;
+    let isFirstBackground = true;
+
+    function preloadImages() {
+        backgroundImages.forEach(src => {
+            const img = new Image();
+            img.src = src;
+        });
+    }
+
+    function changeBackground() {
+        // Select active and next background elements
+        const activeBackground = isFirstBackground ? heroBackground1 : heroBackground2;
+        const nextBackground = isFirstBackground ? heroBackground2 : heroBackground1;
+
+        // Update image index
+        currentImageIndex = (currentImageIndex + 1) % backgroundImages.length;
+
+        // Set next background image
+        nextBackground.style.backgroundImage = `url(${backgroundImages[currentImageIndex]})`;
+        
+        // Remove active class from current background
+        activeBackground.classList.remove('active');
+        activeBackground.classList.add('next');
+
+        // Add active class to next background after a short delay
+        setTimeout(() => {
+            nextBackground.classList.remove('next');
+            nextBackground.classList.add('active');
+        }, 50);
+
+        // Toggle background
+        isFirstBackground = !isFirstBackground;
+    }
+
+    // Preload images
+    preloadImages();
+
+    // Set initial background
+    heroBackground1.style.backgroundImage = `url(${backgroundImages[0]})`;
+    heroBackground1.classList.add('active');
+
+    // Change background every 4 seconds (2s display + 2s transition)
+    setInterval(changeBackground, 4000);
 
     </script>
 </body>
