@@ -374,62 +374,96 @@
         }
 
         .climate-stats {
-            padding: 6rem 10%;
-            background: var(--darker-bg);
+        padding: 8rem 10%;
+        background-color: var(--darker-bg);
+        position: relative;
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 3rem;
+    }
+
+    .stat-card {
+        background: rgba(255, 255, 255, 0.03);
+        padding: 2.5rem;
+        border-radius: 20px;
+        transition: all 0.4s ease;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        text-align: center;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-10px);
+        background: rgba(255, 255, 255, 0.05);
+        border-color: var(--accent);
+    }
+
+    .stat-icon {
+        font-size: 3rem;
+        color: var(--accent);
+        margin-bottom: 1.5rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .stat-number {
+        font-size: 3.5rem;
+        font-weight: 800;
+        font-family: 'Syne', sans-serif;
+        background: var(--gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 1rem;
+    }
+
+    .stat-card h3 {
+        font-size: 1.8rem;
+        margin-bottom: 1rem;
+        color: var(--text);
+    }
+
+    .stat-description {
+        color: var(--text-secondary);
+        font-size: 1.1rem;
+        line-height: 1.7;
+    }
+         /* Responsive Adjustments */
+    @media (max-width: 768px) {
+        .climate-stats {
+            padding: 4rem 5%;
         }
 
         .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 3rem;
+            grid-template-columns: 1fr;
+            gap: 2rem;
         }
 
         .stat-card {
-            background: rgba(255, 255, 255, 0.03);
-            border-radius: 20px;
-            padding: 3rem 2rem;
-            text-align: center;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            transition: all 0.4s ease;
-        }
-
-        .stat-card:hover {
-            border-color: var(--accent);
-            transform: translateY(-10px);
-        }
-
-        .stat-icon {
-            font-size: 3rem;
-            color: var(--accent);
-            margin-bottom: 1.5rem;
+            width: 100%;
+            max-width: 350px;
+            margin: 0 auto;
         }
 
         .stat-number {
-            font-size: 3.5rem;
-            font-weight: 800;
-            font-family: 'Syne', sans-serif;
-            background: var(--gradient);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 1rem;
+            font-size: 2rem;
+        }
+
+        .stat-icon {
+            font-size: 2.5rem;
+        }
+
+        .stat-card h3 {
+            font-size: 1.5rem;
         }
 
         .stat-description {
-            color: var(--text-secondary);
-            font-size: 1.1rem;
-            line-height: 1.6;
+            font-size: 1rem;
         }
-
-        @media (max-width: 768px) {
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .temp-viz {
-                height: 300px;
-                /* Adjusted height for smaller screens */
-            }
-        }
+    }
 
         /* Tablet Styles */
 
@@ -504,40 +538,38 @@
         <div class="temp-viz" id="temperature" data-aos="fade-up"></div>
     </section>
 
-    <!-- Add Climate Stats Section -->
-    <section class="climate-stats">
-        <div class="stats-grid">
-            <div class="stat-card" data-aos="fade-up">
-                <div class="stat-icon">
-                    <i class="fas fa-temperature-high"></i>
-                </div>
-                <div class="stat-number">+1.5°C</div>
-                <h3>Aumento Critico</h3>
-                <p class="stat-description">La soglia di temperatura che, se superata, causerà danni irreversibili al
-                    nostro pianeta. Siamo pericolosamente vicini.</p>
+<!-- Replace the existing climate-stats section with this -->
+<section class="climate-stats">
+    <h2 class="section-title" data-aos="fade-right">Climate Impact Statistics</h2>
+    <div class="stats-grid">
+        <div class="stat-card" data-aos="fade-up">
+            <div class="stat-icon">
+                <i class="fas fa-temperature-high"></i>
             </div>
-
-            <div class="stat-card" data-aos="fade-up" data-aos-delay="100">
-                <div class="stat-icon">
-                    <i class="fas fa-water"></i>
-                </div>
-                <div class="stat-number">3.3mm</div>
-                <h3>Innalzamento Mari</h3>
-                <p class="stat-description">L'aumento annuale del livello del mare. Le zone costiere sono sempre più a
-                    rischio di inondazioni.</p>
-            </div>
-
-            <div class="stat-card" data-aos="fade-up" data-aos-delay="200">
-                <div class="stat-icon">
-                    <i class="fas fa-globe-europe"></i>
-                </div>
-                <div class="stat-number">415ppm</div>
-                <h3>CO₂ Atmosferica</h3>
-                <p class="stat-description">Il livello attuale di CO₂ nell'atmosfera, il più alto degli ultimi 800,000
-                    anni.</p>
-            </div>
+            <div class="stat-number">+1.5°C</div>
+            <h3>Aumento Critico</h3>
+            <p class="stat-description">La soglia di temperatura che, se superata, causerà danni irreversibili al nostro pianeta. Siamo pericolosamente vicini.</p>
         </div>
-    </section>
+
+        <div class="stat-card" data-aos="fade-up" data-aos-delay="100">
+            <div class="stat-icon">
+                <i class="fas fa-water"></i>
+            </div>
+            <div class="stat-number">3.3mm</div>
+            <h3>Innalzamento Mari</h3>
+            <p class="stat-description">L'aumento annuale del livello del mare. Le zone costiere sono sempre più a rischio di inondazioni.</p>
+        </div>
+
+        <div class="stat-card" data-aos="fade-up" data-aos-delay="200">
+            <div class="stat-icon">
+                <i class="fas fa-globe-europe"></i>
+            </div>
+            <div class="stat-number">415ppm</div>
+            <h3>CO₂ Atmosferica</h3>
+            <p class="stat-description">Il livello attuale di CO₂ nell'atmosfera, il più alto degli ultimi 800,000 anni.</p>
+        </div>
+    </div>
+</section>
     <section class="call-to-action" style="padding: 6rem 5%; text-align: center; background-color: var(--darker-bg);">
         <h2 class="section-title" style="
             background: var(--gradient); 
