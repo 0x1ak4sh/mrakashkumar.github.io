@@ -518,6 +518,24 @@
         max-width: 90%;
         padding: 2rem;
     }
+    .team-member-placeholder {
+    width: 200px;
+    height: 200px;
+    border-radius: 20px;
+    margin-bottom: 1.5rem;
+    background-color: rgba(255,255,255,0.1);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.team-logo {
+    max-width: 80%; /* Adjust as needed */
+    max-height: 80%; /* Adjust as needed */
+    object-fit: contain;
+}
     </style>
 </head>
 
@@ -644,20 +662,28 @@
         <h2 class="section-title" data-aos="fade-right">Il Team</h2>
         <div class="team-grid">
             <div class="team-member" data-aos="fade-up">
-                <img src="/api/placeholder/200/200" alt="Akash">
-                <h3>Akash</h3>
+                <div class="team-member-placeholder">
+                    <img src="/podcast-4ia/media/logo-Alessio.png" alt="Alessio Logo" class="team-logo">
+                </div>
+                <h3>Alessio Lomonte</h3>
             </div>
             <div class="team-member" data-aos="fade-up" data-aos-delay="100">
-                <img src="/api/placeholder/200/200" alt="Alessio">
-                <h3>Alessio</h3>
+                <div class="team-member-placeholder">
+                    <img src="/podcast-4ia/media/logo-Anna.png" alt="Anna Logo" class="team-logo">
+                </div>
+                <h3>Anna Valerio</h3>
             </div>
             <div class="team-member" data-aos="fade-up" data-aos-delay="200">
-                <img src="/api/placeholder/200/200" alt="Anna">
-                <h3>Anna</h3>
+                <div class="team-member-placeholder">
+                    <img src="/podcast-4ia/media/logo-Ferrante.png" alt="Cristian Logo" class="team-logo">
+                </div>
+                <h3>Cristian Ferrante</h3>
             </div>
             <div class="team-member" data-aos="fade-up" data-aos-delay="300">
-                <img src="/api/placeholder/200/200" alt="Cristian">
-                <h3>Cristian</h3>
+                <div class="team-member-placeholder">
+                    <img src="/podcast-4ia/media/logo-akash.png" alt="Akash Logo" class="team-logo">
+                </div>
+                <h3>Akash</h3>
             </div>
         </div>
     </section>
