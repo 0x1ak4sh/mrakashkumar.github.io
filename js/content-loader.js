@@ -49,6 +49,22 @@
         }
     ];
 
+        // ---- ARTICLES ----
+        {
+            type: 'article',
+            slug: 'c2-deployment',
+            title: 'C2 Network Redirection & Traffic Filtering Lab',
+            description: 'Deploying Sliver and Mythic C2 frameworks behind Caddy reverse proxy and Cloudflare with traffic filtering. Infrastructure setup, agent generation, and traffic analysis.',
+            category: 'Tutorial',
+            difficulty: 'medium',
+            date: '2026-06-30',
+            readTime: '25 min',
+            tags: ['c2', 'sliver', 'mythic', 'redteam', 'infrastructure'],
+            image: '/articles/c2-deployment/assets/Deploy%20C2%20Network.png',
+            url: '/articles/c2-deployment/'
+        }
+    ];
+
     // =============================================
     // INITIALIZATION
     // =============================================

