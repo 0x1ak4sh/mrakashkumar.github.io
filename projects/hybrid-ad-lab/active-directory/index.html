@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5">
+    <title>Active Directory Setup | Hybrid AD Lab | 0x1Ak4sh</title>
+    <meta name="description" content="Building the AD root forest on Vultr from scratch — domain controller, OUs, 50+ users, AD CS with ESC1 vulnerable template, SMB shares, and Kerberoastable accounts.">
+    <meta name="robots" content="noindex,follow">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/8d67cb621b.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="/css/article.css?v=1.5">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.1.0/magnific-popup.min.css">
+</head>
+
+<body class="article-page">
+    <div class="reading-progress"></div>
+    <div id="canvas_snake" class="canvas canvas-snake" data-colorone="#0b1115" data-colortwo="#a4ff91"
+        style="position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;opacity:0.3;"></div>
+
+    <nav class="article-nav">
+        <div class="nav-left">
+            <a href="/projects/hybrid-ad-lab/" class="nav-back">
+                <i class="fas fa-arrow-left"></i>
+                <span>Back to Lab Overview</span>
+            </a>
+            <a href="/" class="nav-logo">0x1Ak4sh</a>
+        </div>
+        <div class="nav-right">
+            <button class="nav-share-btn" onclick="document.querySelector('.share-section').scrollIntoView({behavior:'smooth'})" title="Share">
+                <i class="fas fa-share-alt"></i>
+            </button>
+        </div>
+    </nav>
+
+    <section class="article-hero">
+        <div class="hero-content">
+            <div class="hero-badges">
+                <span class="badge badge-category"><i class="fab fa-windows"></i> Active Directory</span>
+            </div>
+            <h1 class="hero-title">Active Directory Setup</h1>
+            <p style="color: rgba(255,255,255,0.7); font-size: 1.05rem; margin: 0.5rem 0 1rem; max-width: 650px;">
+                Building the AD root forest on Vultr from scratch — domain controller, OUs, 50+ user accounts, GPOs, AD Certificate Services with a deliberately vulnerable ESC1 template, SMB shares, and Kerberoastable accounts.
+            </p>
+            <div class="hero-tags">
+                <a href="#" class="hero-tag">#active-directory</a>
+                <a href="#" class="hero-tag">#ad-cs</a>
+                <a href="#" class="hero-tag">#kerberoasting</a>
+                <a href="#" class="hero-tag">#esc1</a>
+                <a href="#" class="hero-tag">#vultr</a>
+            </div>
+        </div>
+    </section>
+
+    <main class="article-layout" style="position:relative;z-index:1;">
+        <aside class="toc-sidebar">
+            <div class="toc-title">Contents</div>
+            <ul class="toc-list">
+                <li><a href="#domain-buy">Buy Domain &amp; Cloudflare</a></li>
+                <li><a href="#vps-deploy">Deploy VPS on Vultr</a></li>
+                <li><a href="#rdp">Connect via RDP</a></li>
+                <li><a href="#ad-install">Install AD DS</a></li>
+                <li><a href="#forest">Create the Forest</a></li>
+                <li><a href="#adcs">AD Certificate Services</a></li>
+                <li><a href="#ous-users">OUs, Groups &amp; Users</a></li>
+                <li><a href="#service-accounts">Service Accounts</a></li>
+                <li><a href="#smb">SMB Shares</a></li>
+                <li><a href="#gpo">Group Policy</a></li>
+                <li><a href="#vuln-accounts">Kerberoastable Accounts</a></li>
+                <li><a href="#workstation">Second Machine</a></li>
+            </ul>
+        </aside>
+
+        <article class="article-content">
+
+            <figure class="intro-image">
+                <img src="/projects/hybrid-ad-lab/img/ActiveDirectoySetup.png" alt="Active Directory domain controller setup for hybrid AD lab">
+                <figcaption>Building the AD root forest from scratch on Vultr</figcaption>
+            </figure>
+
+            <div class="tech-stack">
+                <div class="tech-item"><i class="fab fa-windows"></i> Windows Server 2022</div>
+                <div class="tech-item"><i class="fas fa-network-wired"></i> AD DS / AD CS</div>
+                <div class="tech-item"><i class="fas fa-users"></i> 25+ Lab Users</div>
+                <div class="tech-item"><i class="fas fa-shield-alt"></i> Group Policy</div>
+                <div class="tech-item"><i class="fas fa-folder"></i> SMB Shares</div>
+                <div class="tech-item"><i class="fas fa-certificate"></i> PKI / CA</div>
+                <div class="tech-item"><i class="fas fa-dragon"></i> Kerberoast Targets</div>
+                <div class="tech-item"><i class="fas fa-cloud"></i> Cloudflare DNS</div>
+            </div>
+
+            <h2 id="domain-buy">Step 1 — Buy the Domain &amp; Set Up Cloudflare</h2>
+            <p>Went to Namecheap and bought <code>apex-corp.xyz</code>. A <code>.xyz</code> domain costs about $1–3 a year, which is fine for a lab. Nothing special here — just needed a real public domain to use with Cloudflare DNS, and later for Exchange and the portal.</p>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/BoughtDomainOnNameCheap.png" alt="Namecheap domain purchase showing apex-corp.xyz successfully bought">
+                <figcaption>Namecheap dashboard confirming the apex-corp.xyz domain was purchased</figcaption>
+            </figure>
+
+            <p>Created a free Cloudflare account, added the domain, and Cloudflare gave two nameservers. Went back into Namecheap, deleted the default nameservers, and replaced them with Cloudflare's ones.</p>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/ConnectingDomainToCloudflare.png" alt="Cloudflare showing apex-corp.xyz domain added and pending nameserver update">
+                <figcaption>Domain added to Cloudflare — waiting for nameserver propagation</figcaption>
+            </figure>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/TheNameserverToReplacewithClouflare.png" alt="Cloudflare showing the two nameserver values to copy into Namecheap">
+                <figcaption>Cloudflare gives the exact nameserver values to paste into Namecheap</figcaption>
+            </figure>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/AddingNameserverInsideNameCheapDashboar.png" alt="Namecheap custom DNS section with Cloudflare nameservers pasted in">
+                <figcaption>Namecheap custom DNS field with the Cloudflare nameservers saved</figcaption>
+            </figure>
+
+            <p>Used a third-party DNS checker to verify the nameservers had propagated. Takes about 10–30 minutes.</p>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/VerifyingNameserversonThirdPartysite.png" alt="Third party DNS checker confirming Cloudflare nameservers are live for apex-corp.xyz">
+                <figcaption>Third-party checker confirms propagation is done</figcaption>
+            </figure>
+
+            <p>Once propagated, added DNS A records inside Cloudflare:</p>
+            <table>
+                <thead><tr><th>Type</th><th>Name</th><th>Content</th><th>Proxy</th></tr></thead>
+                <tbody>
+                    <tr><td>A</td><td><code>@</code></td><td>Vultr public IP</td><td>DNS only (grey cloud)</td></tr>
+                    <tr><td>A</td><td><code>hq</code></td><td>Vultr public IP</td><td>DNS only (grey cloud)</td></tr>
+                </tbody>
+            </table>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/AddingTheDNSrecordsforTheDomainController.png" alt="Cloudflare DNS management page showing A records for apex-corp.xyz pointing at the Vultr VPS IP">
+                <figcaption>Cloudflare DNS records pointing at the DC's public IP — proxy is OFF (grey cloud)</figcaption>
+            </figure>
+
+            <div class="prompt-box prompt-warning">
+                <div class="prompt-title"><i class="fas fa-exclamation-triangle"></i> Proxy must be OFF</div>
+                <p>Any record pointing at an actual server (RDP, WireGuard, SMTP, Active Directory) must have the Cloudflare proxy turned OFF. Orange cloud only forwards HTTP/HTTPS. Everything else — including AD authentication — breaks silently.</p>
+            </div>
+
+            <h2 id="vps-deploy">Step 2 — Deploy the VPS on Vultr</h2>
+            <p>Logged into Vultr, deployed a new Cloud Compute — Shared CPU instance. Set the hostname to <code>STARK-TOWER</code> and deployed. Specs used:</p>
+            <table>
+                <thead><tr><th>Setting</th><th>Value</th></tr></thead>
+                <tbody>
+                    <tr><td>OS</td><td>Windows Server 2022 Standard</td></tr>
+                    <tr><td>Plan</td><td>4 vCPU, 8 GB RAM, 160 GB SSD</td></tr>
+                    <tr><td>Region</td><td>Europe (Frankfurt / Amsterdam)</td></tr>
+                    <tr><td>Hostname</td><td>STARK-TOWER</td></tr>
+                </tbody>
+            </table>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/SelectingTheServerTypeForVPS.png" alt="Vultr deploy page showing Cloud Compute server type selected">
+                <figcaption>Selecting Cloud Compute server type on Vultr</figcaption>
+            </figure>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/SelectingTheRAMnCPUforVPS.png" alt="Vultr plan selection showing 4 vCPU and 8 GB RAM">
+                <figcaption>Plan selected: 4 vCPU / 8 GB RAM</figcaption>
+            </figure>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/TheWindowSERVERStandard.png" alt="Vultr OS selection showing Windows Server 2022 Standard selected">
+                <figcaption>Windows Server 2022 Standard as the OS</figcaption>
+            </figure>
+
+            <p>Created a Vultr Firewall Group called <code>apex-lab</code> with these inbound rules:</p>
+            <table>
+                <thead><tr><th>Protocol</th><th>Port</th><th>Source</th><th>Purpose</th></tr></thead>
+                <tbody>
+                    <tr><td>TCP</td><td>3389</td><td>Your home IP only</td><td>RDP (Remote Desktop)</td></tr>
+                    <tr><td>UDP</td><td>51820</td><td>0.0.0.0/0</td><td>WireGuard VPN</td></tr>
+                    <tr><td>TCP</td><td>443</td><td>0.0.0.0/0</td><td>HTTPS / AD CS web enrollment</td></tr>
+                </tbody>
+            </table>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/VultrDashboardForOurVPS.png" alt="Vultr dashboard showing STARK-TOWER VPS running with its public IP, username and password">
+                <figcaption>Vultr dashboard — machine is running, credentials are shown here</figcaption>
+            </figure>
+
+            <h2 id="rdp">Step 3 — Connect via RDP</h2>
+            <p>Used the Remote Desktop Connection app on the local machine, entered the Vultr public IP, and logged in with the Administrator credentials from the Vultr dashboard.</p>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/ConnectingToServerThroughRDP.png" alt="Windows Remote Desktop Connection dialog with the Vultr VPS IP entered">
+                <figcaption>Connecting to STARK-TOWER via Remote Desktop</figcaption>
+            </figure>
+
+            <p>Server Manager loaded automatically after login. That is the sign the machine is ready.</p>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/SuccesfullyLoggedINandGreetedWithSERVERMANAGER.png" alt="Windows Server Manager dashboard visible after RDP login to STARK-TOWER">
+                <figcaption>Server Manager opens automatically — machine is working</figcaption>
+            </figure>
+
+            <p>Checked disk and RAM to make sure the plan matched what Vultr showed.</p>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/SystemSettingsShowingStorage.png" alt="Windows system settings showing 157 GB storage on the C drive">
+                <figcaption>Storage confirmed at 157 GB on C drive</figcaption>
+            </figure>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/TaskManagerShowingTheRAM.png" alt="Windows Task Manager showing 8 GB RAM installed">
+                <figcaption>Task Manager confirming 8 GB RAM available</figcaption>
+            </figure>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/EnoughInternetSpeed.png" alt="Speed test showing approximately 4000 Mbps download on the Vultr VPS">
+                <figcaption>VPS internet speed is around 4000 Mbps — fast enough for everything</figcaption>
+            </figure>
+
+            <h2 id="ad-install">Step 4 — Configure DNS and Install AD DS</h2>
+            <p>Opened PowerShell as Administrator. First set DNS to point at itself (localhost) so AD can work. Active Directory needs to resolve its own domain name.</p>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> PowerShell (as Admin)</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code><span class="prompt">PS></span> $IDX = (Get-NetAdapter | Where-Object {$_.Status -eq "Up"}).ifIndex
+<span class="prompt">PS></span> Set-DnsClientServerAddress -InterfaceIndex $IDX -ServerAddresses "127.0.0.1","1.1.1.1"</code>
+                </div>
+            </div>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/PointingDnstoLocalhost.png" alt="PowerShell showing DNS being set to 127.0.0.1 on the server adapter">
+                <figcaption>DNS pointed at localhost so AD can resolve its own name</figcaption>
+            </figure>
+
+            <p>Then installed the Active Directory Domain Services role:</p>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> PowerShell</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code><span class="prompt">PS></span> Install-WindowsFeature -Name AD-Domain-Services -IncludeManagementTools</code>
+                </div>
+            </div>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/InstallingWindowsADServidesinPowershell.png" alt="PowerShell running Install-WindowsFeature for AD-Domain-Services">
+                <figcaption>Installing AD DS role via PowerShell</figcaption>
+            </figure>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/SuccessfullyInstalledADServers.png" alt="PowerShell showing Success output after AD-Domain-Services installation completed">
+                <figcaption>Role installed successfully — no restart needed at this stage</figcaption>
+            </figure>
+
+            <h2 id="forest">Step 5 — Create the Forest</h2>
+            <p>Ran the command to create the AD forest root domain <code>hq.apex-corp.xyz</code>. The DSRM password is a recovery password you would need if the DC ever lost its AD database — keep it safe. The server reboots automatically after this.</p>
+
+            <div class="code-block">
+                <div class="code-block-header">
+                    <span class="code-lang">PowerShell</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <pre><code class="language-powershell">Install-ADDSForest `
+  -DomainName "hq.apex-corp.xyz" `
+  -DomainNetbiosName "HQ" `
+  -ForestMode "WinThreshold" `
+  -DomainMode "WinThreshold" `
+  -InstallDNS:$true `
+  -SafeModeAdministratorPassword (ConvertTo-SecureString "DSRM-P@ss2025!" -AsPlainText -Force) `
+  -Force:$true</code></pre>
+            </div>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/InstallingADFOREST.png" alt="PowerShell running Install-ADDSForest command to create hq.apex-corp.xyz">
+                <figcaption>Forest creation command running — takes a few minutes</figcaption>
+            </figure>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/OperationDCPromoGeneral3Sucess.png" alt="Server showing DCPromo operation completed successfully before rebooting">
+                <figcaption>Promotion completed successfully — server reboots now</figcaption>
+            </figure>
+
+            <p>After reboot, logged back in via RDP using <code>HQ\Administrator</code> — note the domain prefix is needed now.</p>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/specifyingDomainwhileconnectingThroughRDPbefore.png" alt="RDP login screen showing HQ\Administrator entered as the username">
+                <figcaption>After promotion, log in with domain prefix: HQ\Administrator</figcaption>
+            </figure>
+
+            <p>Ran <code>Get-ADDomain</code> to verify the domain was live:</p>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> PowerShell</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code><span class="prompt">PS></span> Get-ADDomain</code>
+                </div>
+            </div>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/GET-ADDOmainCommandonpowershell.png" alt="PowerShell Get-ADDomain output showing hq.apex-corp.xyz forest and domain details">
+                <figcaption>Get-ADDomain confirms the forest is running at hq.apex-corp.xyz</figcaption>
+            </figure>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/ServerManagershowingEverythingWorking.png" alt="Server Manager dashboard showing AD DS, DNS, and File Services all green">
+                <figcaption>Server Manager — all roles showing green, everything working</figcaption>
+            </figure>
+
+            <h2 id="adcs">Step 6 — Active Directory Certificate Services (AD CS)</h2>
+            <p>AD CS gives the domain its own Certificate Authority. Certificates it issues are trusted automatically by all domain-joined machines. We also create a deliberately misconfigured certificate template to simulate the ESC1 vulnerability.</p>
+
+            <div class="code-block">
+                <div class="code-block-header">
+                    <span class="code-lang">PowerShell</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <pre><code class="language-powershell"># Install the AD CS role and web enrollment
+Install-WindowsFeature -Name AD-Certificate, ADCS-Cert-Authority, ADCS-Web-Enrollment, Web-Server -IncludeManagementTools
+
+# Configure an Enterprise Root CA
+Install-AdcsCertificationAuthority `
+  -CAType EnterpriseRootCA `
+  -CryptoProviderName "RSA#Microsoft Software Key Storage Provider" `
+  -KeyLength 2048 `
+  -HashAlgorithmName SHA256 `
+  -CACommonName "Apex-Corp-CA" `
+  -ValidityPeriod Years `
+  -ValidityPeriodUnits 10 `
+  -Force
+
+# Install the web enrollment endpoint
+Install-AdcsWebEnrollment -Force</code></pre>
+            </div>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/InstallingADCs.png" alt="PowerShell running Install-WindowsFeature for AD-Certificate and ADCS-Cert-Authority">
+                <figcaption>Installing the AD CS role features</figcaption>
+            </figure>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/ADCSEnrollment.png" alt="PowerShell output showing Install-AdcsCertificationAuthority completed successfully">
+                <figcaption>Enterprise Root CA configured — Apex-Corp-CA is now the domain CA</figcaption>
+            </figure>
+
+            <p>Verified the CA was online with <code>certutil -ping</code>:</p>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> CMD</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code><span class="prompt">C:\></span> certutil -ping</code>
+                </div>
+            </div>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/RunningCertuilforVerifyitworks.png" alt="certutil -ping output showing Server ICMP Response is active">
+                <figcaption>certutil -ping confirms the CA is responding</figcaption>
+            </figure>
+
+            <p>Then created the vulnerable certificate template. In <code>certsrv.msc</code>:</p>
+            <ol class="steps">
+                <li>Open Certificate Templates Console from certsrv → right-click Certificate Templates → Manage</li>
+                <li>Duplicate the built-in <strong>User</strong> template</li>
+                <li>Name the new template <code>ApexVPN</code></li>
+                <li>In the <strong>Subject Name</strong> tab: select "Supply in the request"</li>
+                <li>In the <strong>Security</strong> tab: give <strong>Domain Users</strong> the <em>Enroll</em> permission</li>
+                <li>Back in certsrv → Certificate Templates → New → Certificate Template to Issue → select <code>ApexVPN</code></li>
+            </ol>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/certsrv-selectingThenewlycreatedtemplate.png" alt="certsrv.msc showing the ApexVPN template selected in the Certificate Templates to Issue dialog">
+                <figcaption>Publishing the ApexVPN template in certsrv</figcaption>
+            </figure>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/PropertiesOfAPexVpn.png" alt="ApexVPN certificate template properties showing Subject Name tab set to Supply in the request">
+                <figcaption>The critical ESC1 setting — "Supply in the request" on the Subject Name tab</figcaption>
+            </figure>
+
+            <div class="prompt-box prompt-danger">
+                <div class="prompt-title"><i class="fas fa-skull-crossbones"></i> ESC1 Vulnerability</div>
+                <p>"Supply in the request" means any domain user can put any name they want in the Subject Alternative Name when requesting a certificate — including a Domain Admin's name. This is ESC1 from the Certified Pre-Owned research. With this, a low-privilege user can impersonate DA.</p>
+            </div>
+
+            <h2 id="ous-users">Step 7 — OUs, Groups, and Users</h2>
+            <p>Created Organizational Units to give the domain a realistic company structure, then security groups, and finally around 50 named user accounts pulled from MCU, DCU, and The Boys characters.</p>
+
+            <div class="code-block">
+                <div class="code-block-header">
+                    <span class="code-lang">PowerShell — create OUs</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <pre><code class="language-powershell">$base = "DC=hq,DC=apex-corp,DC=xyz"
+
+$ous = @("Executives","IT Department","Security Division","Research",
+         "Operations","HR","Finance","DevOps","Service Accounts","Workstations","Servers")
+
+foreach ($ou in $ous) {
+    New-ADOrganizationalUnit -Name $ou -Path $base
+    Write-Host "Created OU: $ou" -ForegroundColor Green
+}</code></pre>
+            </div>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/OnelinersCommnadsToCreateTheouandGroups.png" alt="PowerShell showing the one-liner commands to create OUs and groups running in sequence">
+                <figcaption>Creating all OUs and groups in one go via PowerShell</figcaption>
+            </figure>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/CreatingOUs.png" alt="Active Directory Users and Computers showing all OUs created under hq.apex-corp.xyz">
+                <figcaption>All OUs visible in ADUC — company structure is in place</figcaption>
+            </figure>
+
+            <div class="code-block">
+                <div class="code-block-header">
+                    <span class="code-lang">PowerShell — create security groups</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <pre><code class="language-powershell">$base = "DC=hq,DC=apex-corp,DC=xyz"
+
+"GRP-Executives","GRP-Research","GRP-Operations","GRP-DevOps","GRP-Finance","GRP-HR" | ForEach-Object {
+    New-ADGroup -Name $_ -GroupScope Global -GroupCategory Security -Path "OU=Security Division,$base"
+}
+
+"IT-Admins","SOC-Team","Linux-SSH-Users","Linux-Sudo-Users" | ForEach-Object {
+    New-ADGroup -Name $_ -GroupScope Global -GroupCategory Security -Path "OU=IT Department,$base"
+}</code></pre>
+            </div>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/CreatingGroups.png" alt="Active Directory showing the security groups created under Security Division OU">
+                <figcaption>Security groups created — GRP-Executives, GRP-Operations, IT-Admins, etc.</figcaption>
+            </figure>
+
+            <p>For users, created characters named after MCU, DCU, and The Boys to make the domain look like a real company. Tony Stark is the main Domain Admin account.</p>
+
+            <div class="code-block">
+                <div class="code-block-header">
+                    <span class="code-lang">PowerShell — create user accounts</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <pre><code class="language-powershell">$base = "DC=hq,DC=apex-corp,DC=xyz"
+$defaultPass = ConvertTo-SecureString "Apex@2025Secure!" -AsPlainText -Force
+
+# Tony Stark — CTO, Domain Admin
+New-ADUser -Name "Tony Stark" -SamAccountName "t.stark" `
+  -UserPrincipalName "t.stark@hq.apex-corp.xyz" `
+  -Title "CTO" -Department "Executive" `
+  -Path "OU=Executives,$base" `
+  -AccountPassword $defaultPass -Enabled $true -PasswordNeverExpires $true
+Add-ADGroupMember -Identity "Domain Admins" -Members "t.stark"
+Add-ADGroupMember -Identity "Enterprise Admins" -Members "t.stark"
+Add-ADGroupMember -Identity "Schema Admins" -Members "t.stark"
+
+# Homelander — intentional DA misconfiguration (attack path)
+New-ADUser -Name "John Gillman" -SamAccountName "homelander" `
+  -UserPrincipalName "homelander@hq.apex-corp.xyz" `
+  -Title "CEO" -Department "Executive" `
+  -Path "OU=Executives,$base" `
+  -AccountPassword $defaultPass -Enabled $true -PasswordNeverExpires $true
+Add-ADGroupMember -Identity "Domain Admins" -Members "homelander"
+
+# Hughie Campbell — standard user, active on FLATIRON workstation
+New-ADUser -Name "Hughie Campbell" -SamAccountName "h.campbell" `
+  -UserPrincipalName "h.campbell@hq.apex-corp.xyz" `
+  -Title "Field Operative" -Department "Operations" `
+  -Path "OU=Operations,$base" `
+  -AccountPassword $defaultPass -Enabled $true -PasswordNeverExpires $true
+Add-ADGroupMember -Identity "GRP-Operations" -Members "h.campbell"</code></pre>
+            </div>
+
+           
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/GUIpagesShowingTheUsersANdgroups.png" alt="Active Directory Users and Computers showing all users and groups organized in their OUs">
+                <figcaption>Full AD structure — users organized across OUs like a real company</figcaption>
+            </figure>
+
+            <p>Verified which users were in the Domain Admins group:</p>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/CommandsREsultshowingtheGroupAdmins.png" alt="PowerShell Get-ADGroupMember output showing Domain Admins: Administrator, Tony Stark, and homelander">
+                <figcaption>Domain Admins group — Homelander is in there as the intentional misconfiguration</figcaption>
+            </figure>
+
+            <h2 id="service-accounts">Step 8 — Service Accounts</h2>
+            <p>Created three service accounts with SPNs registered, making them Kerberoasting targets. These are the accounts an attacker can grab tickets for and crack offline.</p>
+
+            <div class="code-block">
+                <div class="code-block-header">
+                    <span class="code-lang">PowerShell</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <pre><code class="language-powershell">$svcOU = "OU=Service Accounts,DC=hq,DC=apex-corp,DC=xyz"
+
+# svc_alfred — Kerberoastable, has GenericAll on Domain Admins group
+New-ADUser -Name "svc_alfred" -SamAccountName "svc_alfred" `
+  -Description "Backup Service Account" -Path $svcOU `
+  -AccountPassword (ConvertTo-SecureString "Alfred#Butler1" -AsPlainText -Force) `
+  -Enabled $true -PasswordNeverExpires $true
+Set-ADUser -Identity "svc_alfred" -ServicePrincipalNames @{Add="MSSQLSvc/vought-hq.branch.hq.apex-corp.xyz:1433"}
+
+# svc_jarvis — Kerberoastable, credentials planted in Jenkins workspace
+New-ADUser -Name "svc_jarvis" -SamAccountName "svc_jarvis" `
+  -Description "Web & Database Service" -Path $svcOU `
+  -AccountPassword (ConvertTo-SecureString "J@rv1s2025!" -AsPlainText -Force) `
+  -Enabled $true -PasswordNeverExpires $true
+Set-ADUser -Identity "svc_jarvis" -ServicePrincipalNames @{Add="HTTP/vought-hq.branch.hq.apex-corp.xyz"}
+
+# svc_friday — Kerberoastable, credentials in Jenkins .env file
+New-ADUser -Name "svc_friday" -SamAccountName "svc_friday" `
+  -Description "Linux Nginx Service Account" -Path $svcOU `
+  -AccountPassword (ConvertTo-SecureString "Fr1d@yAI2025" -AsPlainText -Force) `
+  -Enabled $true -PasswordNeverExpires $true
+Set-ADUser -Identity "svc_friday" -ServicePrincipalNames @{Add="HTTP/batcave.hq.apex-corp.xyz"}</code></pre>
+            </div>
+
+            <p>Verify which accounts have SPNs (Kerberoastable):</p>
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> PowerShell</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code><span class="prompt">PS></span> Get-ADUser -Filter {ServicePrincipalName -ne "$null"} -Properties ServicePrincipalName | Select-Object Name, SamAccountName, ServicePrincipalName</code>
+                </div>
+            </div>
+
+            <h2 id="smb">Step 9 — SMB Shares</h2>
+            <p>Created shared folders with dummy sensitive files inside — board meeting notes, VPN configs with passwords, merger documents. The goal is to make shares look like a real company when an attacker lands on the network and starts browsing.</p>
+
+            <div class="code-block">
+                <div class="code-block-header">
+                    <span class="code-lang">PowerShell</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <pre><code class="language-powershell"># Create directories
+"Executive","Operations","IT","HR" | ForEach-Object {
+    New-Item -Path "C:\Shares\$_" -ItemType Directory -Force
+}
+
+# Create shares with appropriate permissions
+New-SmbShare -Name "Executive$" -Path "C:\Shares\Executive" `
+  -FullAccess "HQ\GRP-Executives" -NoAccess "Everyone"
+
+New-SmbShare -Name "Operations" -Path "C:\Shares\Operations" `
+  -FullAccess "HQ\GRP-Operations"
+
+New-SmbShare -Name "IT-Tools" -Path "C:\Shares\IT" `
+  -FullAccess "HQ\IT-Admins"
+
+New-SmbShare -Name "HR-Records" -Path "C:\Shares\HR" `
+  -FullAccess "HQ\GRP-HR" -NoAccess "Everyone"
+
+# List to confirm
+Get-SmbShare | Where-Object Name -notlike "*$" | Format-Table Name, Path</code></pre>
+            </div>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/CreatingSMBShares.png" alt="PowerShell showing New-SmbShare commands creating Operations, IT-Tools, and HR-Records shares">
+                <figcaption>SMB shares being created via PowerShell</figcaption>
+            </figure>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/CommandToListCurrentShares.png" alt="PowerShell Get-SmbShare output listing all active shares including Operations, IT-Tools, HR-Records">
+                <figcaption>All shares visible and active</figcaption>
+            </figure>
+
+            <h2 id="gpo">Step 10 — Group Policy</h2>
+            <p>Created two GPOs — one for password policy and one to enable audit logging for logon events.</p>
+
+            <div class="code-block">
+                <div class="code-block-header">
+                    <span class="code-lang">PowerShell</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <pre><code class="language-powershell"># Password policy linked at domain root
+New-GPO -Name "APEX-SEC-PasswordPolicy" | New-GPLink -Target "DC=hq,DC=apex-corp,DC=xyz"
+Set-ADDefaultDomainPasswordPolicy -Identity "hq.apex-corp.xyz" `
+  -MinPasswordLength 8 `
+  -ComplexityEnabled $true `
+  -LockoutThreshold 5 `
+  -LockoutDuration "00:30:00"
+
+# Audit GPO for logon event tracking
+New-GPO -Name "ApexSecAuditPolicy" | New-GPLink -Target "DC=hq,DC=apex-corp,DC=xyz"</code></pre>
+            </div>
+
+            <p>The audit policy was configured inside Group Policy Management Editor under: Computer Configuration → Windows Settings → Security Settings → Advanced Audit Policy Configuration → Account Logon. Enabled success and failure logging for Kerberos authentication events.</p>
+
+            <h2 id="vuln-accounts">Step 11 — Kerberoastable and AS-REPRoastable Accounts</h2>
+            <p>Some user accounts were configured with "Do not require Kerberos preauthentication" checked. This means an attacker can request a Kerberos AS-REP hash for these accounts without knowing the password — then crack it offline. That is AS-REPRoasting.</p>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> PowerShell</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code><span class="prompt">PS></span> Set-ADAccountControl -Identity "some.user" -DoesNotRequirePreAuth $true
+
+<span class="prompt">PS></span> # Check which accounts are AS-REPRoastable
+<span class="prompt">PS></span> Get-ADUser -Filter {DoesNotRequirePreAuth -eq $true} -Properties DoesNotRequirePreAuth | Select-Object Name, SamAccountName</code>
+                </div>
+            </div>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/checkingTheDontREquirePreauthenticationFortheusers.png" alt="Active Directory Users and Computers showing the Account tab with Do not require Kerberos preauthentication checked on a user">
+                <figcaption>Setting a user as AS-REPRoastable — the checkbox is in the Account tab</figcaption>
+            </figure>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/AllTheusersWhichAreKerberoastableinTheDomain.png" alt="PowerShell showing all users with ServicePrincipalName set — svc_alfred, svc_jarvis, svc_friday">
+                <figcaption>All Kerberoastable accounts — these three service accounts have SPNs registered</figcaption>
+            </figure>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/Verfiyingthekerborastableusers.png" alt="Active Directory showing the Attribute Editor tab with servicePrincipalName values for a service account">
+                <figcaption>Verifying the SPN is set correctly on one of the service accounts</figcaption>
+            </figure>
+
+            <div class="terminal-demo">
+                <div class="terminal-header">
+                    <span class="terminal-dot red"></span>
+                    <span class="terminal-dot yellow"></span>
+                    <span class="terminal-dot green"></span>
+                    <span class="terminal-title">Verification — DC01 PowerShell</span>
+                </div>
+                <div class="terminal-body">
+                    <div><span class="t-prompt">PS C:\></span> <span class="t-command">Get-ADUser -Filter {ServicePrincipalName -ne "$null"} -Properties ServicePrincipalName | Select Name, SamAccountName</span></div>
+                    <div><span class="t-output">Name          SamAccountName<br/>----          --------------<br/>svc_alfred    svc_alfred<br/>svc_jarvis    svc_jarvis<br/>svc_friday    svc_friday</span></div>
+                    <div><span class="t-prompt">PS C:\></span> <span class="t-command">Get-ADGroupMember -Identity "Domain Admins" | Select Name</span></div>
+                    <div><span class="t-output">Name<br/>----<br/>Administrator<br/>Tony Stark<br/>homelander</span></div>
+                    <div><span class="t-success">[+] Domain is ready. Forest: hq.apex-corp.xyz | NetBIOS: HQ</span></div>
+                </div>
+            </div>
+
+            <h2 id="workstation">Step 12 — Second Domain-Joined Machine</h2>
+            <p>Deployed a second VPS on the same Vultr private network to act as a domain workstation. This is <code>FLATIRON</code> — it runs Windows 10, is domain joined, and has a logged-in session as Hughie Campbell.</p>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/DepyloyingAnotherMachineinsidesameVPC.png" alt="Vultr deploy page with an existing VPC network selected for the second machine">
+                <figcaption>Deploying a second VPS into the same Vultr private network</figcaption>
+            </figure>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/SelectingTheExistingVpcforthenewmachines.png" alt="Vultr VPC selection showing the apex-lab VPC being chosen for the new machine">
+                <figcaption>Selecting the existing VPC so both machines share the same private subnet</figcaption>
+            </figure>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/TheVpcShowingOurDomainPrivateIP.png" alt="Vultr VPC dashboard showing both machines and their private IP addresses">
+                <figcaption>VPC overview showing both machines on the same private network</figcaption>
+            </figure>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/VultrDashboardShowingTheDCandThenewMachines.png" alt="Vultr instances dashboard showing STARK-TOWER and the new FLATIRON machine both running">
+                <figcaption>Vultr dashboard — both machines running</figcaption>
+            </figure>
+
+            <p>When the machine first booted, pinging the DC failed. The new machine had a link-local address (<code>169.254.x.x</code>) instead of a proper private IP — the network adapter was not configured correctly yet.</p>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/PingIsNotWorkingBecauseTheDeviceIsUsingTheLinkLocalADDress.png" alt="PowerShell ping failing because ipconfig shows 169.254.x.x link-local address instead of a proper IP">
+                <figcaption>Ping fails — machine got a link-local address instead of the VPC subnet IP</figcaption>
+            </figure>
+
+            <p>Fixed by going into Control Panel → Network Connections → IPv4 Properties and manually setting the IP to match the Vultr VPC subnet, with DNS pointed at the DC's private IP.</p>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/ConfiguringTheIPtoSpecifiytheVPCNetwork.png" alt="IPv4 Properties dialog showing static IP set to the Vultr VPC subnet address with DC IP as DNS">
+                <figcaption>Setting a static IP in the VPC range and pointing DNS at the DC</figcaption>
+            </figure>
+
+            <p>Then joined the domain from Settings → System → About → Domain or workgroup.</p>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/GoingInTheSettingAndJoiningTheDomain.png" alt="Windows Settings showing the Domain join dialog with hq.apex-corp.xyz entered">
+                <figcaption>Joining the domain from Windows Settings</figcaption>
+            </figure>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/WelcomeToTHeHq.apex-corp.xyz.png" alt="Windows showing Welcome to hq.apex-corp.xyz message after successful domain join">
+                <figcaption>Successful domain join — welcome to hq.apex-corp.xyz</figcaption>
+            </figure>
+
+            <p>Verified SMB shares were accessible from the new machine by typing <code>\\STARK-TOWER\</code> in the Run dialog:</p>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/WinRBoxShowingTheSMBShares.png" alt="Windows Run dialog with \\STARK-TOWER\ entered and SMB share list visible">
+                <figcaption>SMB shares accessible from the workstation — domain trust is working</figcaption>
+            </figure>
+
+            <p>Logged into the workstation as Hughie Campbell (<code>h.campbell</code>) to make it look like a real employee's machine:</p>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/loggingwithhughieaccount.png" alt="Windows login screen showing h.campbell logging into the FLATIRON workstation">
+                <figcaption>Logged in as Hughie Campbell on the FLATIRON workstation</figcaption>
+            </figure>
+
+            <p>Also added a wallpaper from The Boys to make the workstation feel realistic.</p>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/AddingTheWallpaperofTheboysCastonTheNewMachineAddes.png" alt="Windows desktop of FLATIRON showing The Boys cast wallpaper with Hughie and Starlight">
+                <figcaption>FLATIRON workstation — logged in as Hughie, wallpaper from The Boys</figcaption>
+            </figure>
+
+            <p>Finally confirmed the public domain was pointing to the Vultr IP via Cloudflare. Visiting the domain in a browser hit the IIS default page from the DC — quick visual confirmation the DNS is wired up correctly.</p>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/IISsERVERWORKINGANDDomainispoinitngDirectlytotheVPSIp.png" alt="Browser showing IIS default web page when visiting hq.apex-corp.xyz — confirming DNS points to the DC">
+                <figcaption>IIS default page visible at the domain — DNS is working end to end</figcaption>
+            </figure>
+
+            <div class="prompt-box prompt-info">
+                <div class="prompt-title"><i class="fas fa-info-circle"></i> What we have at this point</div>
+                <p>Domain <code>hq.apex-corp.xyz</code> running on STARK-TOWER (Vultr, Windows Server 2022). Full AD structure with OUs, groups, ~50 named users. AD CS with the ESC1 vulnerable template. SMB shares with dummy sensitive files. Kerberoastable and AS-REPRoastable accounts configured. A domain-joined workstation (FLATIRON) with an active Hughie Campbell session.</p>
+            </div>
+
+            <h2 id="checklist">Setup Checklist</h2>
+            <ul class="checklist">
+                <li>Domain <code>apex-corp.xyz</code> purchased and Cloudflare nameservers configured</li>
+                <li>Vultr VPS deployed with Windows Server 2022 (DC01 — STARK-TOWER)</li>
+                <li>AD DS role installed and forest <code>hq.apex-corp.xyz</code> promoted</li>
+                <li>AD CS configured with ESC1-vulnerable certificate template</li>
+                <li>OUs, groups, and ~50 named lab users created</li>
+                <li>Kerberoastable and AS-REPRoastable service accounts configured</li>
+                <li>SMB shares with sensitive dummy files deployed</li>
+                <li>Domain-joined workstation (FLATIRON) with active user session</li>
+            </ul>
+
+            <nav class="article-nav-bottom">
+                <a href="/projects/hybrid-ad-lab/" class="nav-item prev">
+                    <span class="nav-label"><i class="fas fa-arrow-left"></i> Previous</span>
+                    <span class="nav-title">Lab Overview</span>
+                </a>
+                <a href="/projects/hybrid-ad-lab/wireguard/" class="nav-item next">
+                    <span class="nav-label">Next <i class="fas fa-arrow-right"></i></span>
+                    <span class="nav-title">WireGuard Mesh VPN</span>
+                </a>
+            </nav>
+
+
+
+            <div class="share-section">
+                <h4>Share this page</h4>
+                <div class="share-buttons">
+                    <button class="share-btn" data-action="twitter"><i class="fab fa-x-twitter"></i> Twitter</button>
+                    <button class="share-btn" data-action="linkedin"><i class="fab fa-linkedin"></i> LinkedIn</button>
+                    <button class="share-btn" data-action="copy"><i class="fas fa-link"></i> Copy Link</button>
+                </div>
+            </div>
+
+        </article>
+    </main>
+
+    <footer class="article-footer" style="position:relative;z-index:1;">
+        <p>&copy; 2025 <a href="/">0x1Ak4sh</a> - All rights reserved.</p>
+    </footer>
+    <button class="back-to-top" title="Back to top"><i class="fas fa-arrow-up"></i></button>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.1.0/jquery.magnific-popup.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-powershell.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <script src="/js/snake.js"></script>
+    <script src="/js/article.js?v=1.5"></script>
+</body>
+
+</html>

@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5">
+    <title>Azure Entra ID Hybrid Sync | Hybrid AD Lab | 0x1Ak4sh</title>
+    <meta name="description" content="Connecting Vultr-hosted Active Directory to Microsoft Azure using Entra Connect. UPN suffix mismatch fix, Password Hash Sync, cloud login verification, and vulnerable OAuth app.">
+    <meta name="robots" content="noindex,follow">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/8d67cb621b.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="/css/article.css?v=1.5">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.1.0/magnific-popup.min.css">
+</head>
+
+<body class="article-page">
+    <div class="reading-progress"></div>
+    <div id="canvas_snake" class="canvas canvas-snake" data-colorone="#0b1115" data-colortwo="#a4ff91"
+        style="position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;opacity:0.3;"></div>
+
+    <nav class="article-nav">
+        <div class="nav-left">
+            <a href="/projects/hybrid-ad-lab/" class="nav-back">
+                <i class="fas fa-arrow-left"></i><span>Back to Lab Overview</span>
+            </a>
+            <a href="/" class="nav-logo">0x1Ak4sh</a>
+        </div>
+        <div class="nav-right">
+            <button class="nav-share-btn" onclick="document.querySelector('.share-section').scrollIntoView({behavior:'smooth'})" title="Share">
+                <i class="fas fa-share-alt"></i>
+            </button>
+        </div>
+    </nav>
+
+    <section class="article-hero">
+        <div class="hero-content">
+            <div class="hero-badges">
+                <span class="badge badge-category"><i class="fab fa-microsoft"></i> Azure / Entra ID</span>
+            </div>
+            <h1 class="hero-title">Azure Entra ID Hybrid Sync</h1>
+            <p style="color: rgba(255,255,255,0.7); font-size: 1.05rem; margin: 0.5rem 0 1rem; max-width: 650px;">
+                Syncing Vultr-hosted AD accounts to Azure Entra ID using Microsoft Entra Connect. Includes the UPN suffix mismatch problem that causes users to land on .onmicrosoft.com addresses, how to fix it, and verifying cloud logins work with domain credentials.
+            </p>
+            <div class="hero-tags">
+                <a href="#" class="hero-tag">#entra-id</a>
+                <a href="#" class="hero-tag">#hybrid-identity</a>
+                <a href="#" class="hero-tag">#password-hash-sync</a>
+                <a href="#" class="hero-tag">#azure</a>
+            </div>
+        </div>
+    </section>
+
+    <main class="article-layout" style="position:relative;z-index:1;">
+        <aside class="toc-sidebar">
+            <div class="toc-title">Contents</div>
+            <ul class="toc-list">
+                <li><a href="#search-entra">Search Entra ID</a></li>
+                <li><a href="#add-domain">Add Custom Domain</a></li>
+                <li><a href="#download">Download Entra Connect</a></li>
+                <li><a href="#install-connect">Install on DC01</a></li>
+                <li><a href="#upn-problem">UPN Suffix Problem</a></li>
+                <li><a href="#upn-fix">Fix: Add UPN Suffix</a></li>
+                <li><a href="#star-lord">Create Star Lord Admin</a></li>
+                <li><a href="#configure-sync">Configure Sync</a></li>
+                <li><a href="#verify">Verify Sync</a></li>
+                <li><a href="#cloud-login">Test Cloud Logins</a></li>
+                <li><a href="#sign-in-logs">Sign-In Logs</a></li>
+                <li><a href="#oauth-app">Vulnerable OAuth App</a></li>
+            </ul>
+        </aside>
+
+        <article class="article-content">
+
+            <figure class="intro-image">
+                <img src="/projects/hybrid-ad-lab/img/AzureEntraIDSetup.png" alt="Azure Entra ID hybrid identity sync configuration">
+                <figcaption>Configuring hybrid identity with Microsoft Entra Connect</figcaption>
+            </figure>
+
+            <div class="mermaid-container">
+                <div class="mermaid">
+graph LR
+    AD["🖥️ Vultr VPS — DC01<br/>hq.apex-corp.xyz"] -->|"Microsoft Entra Connect<br/>Password Hash Sync (PHS)"| ENTRA["☁️ Microsoft Entra ID<br/>apex-corp.xyz Tenant"]
+    ENTRA -->|"OAuth 2.0 / OpenID Connect<br/>user login &amp; token validation"| PORTAL["🌐 APEX-PORTAL<br/>portal.apex-corp.xyz<br/>Flask + Caddy"]
+    style AD fill:#1a3a1a,stroke:#a4ff91,color:#fff
+    style ENTRA fill:#1a1a3a,stroke:#9988ff,color:#fff
+    style PORTAL fill:#1a2a3a,stroke:#6bb5ff,color:#fff
+                </div>
+            </div>
+
+            <h2 id="search-entra">Step 1 — Find Entra ID in Azure Portal</h2>
+            <p>Logged into <code>portal.azure.com</code> and searched for "Microsoft Entra ID" in the top search bar.</p>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/Pasted image 20260517103416.png" alt="Azure portal search bar with Microsoft Entra ID typed and the Entra ID result highlighted">
+                <figcaption>Searching for Microsoft Entra ID in the Azure portal</figcaption>
+            </figure>
+
+            <h2 id="add-domain">Step 2 — Add Custom Domain</h2>
+            <p>Inside the Entra Admin Center, went to Custom Domain Names → Add custom domain → typed <code>apex-corp.xyz</code>. Azure generated a TXT verification record. Added that TXT record in Cloudflare DNS, waited a few minutes, then clicked Verify in Azure. After verification, set <code>apex-corp.xyz</code> as the primary domain for the directory.</p>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/Pasted image 20260517104104.png" alt="Entra ID Custom Domain Names page showing apex-corp.xyz added with a TXT verification record to add to DNS">
+                <figcaption>Azure generated a TXT record — add this to Cloudflare DNS to verify ownership</figcaption>
+            </figure>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/Pasted image 20260517104506.png" alt="Entra ID Custom Domain Names showing apex-corp.xyz verified and set as primary domain">
+                <figcaption>Domain verified and set as primary — it shows a green tick</figcaption>
+            </figure>
+
+            <h2 id="download">Step 3 — Download Microsoft Entra Connect</h2>
+            <p>The installer is no longer available at the old Microsoft download links. Microsoft moved the download inside the Entra ID portal itself.</p>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/Pasted image 20260517105258.png" alt="Entra ID portal showing the Microsoft Entra Connect section with the download Connect Sync agent option">
+                <figcaption>Entra Connect download is now inside the portal — go to Manage → Microsoft Entra Connect</figcaption>
+            </figure>
+
+            <div class="prompt-box prompt-warning">
+                <div class="prompt-title"><i class="fas fa-exclamation-triangle"></i> Download Location Changed</div>
+                <p>Searching for "Azure AD Connect download" on Google mostly shows the old Microsoft download page which is outdated. The new installer is only available from: <strong>Azure Portal → Microsoft Entra ID → Manage → Microsoft Entra Connect → Download Connect Sync agent</strong>. You have to accept license terms inside the portal before the download button appears.</p>
+            </div>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/Pasted image 20260517105304.png" alt="Entra Connect download page showing a banner explaining the download has moved to the portal">
+                <figcaption>Banner confirming the download has moved — no longer on the old Microsoft links</figcaption>
+            </figure>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/Pasted image 20260517105655.png" alt="Entra Connect Sync download page inside the portal with Accept terms and download button visible">
+                <figcaption>Accepting terms and downloading the installer from inside the portal</figcaption>
+            </figure>
+
+            <h2 id="install-connect">Step 4 — Install on DC01 (STARK-TOWER)</h2>
+            <p>Copied the installer to DC01 and ran it as Administrator. The welcome screen appeared — clicked agree and continue.</p>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/Pasted image 20260517105736.png" alt="Microsoft Entra Connect Sync installer welcome screen on DC01 with the agree and continue button">
+                <figcaption>Entra Connect installer running on DC01 — agreeing to terms</figcaption>
+            </figure>
+
+            <h2 id="upn-problem">Step 5 — The UPN Suffix Problem</h2>
+            <p>During Entra Connect setup, the sign-in configuration screen flagged a UPN suffix mismatch. The issue:</p>
+            <ul>
+                <li>Local AD users have UPNs like <code>t.stark@hq.apex-corp.xyz</code> or <code>homelander@vought.hq.apex-corp.xyz</code></li>
+                <li>Azure only has <code>apex-corp.xyz</code> verified as a custom domain</li>
+                <li>Azure does not recognize <code>@hq.apex-corp.xyz</code> or <code>@vought.hq.apex-corp.xyz</code> as valid cloud domains</li>
+                <li>Synced users fall back to getting a <code>.onmicrosoft.com</code> address instead</li>
+            </ul>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/Pasted image 20260517110320.png" alt="Entra Connect sign-in configuration screen showing UPN suffix mismatch warning for hq.apex-corp.xyz and vought.hq.apex-corp.xyz">
+                <figcaption>Entra Connect flagging the subdomain UPNs as unverified — users would get .onmicrosoft.com addresses</figcaption>
+            </figure>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/Pasted image 20260517110536.png" alt="Entra Connect sign-in screen showing more details of the UPN mismatch warning with affected domain suffixes listed">
+                <figcaption>Warning details — both hq.apex-corp.xyz and vought.hq.apex-corp.xyz subdomains are flagged</figcaption>
+            </figure>
+
+            <div class="terminal-demo">
+                <div class="terminal-header">
+                    <span class="terminal-dot red"></span>
+                    <span class="terminal-dot yellow"></span>
+                    <span class="terminal-dot green"></span>
+                    <span class="terminal-title">What happens without the fix</span>
+                </div>
+                <div class="terminal-body">
+<span class="t-output">Synced user: t.stark
+Cloud UPN:   t.stark@apexcorp.onmicrosoft.com   ← wrong
+</span>
+<span class="t-error">[-] User cannot log in with t.stark@apex-corp.xyz</span>
+                </div>
+            </div>
+
+            <h2 id="upn-fix">Step 6 — Fix: Add Alternative UPN Suffix</h2>
+            <p>Two steps. First add the cloud domain as an Alternative UPN Suffix in local AD, then update every user's UPN to use it.</p>
+
+            <p><strong>Step 6a — Add Alternative UPN Suffix in Local AD:</strong></p>
+            <ol class="steps">
+                <li>On DC01, open <strong>Active Directory Domains and Trusts</strong> from Server Manager Tools</li>
+                <li>Right-click the top node (Active Directory Domains and Trusts) → Properties</li>
+                <li>In the "Alternative UPN Suffixes" box, type <code>apex-corp.xyz</code></li>
+                <li>Click Add → OK</li>
+            </ol>
+
+            <p><strong>Step 6b — Bulk update all user UPNs via PowerShell:</strong></p>
+
+            <div class="code-tabs">
+                <div class="code-tabs-header">
+                    <button class="code-tab-btn active" data-tab="upn-powershell"><i class="fas fa-terminal"></i> PowerShell (Bulk)</button>
+                    <button class="code-tab-btn" data-tab="upn-manual"><i class="fas fa-user-edit"></i> ADUC (Single User)</button>
+                </div>
+
+                <div class="code-tab-content active" id="upn-powershell">
+                    <div class="code-block">
+                        <div class="code-block-header">
+                            <span class="code-lang">PowerShell — DC01</span>
+                            <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                        </div>
+                        <pre><code class="language-powershell"># Update every user in the domain to use the cloud domain UPN suffix
+Get-ADUser -Filter * | ForEach-Object {
+    $newUpn = $_.SamAccountName + "@apex-corp.xyz"
+    Set-ADUser -Identity $_.SamAccountName -UserPrincipalName $newUpn
+    Write-Host "Updated: $($_.SamAccountName) → $newUpn" -ForegroundColor Green
+}
+
+# Force immediate sync instead of waiting for the 30-minute schedule
+Start-ADSyncSyncCycle -PolicyType Delta</code></pre>
+                    </div>
+                </div>
+
+                <div class="code-tab-content" id="upn-manual">
+                    <ol class="steps">
+                        <li>Open <strong>Active Directory Users and Computers</strong></li>
+                        <li>Right-click a user → Properties → <strong>Account</strong> tab</li>
+                        <li>In the <strong>User UPN Logon</strong> dropdown, select <code>@apex-corp.xyz</code></li>
+                        <li>Click OK — repeat for each user or run the PowerShell script instead</li>
+                    </ol>
+                </div>
+            </div>
+
+            <h2 id="star-lord">Step 7 — Create the Star Lord Admin Account</h2>
+            <p>Created a cloud-only Global Admin account directly in Entra ID to use as the sync service account. Used Star Lord from Guardians of the Galaxy. This is the recommended practice — use a dedicated cloud account for syncing, not a personal one.</p>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/Pasted image 20260517111651.png" alt="Entra ID new user creation page showing Star Lord user being created with apex-corp.xyz UPN">
+                <figcaption>Creating Star Lord as a cloud-only admin account in Entra ID</figcaption>
+            </figure>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/Pasted image 20260517112124.png" alt="Entra ID user creation page showing Star Lord's profile with username and UPN filled in">
+                <figcaption>Star Lord account details — UPN uses the apex-corp.xyz domain</figcaption>
+            </figure>
+
+            <p>Gave Star Lord the Global Administrator role:</p>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/Pasted image 20260517112155.png" alt="Entra ID role assignment page showing Global Administrator role being assigned to Star Lord">
+                <figcaption>Star Lord assigned Global Administrator — needed for Entra Connect sync</figcaption>
+            </figure>
+
+            <h2 id="configure-sync">Step 8 — Connect Vultr AD to Entra ID</h2>
+            <p>Ran the Entra Connect installer on DC01. Entered credentials on both screens:</p>
+            <ul>
+                <li><strong>Microsoft Entra credentials:</strong> Star Lord's Global Administrator account</li>
+                <li><strong>Domain Admin credentials:</strong> HQ\t.stark</li>
+            </ul>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/Pasted image 20260517112318.png" alt="Entra Connect Connect to Azure AD screen showing Star Lord's admin credentials entered">
+                <figcaption>Entering Star Lord's cloud admin credentials in Entra Connect</figcaption>
+            </figure>
+
+            <p>The "Ready to Configure" screen showed what it would do — install sync engine, configure password hash sync, and start the first sync:</p>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/Pasted image 20260517112346.png" alt="Entra Connect Ready to Configure screen showing options to be installed including sync engine and password hash sync">
+                <figcaption>Ready to Configure — Password Hash Sync selected, will start a full sync</figcaption>
+            </figure>
+
+            <p>Clicked Install. Configuration completed successfully:</p>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/Pasted image 20260517115159.png" alt="Entra Connect Configuration Complete screen showing all steps completed successfully">
+                <figcaption>Entra Connect installed and sync started — everything completed successfully</figcaption>
+            </figure>
+
+            <h2 id="verify">Step 9 — Verify the Sync</h2>
+
+            <p>Went back to Azure portal. Under Groups, the local AD groups were now showing in Azure:</p>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/Pasted image 20260517115402.png" alt="Azure Entra ID Groups section showing marketing group synced from local AD with its members listed">
+                <figcaption>Marketing group (VOUGHT) synced — members visible in Azure</figcaption>
+            </figure>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/Pasted image 20260517115452.png" alt="Azure Entra ID showing D7 group synced from local AD with members from The Boys listed">
+                <figcaption>D7 group (The Boys) synced — group and members all visible</figcaption>
+            </figure>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/Pasted image 20260517115605.png" alt="Azure Entra ID Users section showing all synced users listed alphabetically with their apex-corp.xyz UPNs">
+                <figcaption>All users synced — listed alphabetically with apex-corp.xyz UPNs</figcaption>
+            </figure>
+
+            <p>Opened Homelander's profile — all properties synced from local AD:</p>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/Pasted image 20260517115852.png" alt="Azure Entra ID user profile for Homelander showing all synced properties including job title, department, and UPN">
+                <figcaption>Homelander's profile in Azure — job title, department, all synced from local AD</figcaption>
+            </figure>
+
+            <h2 id="cloud-login">Step 10 — Test Cloud Login with Synced Accounts</h2>
+            <p>Before the UPN fix, users would show up with <code>.onmicrosoft.com</code> addresses. After running the bulk update script and forcing the sync:</p>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/Pasted image 20260517121153.png" alt="Azure Entra ID user list showing all users with @apex-corp.xyz UPNs after the UPN fix and sync">
+                <figcaption>After the fix — all users show apex-corp.xyz instead of .onmicrosoft.com</figcaption>
+            </figure>
+
+            <p><strong>Test with Tony Stark (Iron Man):</strong> Typed <code>ironman@apex-corp.xyz</code> at the Microsoft login page — recognized the account and asked for the domain password.</p>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/Pasted image 20260517121319.png" alt="Microsoft login page showing ironman@apex-corp.xyz recognized and the password entry field shown">
+                <figcaption>Microsoft login page recognized the synced account — asking for the domain password</figcaption>
+            </figure>
+
+            <p><strong>Test with Harley Quinn:</strong> Logged in with the marketing specialist account — worked correctly, session active.</p>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/Pasted image 20260517121707.png" alt="Azure portal showing Harley Quinn logged in successfully with an active session">
+                <figcaption>Harley Quinn logged into Azure — domain credentials work for cloud login</figcaption>
+            </figure>
+
+            <div class="terminal-demo">
+                <div class="terminal-header">
+                    <span class="terminal-dot red"></span>
+                    <span class="terminal-dot yellow"></span>
+                    <span class="terminal-dot green"></span>
+                    <span class="terminal-title">Cloud login test</span>
+                </div>
+                <div class="terminal-body">
+                    <div><span class="t-output">Attempting login with: t.stark@apex-corp.xyz<br/>Password: (domain AD password)</span></div>
+                    <div><span class="t-success">[+] Login successful — Azure session active</span></div>
+                    <div><span class="t-output">User: Tony Stark<br/>UPN:  t.stark@apex-corp.xyz<br/>Tenant: apexcorp.onmicrosoft.com<br/>Sign-in type: Password Hash Sync (PHS)</span></div>
+                </div>
+            </div>
+
+            <h2 id="sign-in-logs">Step 11 — Sign-In Logs</h2>
+            <p>The sign-in log in Azure shows interactive login history — all test logins, what apps were accessed, success or failure. This is useful for the attack surface — it shows which accounts tried to log in and from where.</p>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/Pasted image 20260517122031.png" alt="Azure Entra ID sign-in logs showing multiple login events with user names, apps, and success status">
+                <figcaption>Sign-in logs — every login attempt is visible here including the test logins</figcaption>
+            </figure>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/Pasted image 20260517122151.png" alt="Azure sign-in logs detailed view showing individual event rows with timestamp, user, app, and result columns">
+                <figcaption>Detailed sign-in log rows — timestamp, account, app, and result all tracked</figcaption>
+            </figure>
+
+            <h2 id="oauth-app">Step 12 — Vulnerable OAuth App Registration</h2>
+            <p>Registered a fake application called "Apex IT Helpdesk" in Entra ID. This is used as a phishing target — an attacker would send victims a consent phishing email asking them to approve this app. When they click Accept, the attacker gets OAuth tokens granting access to the victim's mailbox and files — no password needed, no MFA required.</p>
+
+            <p>In Azure Portal → App Registrations → New Registration → Name: "Apex IT Helpdesk".</p>
+            <p>Added these API permissions and left them unconsented by an admin:</p>
+
+            <table>
+                <thead><tr><th>Permission</th><th>Type</th><th>What an attacker gets</th></tr></thead>
+                <tbody>
+                    <tr><td><code>Mail.Read</code></td><td>Delegated</td><td>Read all emails in the victim's mailbox</td></tr>
+                    <tr><td><code>Files.ReadWrite.All</code></td><td>Delegated</td><td>Read and write all files in OneDrive</td></tr>
+                    <tr><td><code>User.Read.All</code></td><td>Delegated</td><td>Read all user profiles in the tenant</td></tr>
+                </tbody>
+            </table>
+
+            <div class="prompt-box prompt-danger">
+                <div class="prompt-title"><i class="fas fa-skull-crossbones"></i> OAuth Consent Phishing</div>
+                <p>The attack: send a phishing email with a link to "Apex IT Helpdesk — click here to enable your account". The victim clicks Accept on the consent screen thinking it is a real IT app. The attacker now has OAuth tokens for that user — access to their email and files without ever touching their password. MFA does not help here because MFA is for authentication, not for OAuth consent.</p>
+            </div>
+
+            <div class="prompt-box prompt-info">
+                <div class="prompt-title"><i class="fas fa-info-circle"></i> Why This Matters for the Lab</div>
+                <p>After syncing with Entra Connect, domain accounts are in the cloud. An attacker who compromises a local account via Kerberoasting or NTLM relay now also has cloud access. The credentials work on the local network and on Azure, Microsoft Teams, and the web portal. One compromise = both AD and cloud access.</p>
+            </div>
+
+            <nav class="article-nav-bottom">
+                <a href="/projects/hybrid-ad-lab/aws-jenkins/" class="nav-item prev">
+                    <span class="nav-label"><i class="fas fa-arrow-left"></i> Previous</span>
+                    <span class="nav-title">AWS Jenkins Setup</span>
+                </a>
+                <a href="/projects/hybrid-ad-lab/exchange-server/" class="nav-item next">
+                    <span class="nav-label">Next <i class="fas fa-arrow-right"></i></span>
+                    <span class="nav-title">Exchange Server 2019</span>
+                </a>
+            </nav>
+
+
+
+            <div class="share-section">
+                <h4>Share this page</h4>
+                <div class="share-buttons">
+                    <button class="share-btn" data-action="twitter"><i class="fab fa-x-twitter"></i> Twitter</button>
+                    <button class="share-btn" data-action="linkedin"><i class="fab fa-linkedin"></i> LinkedIn</button>
+                    <button class="share-btn" data-action="copy"><i class="fas fa-link"></i> Copy Link</button>
+                </div>
+            </div>
+
+        </article>
+    </main>
+
+    <footer class="article-footer" style="position:relative;z-index:1;">
+        <p>&copy; 2025 <a href="/">0x1Ak4sh</a> - All rights reserved.</p>
+    </footer>
+    <button class="back-to-top" title="Back to top"><i class="fas fa-arrow-up"></i></button>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.1.0/jquery.magnific-popup.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-powershell.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <script src="/js/snake.js"></script>
+    <script src="/js/article.js?v=1.5"></script>
+</body>
+
+</html>

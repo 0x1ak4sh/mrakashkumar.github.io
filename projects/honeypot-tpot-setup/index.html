@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5">
+    <title>Deploying T-Pot Honeypot on Vultr — 3 Million Attacks in 20 Days | 0x1Ak4sh</title>
+
+    <!-- SEO -->
+    <meta name="description" content="I deployed T-Pot CE on a Vultr VPS and left it exposed to the internet for 20 days. Here's what happened — over 3 million attacks from all around the world.">
+    <meta name="robots" content="index,follow">
+    <link rel="canonical" href="https://mrakashkumar.in/projects/honeypot-tpot-setup/">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://mrakashkumar.in/projects/honeypot-tpot-setup/">
+    <meta property="og:title" content="Deploying T-Pot Honeypot on Vultr — 3 Million Attacks in 20 Days">
+    <meta property="og:description" content="I deployed T-Pot CE on a Vultr VPS and left it exposed to the internet for 20 days. Here's what happened — over 3 million attacks from all around the world.">
+    <meta property="og:image" content="https://mrakashkumar.in/heroarticle.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:type" content="image/png">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Deploying T-Pot Honeypot on Vultr — 3 Million Attacks in 20 Days | 0x1Ak4sh">
+    <meta name="twitter:description" content="I deployed T-Pot CE on a Vultr VPS and left it exposed to the internet for 20 days. Here's what happened — over 3 million attacks from all around the world.">
+    <meta name="twitter:image" content="https://mrakashkumar.in/heroarticle.png">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <!-- Icons -->
+    <script src="https://kit.fontawesome.com/8d67cb621b.js" crossorigin="anonymous"></script>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="/css/article.css">
+
+    <!-- Prism.js -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+
+    <!-- Magnific Popup -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.1.0/magnific-popup.min.css">
+
+    <style>
+        /* Center portrait / narrow screenshots inside figures */
+        .article-content figure {
+            text-align: center;
+        }
+        .article-content figure img {
+            display: inline-block;
+            margin: 0 auto 0;
+            max-height: 700px;   /* cap very tall phone screenshots */
+            width: auto;         /* never stretch beyond natural width */
+            max-width: 100%;     /* still shrink on small screens */
+        }
+        .article-content figure a.image-popup {
+            display: inline-block; /* so the link wraps the image tightly */
+        }
+    </style>
+</head>
+
+<body class="article-page">
+
+    <!-- Reading Progress Bar -->
+    <div class="reading-progress"></div>
+
+    <!-- Snake Background -->
+    <div id="canvas_snake" class="canvas canvas-snake" data-colorone="#0b1115" data-colortwo="#a4ff91"
+        style="position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;opacity:0.25;"></div>
+
+    <!-- Navigation Bar -->
+    <nav class="article-nav">
+        <div class="nav-left">
+            <a href="/" class="nav-back"><i class="fas fa-arrow-left"></i><span>Back</span></a>
+            <a href="/" class="nav-logo">0x1Ak4sh</a>
+        </div>
+        <div class="nav-right">
+            <button class="nav-share-btn" onclick="document.querySelector('.share-section').scrollIntoView({behavior:'smooth'})" title="Share">
+                <i class="fas fa-share-alt"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- ============================================================ -->
+    <!-- HERO SECTION                                                  -->
+    <!-- ============================================================ -->
+    <section class="article-hero">
+        <div class="hero-bg" style="background-image: url('/heroarticle.png'); background-color: #0d1117;"></div>
+        <div class="hero-content">
+            <div class="hero-badges">
+                <span class="badge badge-category"><i class="fas fa-spider"></i> Honeypot</span>
+                <span class="badge badge-difficulty medium"><i class="fas fa-cloud"></i> Cloud Lab</span>
+            </div>
+            <h1 class="hero-title">Deploying T-Pot Honeypot on Vultr — 3 Million Attacks in 20 Days</h1>
+            <p style="color: rgba(255,255,255,0.7); font-size: 1.05rem; margin: 0.5rem 0 1rem; max-width: 680px;">
+                I spun up a T-Pot CE instance on Vultr, pointed it at the internet, and walked away. What came back was fascinating — over 3 million attacks from nearly every corner of the globe in just 20 days.
+            </p>
+
+            <!-- Project Stats -->
+            <div class="project-stats">
+                <div class="stat-item"><i class="fas fa-calendar-alt"></i> 20 Days Runtime</div>
+                <div class="stat-item"><i class="fas fa-bolt"></i> 3M+ Attacks Logged</div>
+                <div class="stat-item"><i class="fas fa-globe"></i> Worldwide Sources</div>
+                <div class="stat-item"><i class="fas fa-dollar-sign"></i> ~$10 Total Cost</div>
+            </div>
+
+            <!-- Tags -->
+            <div class="hero-tags">
+                <a href="#" class="hero-tag">#honeypot</a>
+                <a href="#" class="hero-tag">#t-pot</a>
+                <a href="#" class="hero-tag">#ubuntu</a>
+                <a href="#" class="hero-tag">#vultr</a>
+                <a href="#" class="hero-tag">#threat-intelligence</a>
+                <a href="#" class="hero-tag">#kibana</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Layout -->
+    <main class="article-layout" style="position:relative;z-index:1;">
+
+        <!-- Table of Contents -->
+        <aside class="toc-sidebar">
+            <div class="toc-title">Contents</div>
+            <ul class="toc-list">
+                <li><a href="#overview">Overview</a></li>
+                <li><a href="#architecture">How T-Pot Works</a></li>
+                <li><a href="#vultr-setup">Setting Up Vultr</a></li>
+                <li><a href="#server-config">Server Configuration</a></li>
+                <li><a href="#installing-tpot">Installing T-Pot</a></li>
+                <li><a href="#accessing-webui">Accessing the Web UI</a></li>
+                <li><a href="#first-hits">First Hits</a></li>
+                <li><a href="#results-15-days">Results at 15 Days</a></li>
+                <li><a href="#results-20-days">Results at 20 Days</a></li>
+                <li><a href="#key-findings">Key Findings</a></li>
+                <li><a href="#whats-next">What's Next</a></li>
+            </ul>
+        </aside>
+
+        <!-- Project Content -->
+        <article class="article-content">
+
+            <!-- ============================================================ -->
+            <!-- OVERVIEW                                                       -->
+            <!-- ============================================================ -->
+            <h2 id="overview">Overview</h2>
+            <p>
+                Honeypots are one of the most honest ways to understand the real threat landscape. Instead of reading reports about what attackers are doing, you just... let them in — into a controlled, fake environment — and watch. I've been curious about this for a while, and I finally decided to set one up properly using <strong>T-Pot CE</strong>, an all-in-one honeypot platform by Telekom Security that bundles over 20 different honeypot types under a single Docker-based stack.
+            </p>
+            <p>
+                For this experiment I used <a href="https://www.vultr.com/?ref=9899889-9J" target="_blank">Vultr</a> — if you want to try this yourself, you can sign up for a <strong>free $300 credit</strong> using that link. The whole 20-day run cost me roughly $10, which is honestly incredible for the data you get back.
+            </p>
+
+            <!-- Feature Cards -->
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="fc-icon"><i class="fas fa-network-wired"></i></div>
+                    <h4>Multi-Protocol Coverage</h4>
+                    <p>T-Pot captures attacks across SSH, RDP, VNC, SIP, ADB, Telnet, HTTP/S, and many more simultaneously.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="fc-icon"><i class="fas fa-chart-bar"></i></div>
+                    <h4>Kibana Dashboards</h4>
+                    <p>Built-in Elasticsearch + Kibana stack gives you beautiful real-time dashboards over all captured attack data.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="fc-icon"><i class="fas fa-map-marked-alt"></i></div>
+                    <h4>Live Attack Map</h4>
+                    <p>A live world map showing attacks hitting your server in real time, with attacker geolocation and origin country.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="fc-icon"><i class="fas fa-database"></i></div>
+                    <h4>Raw Log Export</h4>
+                    <p>All raw logs are stored in <code>~/tpotce/data</code>, exportable for offline analysis in any tooling you like.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="fc-icon"><i class="fas fa-shield-alt"></i></div>
+                    <h4>Safe & Isolated</h4>
+                    <p>Attackers interact only with the honeypot containers. Your actual server and SSH access are moved to a non-standard port.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="fc-icon"><i class="fab fa-docker"></i></div>
+                    <h4>Docker-Based Stack</h4>
+                    <p>Everything runs in Docker containers. Easy to install, easy to remove, and isolated from the host OS by design.</p>
+                </div>
+            </div>
+
+            <!-- Tech Stack -->
+            <div class="tech-stack">
+                <div class="tech-item"><i class="fab fa-ubuntu"></i> Ubuntu 22.04</div>
+                <div class="tech-item"><i class="fab fa-docker"></i> Docker</div>
+                <div class="tech-item"><i class="fas fa-spider"></i> T-Pot CE</div>
+                <div class="tech-item"><i class="fas fa-search"></i> Kibana</div>
+                <div class="tech-item"><i class="fas fa-database"></i> Elasticsearch</div>
+                <div class="tech-item"><i class="fas fa-cloud"></i> Vultr VPS</div>
+            </div>
+
+            <!-- ============================================================ -->
+            <!-- HOW T-POT WORKS                                               -->
+            <!-- ============================================================ -->
+            <h2 id="architecture">How T-Pot Works</h2>
+            <p>
+                T-Pot works by listening on virtually every port and simulating a wide variety of services. When an attacker connects and tries to exploit or authenticate, the honeypot logs every detail — credentials used, payloads sent, timing, origin IP — and feeds it all into Elasticsearch for analysis. Your real SSH access gets moved to a random high port during installation so you can still manage the machine safely.
+            </p>
+
+            <div class="mermaid-container">
+                <div class="mermaid">
+graph TD
+    Internet["🌐 Internet\n(Attackers)"] -->|"Port 22 / 23 / 80 / 443\n3389 / 5900 / 5038\n...and many more"| TPOT
+
+    subgraph TPOT["T-Pot CE (Ubuntu VPS)"]
+        HPC["Honeypot Containers\nCowrie · Dionaea · Honeytrap\nCitrixHoneypot · Mailoney · ..."]
+        ELK["ELK Stack\nElasticsearch · Logstash · Kibana"]
+        SPIDERFOOT["SpiderFoot\nOSINT Framework"]
+        HPC -->|"Attack Logs"| ELK
+    end
+
+    Analyst["👤 You\n(Port 64265 SSH\n+ Port 64297 Web UI)"] -->|"Manage & Review"| TPOT
+                </div>
+            </div>
+
+            <!-- ============================================================ -->
+            <!-- VULTR SETUP                                                    -->
+            <!-- ============================================================ -->
+            <h2 id="vultr-setup">Setting Up Vultr</h2>
+            <p>
+                After logging in to Vultr, navigate to <strong>Compute → Instances</strong> and click <strong>Create Instance</strong>. The setup is straightforward — here's what I picked and why.
+            </p>
+
+            <figure>
+                <a href="/media/VultrDashboard.png" class="image-popup">
+                    <img src="/media/VultrDashboard.png" alt="Vultr dashboard showing the Compute > Instances section">
+                </a>
+                <figcaption>Figure 1: Vultr dashboard — navigate to Compute → Instances to get started.</figcaption>
+            </figure>
+
+            <ol class="steps">
+                <li>
+                    <strong>Choose Shared CPU</strong>
+                    <p>Select <strong>Shared CPU</strong> as the server type. For a honeypot experiment this is more than enough — we don't need dedicated compute.</p>
+                    <figure>
+                        <a href="/media/SelectingTheServerType.png" class="image-popup">
+                            <img src="/media/SelectingTheServerType.png" alt="Selecting Shared CPU server type on Vultr">
+                        </a>
+                        <figcaption>Selecting Shared CPU — the right choice for a cost-effective honeypot.</figcaption>
+                    </figure>
+                </li>
+                <li>
+                    <strong>Pick a Region with High Exposure</strong>
+                    <p>I chose <strong>Americas / Silicon Valley</strong>. The idea here is simple — higher traffic regions attract more attention from automated scanners and botnets, which means more attack data for us to study.</p>
+                    <figure>
+                        <a href="/media/SelectingTheRegion.png" class="image-popup">
+                            <img src="/media/SelectingTheRegion.png" alt="Selecting Silicon Valley region on Vultr">
+                        </a>
+                        <figcaption>Silicon Valley region — well-connected and popular with scanners.</figcaption>
+                    </figure>
+                </li>
+                <li>
+                    <strong>Size It Right for T-Pot</strong>
+                    <p>T-Pot runs a lot of Docker containers and Elasticsearch is memory-hungry. I went with <strong>4 vCPUs, 8 GB RAM, 180 GB SSD</strong>. This ran the full stack smoothly for the entire 20 days without any issues. Total cost was around $10 for the experiment.</p>
+                    <figure>
+                        <a href="/media/TheSystemCPUandRAM.png" class="image-popup">
+                            <img src="/media/TheSystemCPUandRAM.png" alt="Selecting 4 vCPU, 8GB RAM, 180GB SSD on Vultr">
+                        </a>
+                        <figcaption>4 vCPU / 8 GB RAM / 180 GB SSD — the recommended minimum for T-Pot CE.</figcaption>
+                    </figure>
+
+                    <div class="prompt-box prompt-tip">
+                        <div class="prompt-title"><i class="fas fa-lightbulb"></i> Cost Tip</div>
+                        <p>Running this for 7 days costs roughly $5–7. For 20 days it came to around $10. Vultr bills by the hour so you can stop it anytime without wasting money.</p>
+                    </div>
+                </li>
+                <li>
+                    <strong>Select Ubuntu as the OS</strong>
+                    <p>T-Pot officially supports Ubuntu. Select <strong>Ubuntu 22.04 LTS</strong> — don't use any other distro or you'll run into dependency issues during the install script.</p>
+                    <figure>
+                        <a href="/media/SelectinTheUbuntuOS.png" class="image-popup">
+                            <img src="/media/SelectinTheUbuntuOS.png" alt="Selecting Ubuntu OS on Vultr">
+                        </a>
+                        <figcaption>Ubuntu 22.04 LTS — the recommended OS for T-Pot CE.</figcaption>
+                    </figure>
+                </li>
+            </ol>
+
+            <p>After hitting deploy, the instance takes a minute or two to boot up. You can watch its status from the Vultr dashboard.</p>
+
+            <figure>
+                <a href="/media/ShowingTheInstanceLoading.png" class="image-popup">
+                    <img src="/media/ShowingTheInstanceLoading.png" alt="Vultr instance booting and loading">
+                </a>
+                <figcaption>Figure 2: The instance spinning up — grab a coffee, it only takes a moment.</figcaption>
+            </figure>
+
+            <!-- ============================================================ -->
+            <!-- SERVER CONFIGURATION                                           -->
+            <!-- ============================================================ -->
+            <h2 id="server-config">Server Configuration</h2>
+            <p>
+                Once the instance is running, head to its dashboard page — you'll find the <strong>public IP address</strong> and the <strong>root password</strong> right there. Use those to SSH in.
+            </p>
+
+            <figure>
+                <a href="/media/InstanceDashboardwithPassWordAndPublicIP.png" class="image-popup">
+                    <img src="/media/InstanceDashboardwithPassWordAndPublicIP.png" alt="Vultr instance dashboard showing the public IP and root password">
+                </a>
+                <figcaption>Figure 3: The instance overview — IP and credentials are right here.</figcaption>
+            </figure>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> PowerShell / Terminal</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code><span class="prompt">$</span> ssh root@YOUR_SERVER_IP</code>
+                </div>
+            </div>
+
+            <figure>
+                <a href="/media/SSHingToServer.png" class="image-popup">
+                    <img src="/media/SSHingToServer.png" alt="SSHing into the Vultr Ubuntu server">
+                </a>
+                <figcaption>Figure 4: Successfully logged in as root via SSH.</figcaption>
+            </figure>
+
+            <p>
+                We're in as root. T-Pot's installer needs a non-root user to run correctly, so our first step is to create a dedicated user and give it sudo privileges.
+            </p>
+
+            <figure>
+                <a href="/media/OutputOfWhoami.png" class="image-popup">
+                    <img src="/media/OutputOfWhoami.png" alt="whoami command confirming we are root">
+                </a>
+                <figcaption>Figure 5: <code>whoami</code> confirms we're root — time to create a dedicated user.</figcaption>
+            </figure>
+
+            <ol class="steps">
+                <li>
+                    <strong>Create a New User</strong>
+                    <p>Run <code>adduser</code> and just keep pressing Enter through the prompts — only the password matters here.</p>
+                    <div class="cmd-block">
+                        <div class="cmd-header">
+                            <span class="cmd-tool"><i class="fas fa-terminal"></i> Terminal</span>
+                            <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                        </div>
+                        <div class="cmd-body">
+                            <code><span class="prompt">#</span> adduser tpotuser</code>
+                        </div>
+                    </div>
+                    <figure>
+                        <a href="/media/CretingNewUser.png" class="image-popup">
+                            <img src="/media/CretingNewUser.png" alt="Creating a new user on Ubuntu with adduser">
+                        </a>
+                        <figcaption>Creating the new user — just press Enter through the optional fields.</figcaption>
+                    </figure>
+                </li>
+                <li>
+                    <strong>Add the User to the Sudo Group</strong>
+                    <div class="cmd-block">
+                        <div class="cmd-header">
+                            <span class="cmd-tool"><i class="fas fa-terminal"></i> Terminal</span>
+                            <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                        </div>
+                        <div class="cmd-body">
+                            <code><span class="prompt">#</span> usermod -aG sudo tpotuser</code>
+                        </div>
+                    </div>
+                    <figure>
+                        <a href="/media/AddingUserToSudoGroup.png" class="image-popup">
+                            <img src="/media/AddingUserToSudoGroup.png" alt="Adding the new user to the sudo group">
+                        </a>
+                        <figcaption>Adding our user to the <code>sudo</code> group — required for the T-Pot installer.</figcaption>
+                    </figure>
+                </li>
+            </ol>
+
+            <!-- ============================================================ -->
+            <!-- INSTALLING T-POT                                              -->
+            <!-- ============================================================ -->
+            <h2 id="installing-tpot">Installing T-Pot</h2>
+            <p>
+                Now the fun part. T-Pot's installer is a single curl command provided on their <a href="https://github.com/telekom-security/tpotce" target="_blank">GitHub page</a>. It handles everything — installs Docker, pulls all the honeypot images, configures Elasticsearch and Kibana, and sets up the web UI. Run it as your new non-root user.
+            </p>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> Terminal (as tpotuser)</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code><span class="prompt">$</span> env bash -c "$(curl -sL https://github.com/telekom-security/tpotce/raw/master/install.sh)"</code>
+                </div>
+            </div>
+
+            <figure>
+                <a href="/media/InstallingHoneypot.png" class="image-popup">
+                    <img src="/media/InstallingHoneypot.png" alt="Running the T-Pot installation script">
+                </a>
+                <figcaption>Figure 6: The T-Pot installer running — it will ask for your sudo password first.</figcaption>
+            </figure>
+
+            <p>
+                The installer presents a menu asking which edition to install. I chose <strong>H (Hive)</strong> — this installs every available honeypot type at once, giving you the widest possible coverage across protocols.
+            </p>
+
+            <div class="prompt-box prompt-info">
+                <div class="prompt-title"><i class="fas fa-info-circle"></i> T-Pot Editions</div>
+                <p>T-Pot offers several installation profiles. <strong>H (Hive)</strong> is the full edition — it runs all supported honeypots simultaneously. There are lighter profiles like <strong>S (Standard)</strong> or <strong>M (Medium)</strong> if you're working with limited RAM.</p>
+            </div>
+
+            <figure>
+                <a href="/media/SelectingTheTPotType.png" class="image-popup">
+                    <img src="/media/SelectingTheTPotType.png" alt="Selecting T-Pot type H (Hive) during installation">
+                </a>
+                <figcaption>Figure 7: Selecting <strong>H</strong> for the full Hive installation — all honeypots enabled.</figcaption>
+            </figure>
+
+            <p>
+                The script then downloads and configures everything. Since we're on a cloud VPS with a good uplink, this goes surprisingly fast — usually 10–15 minutes. Grab a coffee.
+            </p>
+
+            <figure>
+                <a href="/media/InstallationProcessOfHoneypot.png" class="image-popup">
+                    <img src="/media/InstallationProcessOfHoneypot.png" alt="T-Pot installation process downloading Docker images">
+                </a>
+                <figcaption>Figure 8: Docker pulling all the honeypot images — cloud bandwidth makes this quick.</figcaption>
+            </figure>
+
+            <div class="prompt-box prompt-warning">
+                <div class="prompt-title"><i class="fas fa-exclamation-triangle"></i> Important — Read the Installer Output</div>
+                <p>When installation finishes, the script prints your <strong>new SSH port</strong> at the end of the output. Port 22 is now a honeypot. <strong>Note down that port number before closing your terminal</strong> — losing it means losing access to your server.</p>
+            </div>
+
+            <figure>
+                <a href="/media/InstallationFinished.png" class="image-popup">
+                    <img src="/media/InstallationFinished.png" alt="T-Pot installation finished with new SSH port displayed">
+                </a>
+                <figcaption>Figure 9: Installation complete — the new SSH port is shown at the bottom of the output.</figcaption>
+            </figure>
+
+            <!-- Reconnect Terminal Demo -->
+            <p>After installation the server reboots. When you reconnect, you <strong>must use the new high port</strong> (in my case it was <code>64265</code>). Trying port 22 now just dumps you into the SSH honeypot, which won't accept your real credentials.</p>
+
+            <div class="terminal-demo">
+                <div class="terminal-header">
+                    <span class="terminal-dot red"></span>
+                    <span class="terminal-dot yellow"></span>
+                    <span class="terminal-dot green"></span>
+                    <span class="terminal-title">Reconnecting after T-Pot Installation</span>
+                </div>
+                <div class="terminal-body">
+<span class="t-prompt">$</span> <span class="t-command">ssh root@YOUR_SERVER_IP -p 22</span>
+<span class="t-error">[-] Permission denied (publickey,password).</span>
+<span class="t-output"># Port 22 is now the Cowrie SSH honeypot — expected behaviour.</span>
+
+<span class="t-prompt">$</span> <span class="t-command">ssh tpotuser@YOUR_SERVER_IP -p 64265</span>
+<span class="t-success">[+] Welcome to Ubuntu 22.04 LTS</span>
+<span class="t-success">[+] Successfully logged in on the new management port.</span>
+                </div>
+            </div>
+
+            <figure>
+                <a href="/media/SSHingtoTheNewPort.png" class="image-popup">
+                    <img src="/media/SSHingtoTheNewPort.png" alt="SSH failing on port 22 (honeypot) and succeeding on port 64265">
+                </a>
+                <figcaption>Figure 10: Port 22 rejects the real credentials — the honeypot is working. Port 64265 gets us in safely.</figcaption>
+            </figure>
+
+            <!-- ============================================================ -->
+            <!-- ACCESSING WEB UI                                              -->
+            <!-- ============================================================ -->
+            <h2 id="accessing-webui">Accessing the Web UI</h2>
+            <p>
+                T-Pot's web interface runs on port <code>64297</code>. Just open your browser and navigate to <code>https://YOUR_SERVER_IP:64297</code>. The username and password are whatever you set during the installation wizard.
+            </p>
+
+            <div class="prompt-box prompt-info">
+                <div class="prompt-title"><i class="fas fa-info-circle"></i> Can't Reach the Web UI?</div>
+                <p>If the page doesn't load, the most likely cause is your cloud provider's firewall (security group / firewall rules). Head to Vultr's Firewall section and make sure ports <code>64297</code> and <code>64265</code> are open for your source IP, or open them to the world if you want full access.</p>
+            </div>
+
+            <figure>
+                <a href="/media/WebUiOfTPOT.png" class="image-popup">
+                    <img src="/media/WebUiOfTPOT.png" alt="T-Pot Web UI login page">
+                </a>
+                <figcaption>Figure 11: The T-Pot web interface login screen on port 64297.</figcaption>
+            </figure>
+
+            <figure>
+                <a href="/media/HomePageOfTPot.png" class="image-popup">
+                    <img src="/media/HomePageOfTPot.png" alt="T-Pot CE landing page / home dashboard">
+                </a>
+                <figcaption>Figure 12: T-Pot's home page — links to the Attack Map, Kibana, SpiderFoot, and more.</figcaption>
+            </figure>
+
+            <!-- ============================================================ -->
+            <!-- FIRST HITS                                                     -->
+            <!-- ============================================================ -->
+            <h2 id="first-hits">First Hits — Attackers Were There Immediately</h2>
+            <p>
+                I genuinely expected to wait a few hours before seeing anything. I was wrong. Within minutes of the installation completing, the live attack map was already lighting up with incoming connections from across the globe. This is what automated internet scanners look like in practice — they are relentless and fast.
+            </p>
+
+            <figure>
+                <a href="/media/MAP.png" class="image-popup">
+                    <img src="/media/MAP.png" alt="T-Pot live attack map showing real-time incoming attacks from around the world">
+                </a>
+                <figcaption>Figure 13: The live attack map — within minutes of installation, hits were coming in from everywhere.</figcaption>
+            </figure>
+
+            <p>Within the first 10 minutes, the attack count had already climbed past <strong>500,000 events</strong>. I had to double-check the numbers — but this is the reality of putting any public IP online.</p>
+
+            <figure>
+                <a href="/media/KibanaDashboardAfter10Minutes.png" class="image-popup">
+                    <img src="/media/KibanaDashboardAfter10Minutes.png" alt="Kibana showing 500k+ attacks after the first few minutes">
+                </a>
+                <figcaption>Figure 14: Over 500,000 attack events logged within the first 10 minutes.</figcaption>
+            </figure>
+
+            <figure>
+                <a href="/media/KibanaDashboard.png" class="image-popup">
+                    <img src="/media/KibanaDashboard.png" alt="Kibana dashboard showing initial attack data">
+                </a>
+                <figcaption>Figure 15: Kibana dashboard — initial attack data starting to populate.</figcaption>
+            </figure>
+
+            <p>In the very first few minutes, the top attacking countries were already clearly visible:</p>
+
+            <figure>
+                <a href="/media/TopCountries.png" class="image-popup">
+                    <img src="/media/TopCountries.png" alt="Top attacking countries in the first few minutes">
+                </a>
+                <figcaption>Figure 16: Top attacking countries in the first few minutes of being live.</figcaption>
+            </figure>
+
+            <blockquote>
+                <p>"Every IP address that's publicly routable on the internet will be port-scanned within minutes. There are no exceptions. The question is not if — it's when and how often."</p>
+            </blockquote>
+
+            <!-- ============================================================ -->
+            <!-- RESULTS AT 15 DAYS                                            -->
+            <!-- ============================================================ -->
+            <h2 id="results-15-days">Results at 15 Days — 2 Million Attacks</h2>
+            <p>
+                By day 15 the attack count had crossed the <strong>2 million mark</strong>. Attackers don't sleep, don't take weekends off, and they scan 24/7.
+            </p>
+
+            <figure>
+                <a href="/media/Pasted image 20260523100821.png" class="image-popup">
+                    <img src="/media/Pasted image 20260523100821.png" alt="Kibana dashboard showing 2 million attacks after 15 days">
+                </a>
+                <figcaption>Figure 16: 2 million+ attacks logged at the 15-day mark.</figcaption>
+            </figure>
+
+            <!-- ============================================================ -->
+            <!-- RESULTS AT 20 DAYS                                            -->
+            <!-- ============================================================ -->
+            <h2 id="results-20-days">Results at 20 Days — 3 Million Attacks</h2>
+            <p>
+                By day 20 the counter had passed <strong>3 million total attack events</strong>. To put that in perspective — that's roughly 150,000 attacks per day, or just over 100 every minute, around the clock.
+            </p>
+
+            <figure>
+                <a href="/media/KibanaDashboardAfter20Days.png" class="image-popup">
+                    <img src="/media/KibanaDashboardAfter20Days.png" alt="Kibana dashboard showing 3 million total attacks after 20 days">
+                </a>
+                <figcaption>Figure 18: The 3-million milestone — 20 days of continuous bombardment logged.</figcaption>
+            </figure>
+
+            <!-- ============================================================ -->
+            <!-- KEY FINDINGS                                                   -->
+            <!-- ============================================================ -->
+            <h2 id="key-findings">Key Findings</h2>
+            <p>
+                Beyond the headline numbers, the most interesting data came from drilling into <em>what</em> the attackers were actually targeting. Here's a breakdown of the key observations.
+            </p>
+
+            <h3>Most Targeted Ports & Countries</h3>
+            <p>The attacks weren't random — specific ports were hammered far more than others, reflecting the automated tools and botnets in use.</p>
+
+            <figure>
+                <a href="/media/AttacksByCountryAndPorts.png" class="image-popup">
+                    <img src="/media/AttacksByCountryAndPorts.png" alt="Graph showing attacks broken down by country and targeted port">
+                </a>
+                <figcaption>Figure 19: Attacks broken down by origin country and targeted port — SSH and Telnet dominated.</figcaption>
+            </figure>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Protocol / Port</th>
+                        <th>Description</th>
+                        <th>Volume</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>22/tcp</code> SSH</td>
+                        <td>Credential stuffing & brute force against Cowrie SSH honeypot</td>
+                        <td><span class="status-badge danger">Highest</span></td>
+                    </tr>
+                    <tr>
+                        <td><code>23/tcp</code> Telnet</td>
+                        <td>IoT botnet recruitment attempts (Mirai variants)</td>
+                        <td><span class="status-badge danger">Very High</span></td>
+                    </tr>
+                    <tr>
+                        <td><code>3389/tcp</code> RDP</td>
+                        <td>Remote Desktop credential attacks targeting Windows</td>
+                        <td><span class="status-badge warning">High</span></td>
+                    </tr>
+                    <tr>
+                        <td><code>5060/tcp</code> SIP</td>
+                        <td>VoIP exploitation attempts via Mailoney honeypot</td>
+                        <td><span class="status-badge warning">Medium</span></td>
+                    </tr>
+                    <tr>
+                        <td><code>5900/tcp</code> VNC</td>
+                        <td>VNC brute force attempts against desktop access</td>
+                        <td><span class="status-badge success">Moderate</span></td>
+                    </tr>
+                    <tr>
+                        <td><code>5555/tcp</code> ADB</td>
+                        <td>Android Debug Bridge — Android device compromise attempts</td>
+                        <td><span class="status-badge success">Moderate</span></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Top Attacking Countries</h3>
+            <p>The United States came in as the number one source — this likely reflects the large number of compromised American infrastructure nodes and cloud-hosted attack platforms rather than direct attribution.</p>
+
+            <figure>
+                <a href="/media/AttacksByCountry.png" class="image-popup">
+                    <img src="/media/AttacksByCountry.png" alt="Bar chart showing attacks by country — USA is number one">
+                </a>
+                <figcaption>Figure 20: Overall attacks by country. The US leads, followed by China, Russia, and others.</figcaption>
+            </figure>
+
+            <div class="prompt-box prompt-info">
+                <div class="prompt-title"><i class="fas fa-info-circle"></i> Attribution vs. Geolocation</div>
+                <p>A high attack count from a country doesn't mean its government or citizens are behind it. Most attacks originate from <strong>compromised servers, cloud VMs, and botnet nodes</strong> that happen to be hosted in that country. The US leads largely because it hosts so much cloud infrastructure.</p>
+            </div>
+
+            <h3>Most Targeted Usernames</h3>
+            <p>The credential brute-force attempts showed clear patterns in what attackers assume default usernames to be. Unsurprisingly, they target the classics first.</p>
+
+            <figure>
+                <a href="/media/MostUsedUsernames.png" class="image-popup">
+                    <img src="/media/MostUsedUsernames.png" alt="Chart showing the most frequently used usernames in brute force attacks">
+                </a>
+                <figcaption>Figure 21: Most targeted usernames — <code>root</code>, <code>admin</code>, and <code>ubuntu</code> are always at the top.</figcaption>
+            </figure>
+
+            <h3>Most Tried Passwords</h3>
+            <p>The password lists used are fascinating. They're a mix of well-known defaults, common weak passwords, and strings that are clearly from published credential dumps.</p>
+
+            <figure>
+                <a href="/media/MostUsedPasswords.png" class="image-popup">
+                    <img src="/media/MostUsedPasswords.png" alt="Chart showing most frequently tried passwords in brute force attacks">
+                </a>
+                <figcaption>Figure 22: Most tried passwords — default credentials and common weak passwords dominate every list.</figcaption>
+            </figure>
+
+            <!-- Checklist of findings -->
+            <h3>Key Takeaways</h3>
+            <ul class="checklist">
+                <li>Every public IP is scanned within minutes — there is zero grace period after deployment</li>
+                <li>SSH (port 22) and Telnet (port 23) are by far the most targeted services</li>
+                <li>Usernames like <code>root</code>, <code>admin</code>, <code>ubuntu</code>, and <code>pi</code> are tried millions of times</li>
+                <li>Password lists are sophisticated — they include known defaults AND leaked credential dumps</li>
+                <li>RDP, VNC, SIP, and ADB are all being actively probed — not just SSH</li>
+                <li>Attack volume grows steadily as your IP gets added to scanner databases</li>
+                <li>The US hosts more attacking infrastructure than any other single country</li>
+                <li class="unchecked">Full log analysis of raw PCAP and JSON data — coming in a follow-up post</li>
+                <li class="unchecked">Protocol-specific deep dive (VNC, SIP, ADB payloads) — coming soon</li>
+            </ul>
+
+            <!-- ============================================================ -->
+            <!-- WHAT'S NEXT                                                    -->
+            <!-- ============================================================ -->
+            <h2 id="whats-next">What's Next</h2>
+            <p>
+                After 20 days I shut down the server and transferred all the raw logs out of <code>~/tpotce/data</code>. The data folder contains structured JSON logs for every protocol — SSH, Telnet, RDP, VNC, SIP, ADB, HTTP, and more. There's a lot to dig through.
+            </p>
+
+            <div class="prompt-box prompt-tip">
+                <div class="prompt-title"><i class="fas fa-lightbulb"></i> Exporting Your Logs</div>
+                <p>All T-Pot logs are stored in <code>~/tpotce/data</code> in JSON format, organized by honeypot type and date. You can <code>rsync</code> or <code>scp</code> the entire folder out before destroying your instance. These logs are gold for offline analysis.</p>
+            </div>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> Terminal (Local Machine)</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code><span class="prompt">$</span> rsync -avz -e "ssh -p 64265" tpotuser@YOUR_SERVER_IP:~/tpotce/data/ ./tpot-logs/</code>
+                </div>
+            </div>
+
+            <p>
+                In the next post I'll go through the raw logs in detail — looking at specific payloads, commands attackers attempted to run inside the Cowrie SSH honeypot, and what the ADB and SIP traffic actually contained. There are some genuinely interesting findings buried in there.
+            </p>
+
+            <blockquote>
+                <p>If you want to see the internet's background radiation for yourself — this is the cheapest and most educational way to do it. Ten dollars, twenty days, three million data points. Highly recommended.</p>
+            </blockquote>
+
+
+
+            <!-- Share -->
+            <div class="share-section">
+                <h4>Share this project</h4>
+                <div class="share-buttons">
+                    <button class="share-btn" data-action="twitter"><i class="fab fa-x-twitter"></i> Twitter</button>
+                    <button class="share-btn" data-action="linkedin"><i class="fab fa-linkedin"></i> LinkedIn</button>
+                    <button class="share-btn" data-action="telegram"><i class="fab fa-telegram"></i> Telegram</button>
+                    <button class="share-btn" data-action="copy"><i class="fas fa-link"></i> Copy Link</button>
+                </div>
+            </div>
+
+
+
+
+
+        </article>
+    </main>
+
+    <!-- Footer -->
+    <footer class="article-footer" style="position:relative;z-index:1;">
+        <p>&copy; 2025 <a href="/">0x1Ak4sh</a> - All rights reserved.</p>
+    </footer>
+
+    <!-- Back to Top -->
+    <button class="back-to-top" title="Back to top">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.1.0/jquery.magnific-popup.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <script src="/js/snake.js"></script>
+    <script src="/js/article.js"></script>
+</body>
+
+</html>

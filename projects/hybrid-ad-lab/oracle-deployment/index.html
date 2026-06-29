@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5">
+    <title>Oracle Cloud Deployment | Hybrid AD Lab | 0x1Ak4sh</title>
+    <meta name="description" content="Deploying Windows Server as a child domain controller and Ubuntu Linux on Oracle Cloud Free Tier — WireGuard connected, AD-joined, with intentional misconfigurations for the attack path.">
+    <meta name="robots" content="noindex,follow">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/8d67cb621b.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="/css/article.css?v=1.5">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.1.0/magnific-popup.min.css">
+</head>
+
+<body class="article-page">
+    <div class="reading-progress"></div>
+    <div id="canvas_snake" class="canvas canvas-snake" data-colorone="#0b1115" data-colortwo="#a4ff91"
+        style="position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;opacity:0.3;"></div>
+
+    <nav class="article-nav">
+        <div class="nav-left">
+            <a href="/projects/hybrid-ad-lab/" class="nav-back">
+                <i class="fas fa-arrow-left"></i>
+                <span>Back to Lab Overview</span>
+            </a>
+            <a href="/" class="nav-logo">0x1Ak4sh</a>
+        </div>
+        <div class="nav-right">
+            <button class="nav-share-btn" onclick="document.querySelector('.share-section').scrollIntoView({behavior:'smooth'})" title="Share">
+                <i class="fas fa-share-alt"></i>
+            </button>
+        </div>
+    </nav>
+
+    <section class="article-hero">
+        <div class="hero-content">
+            <div class="hero-badges">
+                <span class="badge badge-category"><i class="fas fa-cloud"></i> Oracle Cloud</span>
+            </div>
+            <h1 class="hero-title">Oracle Cloud Deployment</h1>
+            <p style="color: rgba(255,255,255,0.7); font-size: 1.05rem; margin: 0.5rem 0 1rem; max-width: 650px;">
+                Two Oracle Cloud Free Tier machines — one Windows Server promoted as the child domain controller for <code>vought.hq.apex-corp.xyz</code>, and one Ubuntu Linux machine joined to it. Both connected via WireGuard back to DC01 on Vultr.
+            </p>
+            <div class="hero-tags">
+                <a href="#" class="hero-tag">#oracle-cloud</a>
+                <a href="#" class="hero-tag">#child-domain</a>
+                <a href="#" class="hero-tag">#linux-ad-join</a>
+                <a href="#" class="hero-tag">#kerberoasting</a>
+            </div>
+        </div>
+    </section>
+
+    <main class="article-layout" style="position:relative;z-index:1;">
+        <aside class="toc-sidebar">
+            <div class="toc-title">Contents</div>
+            <ul class="toc-list">
+                <li><a href="#overview">Overview</a></li>
+                <li><a href="#windows-instance">Deploy Windows Server</a></li>
+                <li><a href="#linux-instance">Deploy Linux (BATCAVE)</a></li>
+                <li><a href="#firewall">Open Firewall Ports</a></li>
+                <li><a href="#rename-setup">Rename &amp; DNS Setup</a></li>
+                <li><a href="#install-roles">Install AD Roles</a></li>
+                <li><a href="#child-dc">Promote Child DC</a></li>
+                <li><a href="#verify-domain">Verify Domain Trust</a></li>
+                <li><a href="#misconfigs">Intentional Misconfigurations</a></li>
+                <li><a href="#linux-join">Join Linux to Domain</a></li>
+                <li><a href="#linux-wireguard">Linux WireGuard Setup</a></li>
+                <li><a href="#verify-all">Verify Cross-Domain Access</a></li>
+            </ul>
+        </aside>
+
+        <article class="article-content">
+
+            <figure class="intro-image">
+                <img src="/projects/hybrid-ad-lab/img/OracleCloudDomainSetup.png" alt="Oracle Cloud deployment for child domain controller">
+                <figcaption>Deploying a child DC and Linux workstation on Oracle Cloud</figcaption>
+            </figure>
+
+            <h2 id="overview">Overview</h2>
+            <p>Oracle Cloud Free Tier is generous enough to run two decent machines without paying anything. We used it to add the second tier of the lab — a child domain controller (<code>VOUGHT-HQ</code>) and an AD-joined Linux box (<code>BATCAVE</code>). Both connect back to DC01 on Vultr through WireGuard.</p>
+
+            <div class="mermaid-container">
+                <div class="mermaid">
+graph TB
+    subgraph ORACLE ["☁️ Oracle Cloud — APEXnet VCN"]
+        DC02["VOUGHT-HQ (DC02)<br/>Child DC · DNS<br/>vought.hq.apex-corp.xyz<br/>10.10.0.2"]
+        LX01["BATCAVE (LINUX01)<br/>AD-joined Ubuntu<br/>domain: vought.hq.apex-corp.xyz<br/>10.10.0.3"]
+    end
+    subgraph VULTR ["☁️ Vultr — Main Hub"]
+        HUB["STARK-TOWER (DC01)<br/>Root DC<br/>hq.apex-corp.xyz<br/>10.10.0.1"]
+    end
+    LX01 ---|"Oracle VPC internal"| DC02
+    DC02 -->|"WireGuard Mesh"| HUB
+    style HUB fill:#1a3a1a,stroke:#a4ff91,color:#fff
+    style DC02 fill:#3a2a1a,stroke:#ffaa44,color:#fff
+    style LX01 fill:#3a2a1a,stroke:#ffaa44,color:#fff
+                </div>
+            </div>
+
+            <h2 id="windows-instance">Step 1 — Deploy Windows Server (VOUGHT-HQ)</h2>
+            <p>Logged into Oracle Cloud, went to Compute → Instances → Create Instance. Changed the default image to Windows Server 2022 Standard.</p>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/Pasted image 20260515015748.png" alt="Oracle Cloud compute navigation menu showing the path to Instances under Compute">
+                <figcaption>Oracle Cloud console — navigating to Compute → Instances</figcaption>
+            </figure>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/Pasted image 20260515015758.png" alt="Oracle instance creation showing the image changed from Oracle Linux to Windows Server 2022 Standard">
+                <figcaption>Changing the image to Windows Server 2022 Standard</figcaption>
+            </figure>
+
+            <p>Selected shape: <code>VM.Standard.E4.Flex</code> with 2 vCPU and 32 GB RAM.</p>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/Pasted image 20260515015807.png" alt="Oracle shape selection showing VM.Standard.E4.Flex with 2 OCPUs and 32 GB RAM">
+                <figcaption>Shape: VM.Standard.E4.Flex — 2 vCPU, 32 GB RAM</figcaption>
+            </figure>
+
+            <p>For networking, created a new VCN called <code>APEXnet</code> and set the primary VNIC to use it.</p>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/Pasted image 20260515015856.png" alt="Oracle networking section showing new VCN APEXnet being created for the instance">
+                <figcaption>New VCN called APEXnet created for the lab machines</figcaption>
+            </figure>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/Pasted image 20260515015917.png" alt="Oracle instance creation showing automatically assign private IPv4 address selected">
+                <figcaption>Automatic private IP assignment selected</figcaption>
+            </figure>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/Pasted image 20260515015953.png" alt="Oracle Cloud instance dashboard showing VOUGHT-HQ Windows instance provisioning at around 10 percent">
+                <figcaption>Instance provisioning — Oracle takes a few minutes to set up Windows</figcaption>
+            </figure>
+
+            <h2 id="linux-instance">Step 2 — Deploy Ubuntu Linux (BATCAVE)</h2>
+            <p>Created a second instance in the same VCN. This one runs Ubuntu 22.04 and is the AD-joined Linux box named BATCAVE.</p>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/Pasted image 20260515020404.png" alt="Oracle instance creation with Ubuntu 22.04 LTS selected as the image">
+                <figcaption>Second instance — Ubuntu 22.04 as the OS</figcaption>
+            </figure>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/Pasted image 20260515020410.png" alt="Oracle shape selection showing VM.Standard.E4.Flex AMD with 2 vCPU and 16 GB RAM for the Linux instance">
+                <figcaption>Linux instance shape: 2 vCPU, 16 GB RAM</figcaption>
+            </figure>
+
+            <p>Generated a new SSH key pair and downloaded the private key — you need this to SSH into the machine.</p>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/Pasted image 20260515020441.png" alt="Oracle SSH key generation section showing Generate a key pair selected and the download private key button">
+                <figcaption>Generate and download the SSH private key — you only get one chance to download it</figcaption>
+            </figure>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/Pasted image 20260515020503.png" alt="Oracle cost estimator showing approximately 53 euros per month for the Linux instance">
+                <figcaption>Estimated cost shown — around 53 euros/month (this would be on a paid tier)</figcaption>
+            </figure>
+
+            <p>After both instances were ready, the Instances page showed both machines with their public and private IPs.</p>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/Pasted image 20260515020618.png" alt="Oracle Cloud instances list showing VOUGHT-HQ Windows and BATCAVE Linux with their IP addresses">
+                <figcaption>Both instances running — Windows VOUGHT-HQ and Linux BATCAVE</figcaption>
+            </figure>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/Pasted image 20260515020705.png" alt="Oracle VCN subnet showing both machines' private IPs on the APEXnet network">
+                <figcaption>VCN subnet view — both machines on the same private network</figcaption>
+            </figure>
+
+            <h2 id="firewall">Step 3 — Open Firewall Ports in Oracle Security Lists</h2>
+            <p>Oracle blocks all inbound traffic by default. Before RDP could work, the security list needed inbound rules added.</p>
+
+            <p>Tried RDP right after provisioning — it did not connect:</p>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/Pasted image 20260515020849.png" alt="RDP connection attempt failing with connection timed out error before security list rules were added">
+                <figcaption>RDP times out — Oracle's default security list blocks everything</figcaption>
+            </figure>
+
+            <p>Went to Networking → Virtual Cloud Networks → APEXnet → Security Lists → Default Security List. Added ingress rules:</p>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/Pasted image 20260515021204.png" alt="Oracle Security List ingress rules section showing the Add Ingress Rules button">
+                <figcaption>Adding ingress rules to the Oracle security list</figcaption>
+            </figure>
+
+            <p>Added RDP (TCP 3389) with source CIDR <code>0.0.0.0/0</code>:</p>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/Pasted image 20260515021634.png" alt="Oracle Add Ingress Rule dialog showing TCP port 3389 with source CIDR 0.0.0.0/0 for RDP">
+                <figcaption>Adding the RDP inbound rule — TCP 3389 from anywhere</figcaption>
+            </figure>
+
+            <p>Final ingress rules list after adding all required rules:</p>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/Pasted image 20260515021941.png" alt="Oracle security list showing all ingress rules including TCP 3389, UDP 51820, and TCP 80 and 443">
+                <figcaption>All inbound rules added — RDP, WireGuard (UDP 51820), HTTP, HTTPS</figcaption>
+            </figure>
+
+            <div class="prompt-box prompt-info">
+                <div class="prompt-title"><i class="fas fa-info-circle"></i> Applying Security Lists</div>
+                <p>To apply a security list to an instance: go to the instance → find which subnet it uses → click the subnet → go to the Security tab → select the security list. The rule applies to all instances in that subnet.</p>
+            </div>
+
+            <h2 id="rename-setup">Step 4 — Rename and Initial Setup on Windows</h2>
+            <p>After RDP was working, connected to the Windows machine and renamed it to <code>VOUGHT</code>:</p>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> PowerShell</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code><span class="prompt">PS></span> Rename-Computer -NewName "VOUGHT" -Restart</code>
+                </div>
+            </div>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/Pasted image 20260515023134.png" alt="Speed test on the Oracle Windows machine showing high download and upload speeds">
+                <figcaption>Oracle speed test — decent internet on the machine</figcaption>
+            </figure>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/Pasted image 20260515023237.png" alt="PowerShell showing Rename-Computer command running to rename the server to VOUGHT">
+                <figcaption>Renaming the machine to VOUGHT before promoting it</figcaption>
+            </figure>
+
+            <p>After reboot, set the DNS to point at DC01's WireGuard IP so the machine can resolve the AD domain:</p>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/Pasted image 20260515032252.png" alt="Windows IPv4 Properties on VOUGHT showing preferred DNS set to 10.10.0.1 (DC01 WireGuard IP) and alternate DNS to 1.1.1.1">
+                <figcaption>DNS set to 10.10.0.1 — DC01's WireGuard IP is now the resolver</figcaption>
+            </figure>
+
+            <h2 id="install-roles">Step 5 — Install AD Roles on Windows</h2>
+            <p>Opened Server Manager → Add Roles and Features. Selected Active Directory Domain Services, File and Storage Services, and Web Server (IIS).</p>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/Pasted image 20260515032443.png" alt="Server Manager Add Roles and Features wizard showing AD Domain Services, File Services, and IIS selected">
+                <figcaption>Selecting roles — AD DS, File Services, and IIS</figcaption>
+            </figure>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/Pasted image 20260515032556.png" alt="Server Manager role installation progress showing features being installed with a progress tree">
+                <figcaption>Role installation in progress</figcaption>
+            </figure>
+
+            <p>After installation, a flag appeared in Server Manager — "Promote this server to a domain controller":</p>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/Pasted image 20260515032746.png" alt="Server Manager showing the yellow flag notification to promote this server to a domain controller">
+                <figcaption>Yellow flag in Server Manager — click it to start the DC promotion wizard</figcaption>
+            </figure>
+
+            <h2 id="child-dc">Step 6 — Promote as Child Domain Controller</h2>
+            <p>Clicked the flag to open the AD DS Configuration Wizard. Selected "Add a new domain to an existing forest" and specified the child domain details:</p>
+            <ul>
+                <li>Parent domain: <code>hq.apex-corp.xyz</code></li>
+                <li>New domain name: <code>vought</code> (full: <code>vought.hq.apex-corp.xyz</code>)</li>
+                <li>Credentials: Tony Stark (<code>t.stark</code>) from the parent domain</li>
+            </ul>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/Pasted image 20260515033610.png" alt="AD DS Configuration Wizard showing Add new domain selected, parent domain hq.apex-corp.xyz, new domain name vought">
+                <figcaption>Child domain configuration — adding vought under hq.apex-corp.xyz</figcaption>
+            </figure>
+
+            <div class="prompt-box prompt-warning">
+                <div class="prompt-title"><i class="fas fa-exclamation-triangle"></i> Weak Password Error</div>
+                <p>The promotion wizard refused to continue because the default Oracle administrator password was too weak. Fix it first:</p>
+            </div>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> CMD — set a strong admin password</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code><span class="prompt">C:\></span> net user administrator YourStrongPassword123!</code>
+                </div>
+            </div>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/Pasted image 20260515092956.png" alt="CMD showing net user administrator command run successfully to set a stronger password">
+                <figcaption>Setting a strong administrator password so the promotion wizard accepts it</figcaption>
+            </figure>
+
+            <p>In the Domain Controller Options tab: functional level Windows Server 2016, Global Catalog enabled, DNS enabled, DSRM password set.</p>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/Pasted image 20260515093413.png" alt="AD DS wizard Domain Controller Options tab showing Windows Server 2016 functional level, Global Catalog checked, and DSRM password entered">
+                <figcaption>DC options — Global Catalog and DNS enabled, DSRM password set</figcaption>
+            </figure>
+
+            <p>NetBIOS name set to <code>VOUGHT</code>:</p>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/Pasted image 20260515093639.png" alt="AD DS wizard NetBIOS name field showing VOUGHT entered">
+                <figcaption>NetBIOS name set to VOUGHT</figcaption>
+            </figure>
+
+            <p>Prerequisites check passed:</p>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/Pasted image 20260515093900.png" alt="AD DS wizard prerequisites check showing all green checkmarks and ready to install">
+                <figcaption>Prerequisites check passed — ready to promote</figcaption>
+            </figure>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/Pasted image 20260515094138.png" alt="Windows blue restart warning screen indicating the DC promotion is complete and server is restarting">
+                <figcaption>Windows restart warning — promotion succeeded, server is rebooting</figcaption>
+            </figure>
+
+            <h2 id="verify-domain">Step 7 — Verify Domain Trust</h2>
+            <p>After reboot, ran <code>Get-ADTrust</code> to confirm the forest trust between parent and child domains:</p>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> PowerShell</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code><span class="prompt">PS></span> Get-ADTrust -Filter *</code>
+                </div>
+            </div>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/Pasted image 20260515094247.png" alt="PowerShell Get-ADTrust output showing bidirectional trust between hq.apex-corp.xyz and vought.hq.apex-corp.xyz">
+                <figcaption>Forest trust confirmed — bidirectional trust between parent and child domain</figcaption>
+            </figure>
+
+            <p>Opened File Explorer on VOUGHT and navigated to Network — could see the shares from the parent domain DC (STARK-TOWER). That confirms the cross-domain trust is working.</p>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/Pasted image 20260515095031.png" alt="File Explorer on VOUGHT machine showing STARK-TOWER shares visible in the Network section">
+                <figcaption>STARK-TOWER shares visible from VOUGHT — domain trust is fully working</figcaption>
+            </figure>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/Pasted image 20260515095641.png" alt="net user command output on VOUGHT showing characters like Butcher, Kimiko, Queen, Spider-Man from parent domain">
+                <figcaption>Parent domain users visible on the child domain — forest trust in effect</figcaption>
+            </figure>
+
+            <h2 id="misconfigs">Step 8 — Intentional Misconfigurations</h2>
+            <p>Several vulnerabilities were planted on the child domain to create a realistic attack surface.</p>
+
+            <h3>SPN on a User (Kerberoasting Target)</h3>
+            <p>Opened Active Directory Users and Computers on the child domain, navigated to VOUGHT Studios OU, opened a user's Attribute Editor, and added a Service Principal Name — this makes the account Kerberoastable.</p>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/Pasted image 20260516100104.png" alt="Active Directory Users and Computers on vought.hq.apex-corp.xyz showing VOUGHT Studios OU with users">
+                <figcaption>VOUGHT Studios OU on the child domain — selecting a user to add an SPN to</figcaption>
+            </figure>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/Pasted image 20260516100433.png" alt="User Attribute Editor in ADUC showing servicePrincipalName value being added">
+                <figcaption>SPN added via Attribute Editor — this account is now Kerberoastable</figcaption>
+            </figure>
+
+            <h3>AS-REPRoastable Account</h3>
+            <p>On another user, opened Properties → Account tab → checked "Do not require Kerberos preauthentication". Also added the password in the Description field — bad practice that admins actually do.</p>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/Pasted image 20260516100745.png" alt="User Account tab in ADUC showing Do not require Kerberos preauthentication checkbox checked">
+                <figcaption>"Do not require Kerberos preauthentication" checked — AS-REPRoastable target</figcaption>
+            </figure>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/Pasted image 20260516100838.png" alt="User General tab showing the password written in plaintext in the Description field">
+                <figcaption>Password written in the Description field — a real misconfiguration that you find in actual environments</figcaption>
+            </figure>
+
+            <h3>Group Permission Misconfiguration</h3>
+            <p>Added Sister Sage as a member of the D7 group with explicit write permissions — this creates a GenericWrite-type misconfiguration that can be abused for privilege escalation.</p>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/Pasted image 20260516101111.png" alt="D7 group Security tab showing Sister Sage added with Allow permissions including Write Members">
+                <figcaption>Sister Sage given write permissions on D7 group — GenericWrite misconfiguration</figcaption>
+            </figure>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/Pasted image 20260516101154.png" alt="D7 group members tab showing all D7 team members listed">
+                <figcaption>D7 group members — The Boys characters used for realistic group membership</figcaption>
+            </figure>
+
+            <h3>Homelander as Domain Admin on Child Domain</h3>
+            <p>Added Homelander (john.gillman) to the Domain Admins group on the child domain. This is the main misconfiguration in the attack path:</p>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/Pasted image 20260516101253.png" alt="Domain Admins group on vought.hq.apex-corp.xyz showing homelander added as a member">
+                <figcaption>Homelander added to Domain Admins on the child domain — the key privilege escalation path</figcaption>
+            </figure>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> PowerShell — verify</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code><span class="prompt">PS></span> Get-ADGroupMember -Identity "Domain Admins" -Recursive</code>
+                </div>
+            </div>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/Pasted image 20260516101332.png" alt="Get-ADGroupMember output on VOUGHT domain showing Administrator and homelander in Domain Admins">
+                <figcaption>Confirmed — Homelander is in Domain Admins on the VOUGHT child domain</figcaption>
+            </figure>
+
+            <h2 id="linux-join">Step 9 — Join Linux to the Child Domain</h2>
+            <p>SSH'd into BATCAVE using the private key from Oracle:</p>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> Bash</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code><span class="prompt">$</span> ssh -i oracle-key.pem ubuntu@&lt;BATCAVE-PUBLIC-IP&gt;</code>
+                </div>
+            </div>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/Pasted image 20260516102947.png" alt="Terminal showing successful SSH login to BATCAVE Ubuntu machine using the Oracle private key">
+                <figcaption>SSH into BATCAVE successful using the downloaded private key</figcaption>
+            </figure>
+
+            <p>Added a security rule to allow all traffic within the private subnet so Linux and Windows can talk to each other:</p>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/Pasted image 20260516104510.png" alt="Oracle security list showing an ingress rule added to allow all traffic from the 10.x.x.x private subnet">
+                <figcaption>Allowing intra-subnet traffic — Linux and Windows can now reach each other</figcaption>
+            </figure>
+
+            <p>Installed the required packages for domain join:</p>
+
+            <div class="code-block">
+                <div class="code-block-header">
+                    <span class="code-lang">Bash</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <pre><code class="language-bash">sudo apt install -y realmd sssd sssd-tools adcli krb5-user samba-common-bin</code></pre>
+            </div>
+
+            <p>During <code>krb5-user</code> installation, Linux shows a curses dialog asking for the Kerberos realm. Entered <code>VOUGHT.HQ.APEX-CORP.XYZ</code> in uppercase — Kerberos realm names are case sensitive:</p>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/InLinuxGuiLIkeThingAskinMeForTheDefaultKerberoasRealm.png" alt="Linux terminal showing curses-style GUI asking for the default Kerberos realm with VOUGHT.HQ.APEX-CORP.XYZ entered">
+                <figcaption>Kerberos realm entry — must be uppercase: VOUGHT.HQ.APEX-CORP.XYZ</figcaption>
+            </figure>
+
+            <p>Discovered the realm:</p>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> Bash</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code><span class="prompt">$</span> realm discover vought.hq.apex-corp.xyz</code>
+                </div>
+            </div>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/RunningTHeRealmDiscoverCommmand.png" alt="realm discover output showing vought.hq.apex-corp.xyz realm details including configured yes and realm-name">
+                <figcaption>realm discover shows the domain is reachable and returns its configuration</figcaption>
+            </figure>
+
+            <p>Set the hostname and added a DNS entry for the VOUGHT Windows machine:</p>
+
+            <div class="code-block">
+                <div class="code-block-header">
+                    <span class="code-lang">Bash</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <pre><code class="language-bash">sudo hostnamectl set-hostname cyborg.vought.hq.apex-corp.xyz
+echo "&lt;VOUGHT-WINDOWS-PRIVATE-IP&gt; vought.hq.apex-corp.xyz" | sudo tee -a /etc/hosts</code></pre>
+            </div>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/ChangingTheHostnameToCybordandTryingToJoinDomain.png" alt="Terminal showing hostnamectl set-hostname command and attempting to join vought.hq.apex-corp.xyz">
+                <figcaption>Setting hostname to cyborg and preparing to join the domain</figcaption>
+            </figure>
+
+            <h3>First Attempt — Failed (Reverse DNS Issue)</h3>
+            <p>First try to join the domain failed with "insufficient permissions". This is a misleading error — the real problem is that Linux was trying to do a reverse DNS lookup on the DC IP to validate the server identity, and that lookup was failing.</p>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/TryingToJoinTheDomainWithAdministratorUserButfailedBecauseofPermissions.png" alt="realm join output showing all LDAP checks passed but failing at the end with Couldn't join realm insufficient permissions error">
+                <figcaption>Join fails with "insufficient permissions" — actually a reverse DNS lookup failure</figcaption>
+            </figure>
+
+            <h3>Fix — Disable Reverse DNS in Kerberos</h3>
+            <p>The fix is adding <code>rdns = false</code> to <code>/etc/krb5.conf</code>. This tells Kerberos to not do reverse DNS validation on the server:</p>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/SetRdnsToFalseInsideKRB5conf.png" alt="krb5.conf file open in nano editor showing rdns = false added under libdefaults section">
+                <figcaption>Adding rdns = false to krb5.conf — this is the fix for the reverse DNS issue</figcaption>
+            </figure>
+
+            <div class="code-block">
+                <div class="code-block-header">
+                    <span class="code-lang">/etc/krb5.conf — add this under [libdefaults]</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <pre><code class="language-bash">[libdefaults]
+    rdns = false</code></pre>
+            </div>
+
+            <h3>Second Attempt — Success</h3>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> Bash — domain join</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code><span class="prompt">$</span> sudo realm join vought.hq.apex-corp.xyz -U homelander</code>
+                </div>
+            </div>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/Pasted image 20260516112119.png" alt="realm join output showing all steps completing successfully including adding keytab entries, setting up SSSD, and Successfully enrolled machine in realm">
+                <figcaption>Domain join succeeded — "Successfully enrolled machine in realm"</figcaption>
+            </figure>
+
+            <p>Verified with a Kerberos ticket:</p>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> Bash</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code><span class="prompt">$</span> kinit homelander@VOUGHT.HQ.APEX-CORP.XYZ
+<span class="prompt">$</span> klist</code>
+                </div>
+            </div>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/RunningKinitAndKlistCommandToVerify.png" alt="klist output showing a valid Kerberos ticket for homelander@VOUGHT.HQ.APEX-CORP.XYZ with expiry time">
+                <figcaption>Kerberos ticket obtained — homelander authenticated from Linux to the domain</figcaption>
+            </figure>
+
+            <p>Logged in as a domain user from the Linux command line:</p>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/logginInUsingAdministratorcredinLINux.png" alt="Linux terminal showing su command used to switch to administrator@vought.hq.apex-corp.xyz successfully">
+                <figcaption>Switching to domain user on Linux — authentication working</figcaption>
+            </figure>
+
+            <h2 id="linux-wireguard">Step 10 — Connect Linux to DC01 via WireGuard</h2>
+            <p>Added the Oracle Linux machine as a peer on DC01 with WireGuard IP <code>10.10.0.3</code>:</p>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/Pasted image 20260516121807.png" alt="WireGuard GUI on DC01 showing the Oracle Linux BATCAVE machine added as a new peer with AllowedIPs 10.10.0.3/32">
+                <figcaption>Adding BATCAVE as a peer on DC01 — AllowedIPs is /32 for a single peer</figcaption>
+            </figure>
+
+            <p>On BATCAVE, installed WireGuard and created the config:</p>
+
+            <div class="code-block">
+                <div class="code-block-header">
+                    <span class="code-lang">Bash — install and configure WireGuard</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <pre><code class="language-bash">sudo apt install -y wireguard
+sudo nano /etc/wireguard/wg0.conf</code></pre>
+            </div>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/Pasted image 20260516121833.png" alt="nano editor open showing /etc/wireguard/wg0.conf being edited with Interface and Peer sections">
+                <figcaption>Editing the WireGuard config on BATCAVE</figcaption>
+            </figure>
+
+            <div class="code-block">
+                <div class="code-block-header">
+                    <span class="code-lang">/etc/wireguard/wg0.conf — BATCAVE (10.10.0.3)</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <pre><code class="language-bash">[Interface]
+PrivateKey = &lt;LINUX-PRIVATE-KEY&gt;
+Address = 10.10.0.3/24
+ListenPort = 51820
+
+[Peer]
+PublicKey = /qe58vBz5fDxhCmq9OQ3Nc+CjVHWluCsD7IQfb+UsAc=
+AllowedIPs = 10.10.0.0/24
+Endpoint = &lt;DC01-VULTR-PUBLIC-IP&gt;:51820
+PersistentKeepalive = 25</code></pre>
+            </div>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> Bash — start the tunnel</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code><span class="prompt">$</span> sudo systemctl enable wg-quick@wg0
+<span class="prompt">$</span> sudo systemctl start wg-quick@wg0
+<span class="prompt">$</span> ping -c 3 10.10.0.1</code>
+                </div>
+            </div>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/Pasted image 20260516121933.png" alt="Ping from BATCAVE to DC01 at 10.10.0.1 showing successful replies through the WireGuard tunnel">
+                <figcaption>BATCAVE can reach DC01 through WireGuard — tunnel working</figcaption>
+            </figure>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/Pasted image 20260517041847.png" alt="Netplan config and DNS resolution showing 10.10.0.1 as the DNS server working for hq.apex-corp.xyz">
+                <figcaption>DNS resolving through DC01 — netplan config applied correctly</figcaption>
+            </figure>
+
+            <h2 id="verify-all">Step 11 — Verify Cross-Domain SSH and SMB Access</h2>
+            <p>Logged into BATCAVE via SSH using Tony Stark's account (who lives on the parent domain) and Homelander (child domain). Both worked:</p>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/Pasted image 20260517031749.png" alt="Two terminal windows showing successful SSH login to BATCAVE using t.stark@hq.apex-corp.xyz and homelander@vought.hq.apex-corp.xyz">
+                <figcaption>Both parent and child domain accounts can SSH into the Linux machine</figcaption>
+            </figure>
+
+            <p>Tested SMB access from Linux to the DC:</p>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> Bash</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code><span class="prompt">$</span> smbclient //stark-tower.hq.apex-corp.xyz -U t.stark</code>
+                </div>
+            </div>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/Pasted image 20260516123755.png" alt="smbclient connected to STARK-TOWER showing ls output with Operations, IT-Tools, HR-Records shares listed">
+                <figcaption>SMB shares visible from Linux — cross-domain and cross-cloud access working</figcaption>
+            </figure>
+
+            <p>Ran nslookup tests to confirm DNS resolution from Linux:</p>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/Pasted image 20260517061854.png" alt="nslookup results on BATCAVE showing stark-tower.hq.apex-corp.xyz and jarvis.hq.apex-corp.xyz both resolving correctly via 10.10.0.1">
+                <figcaption>DNS working end to end — all internal hostnames resolving through DC01</figcaption>
+            </figure>
+
+            <div class="terminal-demo">
+                <div class="terminal-header">
+                    <span class="terminal-dot red"></span>
+                    <span class="terminal-dot yellow"></span>
+                    <span class="terminal-dot green"></span>
+                    <span class="terminal-title">BATCAVE — Oracle Linux, domain joined</span>
+                </div>
+                <div class="terminal-body">
+                    <div><span class="t-prompt">$</span> <span class="t-command">realm list</span></div>
+                    <div><span class="t-output">vought.hq.apex-corp.xyz<br/>  type: kerberos<br/>  realm-name: VOUGHT.HQ.APEX-CORP.XYZ<br/>  domain-name: vought.hq.apex-corp.xyz<br/>  configured: kerberos-member<br/>  server-software: active-directory<br/>  client-software: sssd<br/>  required-package: sssd-tools<br/>  required-package: sssd<br/>  required-package: adcli<br/>  required-package: realmd<br/>  login-formats: %U@vought.hq.apex-corp.xyz</span></div>
+                    <div><span class="t-success">[+] BATCAVE is domain-joined to vought.hq.apex-corp.xyz</span></div>
+                </div>
+            </div>
+
+            <h2 id="summary">Deployment Checklist</h2>
+            <ul class="checklist">
+                <li>Oracle Cloud account with free tier credits verified</li>
+                <li>Windows Server 2022 instance deployed and RDP accessible</li>
+                <li>WireGuard installed and connected to hub (10.10.0.2)</li>
+                <li>AD DS role installed and child domain promoted</li>
+                <li>Ubuntu 24.04 instance deployed with WireGuard (10.10.0.3)</li>
+                <li><code>rdns = false</code> set in <code>/etc/krb5.conf</code> before domain join</li>
+                <li>Both machines resolvable via DC01 DNS</li>
+            </ul>
+
+            <nav class="article-nav-bottom">
+                <a href="/projects/hybrid-ad-lab/wireguard/" class="nav-item prev">
+                    <span class="nav-label"><i class="fas fa-arrow-left"></i> Previous</span>
+                    <span class="nav-title">WireGuard Mesh VPN</span>
+                </a>
+                <a href="/projects/hybrid-ad-lab/aws-jenkins/" class="nav-item next">
+                    <span class="nav-label">Next <i class="fas fa-arrow-right"></i></span>
+                    <span class="nav-title">AWS Jenkins Setup</span>
+                </a>
+            </nav>
+
+
+
+            <div class="share-section">
+                <h4>Share this page</h4>
+                <div class="share-buttons">
+                    <button class="share-btn" data-action="twitter"><i class="fab fa-x-twitter"></i> Twitter</button>
+                    <button class="share-btn" data-action="linkedin"><i class="fab fa-linkedin"></i> LinkedIn</button>
+                    <button class="share-btn" data-action="copy"><i class="fas fa-link"></i> Copy Link</button>
+                </div>
+            </div>
+
+        </article>
+    </main>
+
+    <footer class="article-footer" style="position:relative;z-index:1;">
+        <p>&copy; 2025 <a href="/">0x1Ak4sh</a> - All rights reserved.</p>
+    </footer>
+    <button class="back-to-top" title="Back to top"><i class="fas fa-arrow-up"></i></button>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.1.0/jquery.magnific-popup.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-powershell.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <script src="/js/snake.js"></script>
+    <script src="/js/article.js?v=1.5"></script>
+</body>
+
+</html>

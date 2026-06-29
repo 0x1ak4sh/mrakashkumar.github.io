@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5">
+    <title>Exchange Server 2019 | Hybrid AD Lab | 0x1Ak4sh</title>
+    <meta name="description" content="Full Exchange Server 2019 deployment on Vultr — prerequisites, all 38 build screenshots, Defender freeze fix, SSL with Win-ACME, and O365 Hybrid wizard troubleshooting.">
+    <meta name="robots" content="noindex,follow">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/8d67cb621b.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="/css/article.css?v=1.5">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.1.0/magnific-popup.min.css">
+</head>
+
+<body class="article-page">
+    <div class="reading-progress"></div>
+    <div id="canvas_snake" class="canvas canvas-snake" data-colorone="#0b1115" data-colortwo="#a4ff91"
+        style="position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;opacity:0.3;"></div>
+
+    <nav class="article-nav">
+        <div class="nav-left">
+            <a href="/projects/hybrid-ad-lab/" class="nav-back">
+                <i class="fas fa-arrow-left"></i><span>Back to Lab Overview</span>
+            </a>
+            <a href="/" class="nav-logo">0x1Ak4sh</a>
+        </div>
+        <div class="nav-right">
+            <button class="nav-share-btn" onclick="document.querySelector('.share-section').scrollIntoView({behavior:'smooth'})" title="Share">
+                <i class="fas fa-share-alt"></i>
+            </button>
+        </div>
+    </nav>
+
+    <section class="article-hero">
+        <div class="hero-content">
+            <div class="hero-badges">
+                <span class="badge badge-category"><i class="fas fa-envelope"></i> Exchange Server</span>
+            </div>
+            <h1 class="hero-title">Exchange Server 2019 Setup</h1>
+            <p style="color: rgba(255,255,255,0.7); font-size: 1.05rem; margin: 0.5rem 0 1rem; max-width: 650px;">
+                Full Exchange Server 2019 deployment on a Vultr VPS joined to Active Directory. Covers prerequisites, installation errors (Defender freeze fix, console coordinates), Let's Encrypt SSL via Win-ACME, and Office 365 Hybrid Configuration Wizard troubleshooting.
+            </p>
+            <div class="hero-tags">
+                <a href="#" class="hero-tag">#exchange-2019</a>
+                <a href="#" class="hero-tag">#owa</a>
+                <a href="#" class="hero-tag">#smtp</a>
+                <a href="#" class="hero-tag">#win-acme</a>
+                <a href="#" class="hero-tag">#hybrid-sync</a>
+            </div>
+        </div>
+    </section>
+
+    <main class="article-layout" style="position:relative;z-index:1;">
+        <aside class="toc-sidebar">
+            <div class="toc-title">Contents</div>
+            <ul class="toc-list">
+                <li><a href="#specs">VPS specifications</a></li>
+                <li><a href="#prep">Server Preparation</a></li>
+                <li><a href="#features">Windows Server Features</a></li>
+                <li><a href="#domain-join">Domain Join</a></li>
+                <li><a href="#prereqs">Exchange Prerequisites</a></li>
+                <li><a href="#forest-prep">Prepare AD Forest</a></li>
+                <li><a href="#install">Install Exchange Server</a></li>
+                <li><a href="#post-install">Post-Install Config</a></li>
+                <li><a href="#inbound-mail">Inbound Public Email</a></li>
+                <li><a href="#ssl">SSL Certificate</a></li>
+                <li><a href="#verify">Outbound &amp; Verification</a></li>
+                <li><a href="#security">Security Implications</a></li>
+            </ul>
+        </aside>
+
+        <article class="article-content">
+
+            <figure class="intro-image">
+                <img src="/projects/hybrid-ad-lab/img/ExchangeServerSetup.png" alt="Exchange Server 2019 setup in hybrid AD lab">
+                <figcaption>Setting up enterprise mail flow with Exchange Server 2019</figcaption>
+            </figure>
+
+            <div class="tech-stack">
+                <div class="tech-item"><i class="fab fa-windows"></i> Windows Server 2022</div>
+                <div class="tech-item"><i class="fas fa-envelope"></i> Exchange Server 2019</div>
+                <div class="tech-item"><i class="fas fa-database"></i> UCMA 4.0</div>
+                <div class="tech-item"><i class="fas fa-certificate"></i> Win-ACME SSL</div>
+                <div class="tech-item"><i class="fas fa-network-wired"></i> IIS 10.0</div>
+                <div class="tech-item"><i class="fas fa-shield-alt"></i> Microsoft Defender</div>
+                <div class="tech-item"><i class="fab fa-microsoft"></i> .NET Framework 4.8</div>
+                <div class="tech-item"><i class="fas fa-cloud"></i> Cloudflare DNS</div>
+            </div>
+
+            <h2 id="specs">VPS Specifications</h2>
+            <p>Exchange 2019 is heavy. It needs at minimum 16 GB RAM and 4 cores to run without grinding to a halt. Deployed a separate Vultr instance for it:</p>
+            <table>
+                <thead><tr><th>Setting</th><th>Value</th></tr></thead>
+                <tbody>
+                    <tr><td>Plan</td><td>Cloud Compute — High Performance (VX1-M-4C-32G)</td></tr>
+                    <tr><td>vCPUs</td><td>4</td></tr>
+                    <tr><td>RAM</td><td>32 GB</td></tr>
+                    <tr><td>Storage</td><td>240 GB SSD</td></tr>
+                    <tr><td>OS</td><td>Windows Server 2022 Standard</td></tr>
+                    <tr><td>Label</td><td>MAILSERVER (EXCH01)</td></tr>
+                </tbody>
+            </table>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/SelectingLocationand4vCPUand32GBRAM.png" alt="Vultr deploy summary showing London location, vx1-m-4c-32g-240s CPU plan with 4 vCPUs and 32 GB RAM">
+                <figcaption>Selecting location, 4 vCPUs, and 32 GB RAM on Vultr</figcaption>
+            </figure>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/WindowServer2022ForExchangeServer.png" alt="Vultr Server Type selection window with Windows Standard 2022 x64 selected">
+                <figcaption>Selecting Windows Server 2022 Standard as the OS type</figcaption>
+            </figure>
+
+            <h2 id="prep">Step 1 — Server Preparation</h2>
+            <p>Booted the server. The Vultr vendor script executed in the background to set initial parameters, activate Windows, configure pagefile sizes, and clean up visual settings.</p>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/ServerStillrunningItsScriptofVendor.png" alt="Vultr dashboard showing noVNC console with Windows Server 2022 boot script completing background configurations">
+                <figcaption>First boot — vendor script configuring host parameters</figcaption>
+            </figure>
+
+            <p>First step was setting up the private network interface (<code>10.8.96.5</code>) and pointing the DNS to DC01 (<code>10.10.0.1</code>) so it could resolve the AD root domain.</p>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/ConfiguringPrivateIP.png" alt="IPv4 Properties window showing static IP set to 10.8.96.5 and DNS pointed to 10.10.0.1">
+                <figcaption>Configuring static private IP and DNS resolver</figcaption>
+            </figure>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/IPCONFIGoutput.png" alt="ipconfig command output showing Ethernet adapter instance with autoconfigured IP and private IP">
+                <figcaption>ipconfig output confirming interface state</figcaption>
+            </figure>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/ConfiguringDNS.png" alt="IPv4 Properties window updating DNS settings to point to the Domain Controller IP 10.8.96.3">
+                <figcaption>Updating DNS to match the Domain Controller private IP</figcaption>
+            </figure>
+
+            <p>Tested connection to the DC using nslookup to verify domain name resolution:</p>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> PowerShell — DNS Test</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code><span class="prompt">PS></span> nslookup hq.apex-corp.xyz</code>
+                </div>
+                <div class="cmd-output">
+                    <button class="cmd-output-toggle"><i class="fas fa-chevron-right"></i> Show Output</button>
+                    <div class="cmd-output-content">
+                        <code>Server:  dc01.hq.apex-corp.xyz
+Address:  10.8.96.3
+
+Name:    hq.apex-corp.xyz
+Addresses:  10.8.96.3</code>
+                    </div>
+                </div>
+            </div>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> PowerShell — Ping Test</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code><span class="prompt">PS></span> ping dc01.hq.apex-corp.xyz -n 4</code>
+                </div>
+                <div class="cmd-output">
+                    <button class="cmd-output-toggle"><i class="fas fa-chevron-right"></i> Show Output</button>
+                    <div class="cmd-output-content">
+                        <code>Pinging dc01.hq.apex-corp.xyz [10.8.96.3] with 32 bytes of data:
+Reply from 10.8.96.3: bytes=32 time=2ms TTL=128
+Reply from 10.8.96.3: bytes=32 time=2ms TTL=128
+Reply from 10.8.96.3: bytes=32 time=2ms TTL=128
+Reply from 10.8.96.3: bytes=32 time=2ms TTL=128</code>
+                    </div>
+                </div>
+            </div>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/itCanTalkToTheDNS.png" alt="nslookup command resolving hq.apex-corp.xyz to the DC IP 10.8.96.3">
+                <figcaption>nslookup confirms the DC01 DNS is responding</figcaption>
+            </figure>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/PingingFromDCtoMailSERver.png" alt="PowerShell ping from the Domain Controller to the Mail Server showing successful 2ms latency replies">
+                <figcaption>Pinging from DC to Mail Server to confirm local routing works</figcaption>
+            </figure>
+
+            <h2 id="features">Step 2 — Install Windows Server Features</h2>
+            <p>Exchange requires a specific set of IIS web roles and management modules. The naming conventions on Windows Server 2022 require using legacy <code>NET-Framework-45</code> names in the PowerShell command, although it installs 4.8 under the hood.</p>
+
+            <div class="code-block">
+                <div class="code-block-header">
+                    <span class="code-lang">PowerShell</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <pre><code class="language-powershell">Install-WindowsFeature NET-Framework-45-Features, RPC-over-HTTP-proxy,
+  RSAT-Clustering, RSAT-Clustering-CmdInterface, RSAT-Clustering-Mgmt,
+  RSAT-Clustering-PowerShell, Web-Mgmt-Console, WAS-Process-Model,
+  Web-Asp-Net45, Web-Basic-Auth, Web-Client-Auth, Web-Digest-Auth,
+  Web-Dir-Browsing, Web-Dyn-Compression, Web-Http-Errors, Web-Http-Logging,
+  Web-Http-Redirect, Web-Http-Tracing, Web-ISAPI-Ext, Web-ISAPI-Filter,
+  Web-Lgcy-Mgmt-Console, Web-Metabase, Web-Mgmt-Console, Web-Mgmt-Service,
+  Web-Net-Ext45, Web-Request-Monitor, Web-Server, Web-Stat-Compression,
+  Web-Static-Content, Web-Windows-Auth, Web-WMI, Windows-Identity-Foundation,
+  RSAT-ADDS -Restart</code></pre>
+            </div>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/InstallingImportantStuff.png" alt="PowerShell Install-WindowsFeature output showing successful role deployment">
+                <figcaption>Installing mandatory IIS and RSAT roles via PowerShell</figcaption>
+            </figure>
+
+            <h2 id="domain-join">Step 3 — Join to the Domain</h2>
+            <p>Joined the new Mail Server to the domain using a domain admin account:</p>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> PowerShell</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code><span class="prompt">PS></span> Add-Computer -DomainName "hq.apex-corp.xyz" -Credential (Get-Credential) -Restart</code>
+                </div>
+            </div>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/JoiningDomain.png" alt="Windows credential prompt dialog for domain join with user credentials entered">
+                <figcaption>Entering Domain Admin credentials to join the forest</figcaption>
+            </figure>
+
+            <p>Verified domain join by checking access to active network shares on the Domain Controller (<code>STARK-TOWER</code>):</p>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/VerifyingtBycheckingTheShares.png" alt="Windows File Explorer showing active network shares CertEnroll, SYSVOL, HR-Records on STARK-TOWER">
+                <figcaption>Verifying domain join by browsing STARK-TOWER shares</figcaption>
+            </figure>
+
+            <h2 id="prereqs">Step 4 — Install Exchange Prerequisites</h2>
+            <p>Before installing Exchange, download the Exchange 2019 ISO along with three crucial dependencies: Visual C++ 2013, Visual C++ 2015-2022, Unified Communications Managed API (UCMA) 4.0, and the IIS URL Rewrite module.</p>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/DownloadTheExchangeServer.png" alt="Web browser showing download progress of ExchangeServer2019-x64-CU14.ISO">
+                <figcaption>Downloading the Exchange 2019 Cumulative Update 14 ISO</figcaption>
+            </figure>
+
+            <div class="code-block">
+                <div class="code-block-header">
+                    <span class="code-lang">PowerShell — Prerequisite Script</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <pre><code class="language-powershell">New-Item -Path "C:\ExchangePrep" -ItemType Directory -Force
+cd "C:\ExchangePrep"
+
+# 1. Visual C++ 2013
+Invoke-WebRequest -Uri "https://download.microsoft.com/download/2/E/6/2E61CFA4-993B-4DD4-91DA-3737CD5CD6E3/vcredist_x64.exe" -OutFile "vcredist_x64.exe"
+Start-Process .\vcredist_x64.exe -ArgumentList '/quiet /norestart' -Wait
+
+# 2. Visual C++ 2015-2022
+Invoke-WebRequest -Uri "https://aka.ms/vs/17/release/vc_redist.x64.exe" -OutFile "vc_redist_x64.exe"
+Start-Process .\vc_redist_x64.exe -ArgumentList '/quiet /norestart' -Wait
+
+# 3. UCMA 4.0
+Invoke-WebRequest -Uri "https://download.microsoft.com/download/2/C/4/2C47A12D-DCA3-4C11-AC1F-95B72FA1D5C2/UcmaRuntimeSetup.msi" -OutFile "UcmaRuntimeSetup.msi"
+Start-Process msiexec.exe -ArgumentList '/i UcmaRuntimeSetup.msi /quiet /norestart' -Wait
+
+# 4. IIS URL Rewrite Module 2.1
+Invoke-WebRequest -Uri "https://download.microsoft.com/download/1/2/8/128E2E22-C1B9-44A4-BE2A-5859ED1D4592/rewrite_amd64_en-US.msi" -OutFile "rewrite_amd64.msi"
+Start-Process msiexec.exe -ArgumentList '/i rewrite_amd64.msi /quiet /norestart' -Wait
+
+cd C:\
+Remove-Item -Path "C:\ExchangePrep" -Recurse -Force</code></pre>
+            </div>
+
+            <h2 id="forest-prep">Step 5 — Prepare the AD Forest for Exchange</h2>
+            <p>Mount the downloaded ISO and run the preparatory commands to extend the Active Directory schema. Run this from an elevated session as Schema Admin / Domain Admin.</p>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/mountTheImage.png" alt="PowerShell running Mount-DiskImage for the Exchange ISO">
+                <figcaption>Mounting the ISO to read setup files</figcaption>
+            </figure>
+
+            <p>Prepare the schema first:</p>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> PowerShell</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code><span class="prompt">PS></span> F:\Setup.exe /PrepareSchema /IAcceptExchangeServerLicenseTerms_DiagnosticDataOFF</code>
+                </div>
+            </div>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/Processof EXchangeServerSetup.png" alt="PowerShell showing schema extension and organization prep completing successfully">
+                <figcaption>Preparing Active Directory schema organization</figcaption>
+            </figure>
+
+            <div class="prompt-box prompt-danger">
+                <div class="prompt-title"><i class="fas fa-skull-crossbones"></i> Error: /PrepareAllDomains fails</div>
+                <p>Running the standard <code>/PrepareAllDomains</code> switch returned a <code>DomainNotReachableException</code> because the child domain <code>vought.hq.apex-corp.xyz</code> was decommissioned. The setup script crashed trying to contact it.</p>
+                <p><strong>Fix:</strong> Run a targeted prep only for the active domain:</p>
+                <p><code>D:\Setup.exe /PrepareDomain:hq.apex-corp.xyz /IAcceptExchangeServerLicenseTerms_DiagnosticDataOFF</code></p>
+            </div>
+
+            <h2 id="install">Step 6 — Install Exchange Server</h2>
+            <p>Run the unattended installer. <strong>Crucial Warning:</strong> Windows Defender real-time scanning will intercept every single file copy operation, pinning the CPU to 100% and causing the installer to freeze indefinitely at **16%**.</p>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> PowerShell</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code><span class="prompt">PS></span> Set-MpPreference -DisableRealtimeMonitoring $true
+<span class="prompt">PS></span> D:\Setup.exe /Mode:Install /Role:Mailbox /IAcceptExchangeServerLicenseTerms_DiagnosticDataOFF</code>
+                </div>
+            </div>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/FinalInstlation.png" alt="Exchange unattended setup running Mailbox role installation showing progress during file copy">
+                <figcaption>Unattended setup running — installing the Mailbox role</figcaption>
+            </figure>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/Pasted image 20260602073153.png" alt="Exchange Server installation progress showing file copy progress at 34 percent">
+                <figcaption>Disabling Defender real-time protection speeds up this process from hours to 20 minutes</figcaption>
+            </figure>
+
+            <div class="prompt-box prompt-warning">
+                <div class="prompt-title"><i class="fas fa-exclamation-triangle"></i> Error: Setup Console Coordinate Crash</div>
+                <p>If you click inside or resize the PowerShell window during setup, it will crash with a coordinate mismatch exception. Relaunch it and don't touch the window. Open a separate console to monitor the logs: <code>Get-Content C:\ExchangeSetupLogs\ExchangeSetup.log -Tail 10 -Wait</code></p>
+            </div>
+
+            <p>Once installation finishes, reboot and verify that all key Microsoft Exchange services are active and running:</p>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/ConfirminExchangeIsRunning.png" alt="PowerShell showing running statuses of Microsoft Exchange transport, topology, and mailbox services">
+                <figcaption>Verifying Microsoft Exchange services are active after reboot</figcaption>
+            </figure>
+
+            <h2 id="post-install">Step 7 — Post-Install Configuration</h2>
+            <p>Tested access to Outlook Web App (OWA) locally at <code>https://localhost/owa</code>:</p>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/OutlookLoginPage.png" alt="Outlook Web App login interface page prompting for domain username and password">
+                <figcaption>Outlook Web App login screen</figcaption>
+            </figure>
+
+            <p>Opened the Exchange Admin Center (EAC) to verify recipients. Registered the Tony Stark account and created mailboxes for synced users.</p>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/AddingTheUsersGUI.png" alt="Exchange Admin Center showing user mailbox creation menu with Tony Stark listed">
+                <figcaption>EAC recipients dashboard — adding mailboxes</figcaption>
+            </figure>
+
+            <p>Opened the Exchange Management Shell (EMS) to script mailbox creation for all domain users:</p>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/ExchangeManagementShell.png" alt="Windows Start Menu showing search result for Exchange Management Shell">
+                <figcaption>Opening the Exchange Management Shell</figcaption>
+            </figure>
+
+            <div class="code-block">
+                <div class="code-block-header">
+                    <span class="code-lang">PowerShell — EMS</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <pre><code class="language-powershell">Get-ADUser -Filter * -SearchBase "DC=hq,DC=apex-corp,DC=xyz" | ForEach-Object {
+    Write-Host "Creating mailbox for: $($_.SamAccountName)..." -ForegroundColor Cyan
+    Enable-Mailbox -Identity $_.SamAccountName -ErrorAction SilentlyContinue
+}</code></pre>
+            </div>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/CreatingMailBoxesforEveryuser.png" alt="PowerShell script output enabling mailboxes for users Rogers, Romanoff, Banner, Fury, Stark">
+                <figcaption>EMS script successfully provisioning mailboxes for all synced AD users</figcaption>
+            </figure>
+
+            <h2 id="inbound-mail">Step 8 — Enable Inbound Public Email</h2>
+            <p>By default, Exchange Frontend Receive connectors block external anonymous SMTP handshakes to prevent acting as a spam relay. To allow public incoming mails from external addresses (like Gmail), configure the frontend connectors.</p>
+
+            <div class="code-block">
+                <div class="code-block-header">
+                    <span class="code-lang">PowerShell — EMS</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <pre><code class="language-powershell"># Register the public domain
+New-AcceptedDomain -Name "apex-corp.xyz" -DomainName "apex-corp.xyz" -DomainType Authoritative
+
+# Update the default address policies to apply the public domain suffix
+Set-EmailAddressPolicy -Identity "Default Policy" -EnabledEmailAddressTemplates "SMTP:%m@apex-corp.xyz"
+Update-EmailAddressPolicy -Identity "Default Policy"
+
+# Authorize anonymous SMTP handshakes on port 25
+$serverName = $env:COMPUTERNAME
+Set-ReceiveConnector -Identity "$serverName\Default Frontend $serverName" -PermissionGroups AnonymousUsers</code></pre>
+            </div>
+
+            <p>Verified OWA login from external endpoints. Logged in as Bruce Wayne (<code>HQ\b.wayne</code>) on a mobile device and verified local mail delivery:</p>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/loggingin from mobile.png" alt="Mobile browser displaying OWA login page on server IP 45.63.99.87 with user credentials entered">
+                <figcaption>Logging into OWA from a mobile browser</figcaption>
+            </figure>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/mobiler.png" alt="Mobile OWA inbox for Bruce Wayne showing test emails received from Tony Stark">
+                <figcaption>Mobile inbox confirming internal mail delivery works</figcaption>
+            </figure>
+
+            <h2 id="ssl">Step 9 — Let's Encrypt SSL Certificate</h2>
+            <p>Configured Cloudflare DNS A records pointing the public mail hosts to the Exchange public IP, along with MX and SPF records.</p>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/DnsRecords.png" alt="Cloudflare DNS dashboard showing A records for mail, CNAME for autodiscover, and MX and SPF TXT records for apex-corp.xyz">
+                <figcaption>Configuring DNS records in Cloudflare — proxy must be OFF (grey cloud)</figcaption>
+            </figure>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/NewDomainForExchange.png" alt="EMS terminal showing New-AcceptedDomain output confirming apex-corp.xyz is registered">
+                <figcaption>Confirming public accepted domain registry in Exchange</figcaption>
+            </figure>
+
+            <p>Used Win-ACME (<code>wacs.exe</code>) to request and bind Let's Encrypt certificates for <code>mail.apex-corp.xyz</code> and <code>autodiscover.apex-corp.xyz</code>:</p>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/Wacs.exe.png" alt="Win-ACME command line utility output showing SSL certificate creation and IIS binding setup">
+                <figcaption>Win-ACME automated certificate enrollment and IIS integration</figcaption>
+            </figure>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/Lets Encripyt Certificate.png" alt="PowerShell displaying certificates list with Let's Encrypt issuer and IIS and SMTP services assigned">
+                <figcaption>SSL Certificate registered and assigned to services</figcaption>
+            </figure>
+
+            <div class="prompt-box prompt-danger">
+                <div class="prompt-title"><i class="fas fa-skull-crossbones"></i> Error: Empty Certificate Thumbprint</div>
+                <p>When selecting the certificate by Subject in PowerShell, the query can return empty if SAN names differ. Use Issuer query instead:</p>
+                <p><code>$cert = Get-ExchangeCertificate | Where-Object {$_.Issuer -like "*Let's Encrypt*"} | Select-Object -First 1</code></p>
+            </div>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/AddingCertificate ToExchagne.png" alt="PowerShell retrieving the cert and enabling it for IIS and SMTP services">
+                <figcaption>Enabling the certificate via PowerShell</figcaption>
+            </figure>
+
+            <h2 id="verify">Step 10 — Outbound Egress &amp; Verification</h2>
+
+            <table>
+                <thead><tr><th>Service</th><th>Status</th></tr></thead>
+                <tbody>
+                    <tr><td>SMTP Inbound (Port 25)</td><td><span class="status-badge status-up">Verified</span></td></tr>
+                    <tr><td>SMTP Outbound</td><td><span class="status-badge status-up">Verified</span></td></tr>
+                    <tr><td>OWA / ECP HTTPS</td><td><span class="status-badge status-up">Verified</span></td></tr>
+                    <tr><td>ActiveSync (Mobile)</td><td><span class="status-badge status-up">Working</span></td></tr>
+                    <tr><td>Autodiscover</td><td><span class="status-badge status-up">Configured</span></td></tr>
+                    <tr><td>Let's Encrypt SSL</td><td><span class="status-badge status-up">Bound</span></td></tr>
+                    <tr><td>Outbound Send Connector</td><td><span class="status-badge status-up">Active</span></td></tr>
+                </tbody>
+            </table>
+
+            <p>Configured an outbound send connector to allow sending mails to external domains via MX records:</p>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/EnablingTheOutboundForEmails.png" alt="EMS terminal executing New-SendConnector for OutboundInternet with AddressSpaces set to wildcard">
+                <figcaption>Creating the outbound send connector in Exchange</figcaption>
+            </figure>
+
+            <p>Received mail from outside (Gmail) to verify inbound delivery:</p>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/LogsOfExchangeServe.png" alt="Exchange SMTP tracking logs showing RECEIVE and SEND logs for email from admin@mrakashkumar.in">
+                <figcaption>SMTP transport logs confirming external mail inbound handshakes</figcaption>
+            </figure>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/SuccessfullyReceivedMailFromOutside.png" alt="Tony Stark inbox in OWA showing email received from admin@mrakashkumar.in confirming external mail flows">
+                <figcaption>OWA inbox confirming mail delivery from external address</figcaption>
+            </figure>
+
+            <p>Tested sending mail outbound from OWA to an external account. Outbound port 25 is blocked by default by most VPS providers. After opening a support ticket, Vultr unblocked port 25 egress, allowing mail to route out cleanly:</p>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/WhatsApp Image 2026-06-09 at 00.38.58.jpeg" alt="Mobile mail client inbox showing mail from Tony Stark at apex-corp.xyz successfully received">
+                <figcaption>Verification — external email successfully received from the lab domain</figcaption>
+            </figure>
+
+            <h2 id="security">Security Implications</h2>
+            <p>This Exchange deployment introduces key enterprise attack surfaces:</p>
+
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="fc-icon"><i class="fas fa-pen-fancy"></i></div>
+                    <h4>Exchange WriteDACL</h4>
+                    <p>The Exchange Windows Permissions group possesses WriteDACL permissions on the domain object by default. Compromise of the Exchange server (MAILSERVER$) allows privilege escalation directly to Domain Admin.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="fc-icon"><i class="fas fa-spray-can"></i></div>
+                    <h4>OWA Password Spraying</h4>
+                    <p>Since OWA is publicly exposed on port 443, it is vulnerable to low-and-slow password spraying attacks against the domain users list.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="fc-icon"><i class="fas fa-address-book"></i></div>
+                    <h4>GAL Exfiltration</h4>
+                    <p>Compromising a single low-privilege domain mailbox allows exfiltration of the entire Global Address List (GAL) through EWS or OWA API endpoints, facilitating highly targeted phishing.</p>
+                </div>
+            </div>
+
+            <nav class="article-nav-bottom">
+                <a href="/projects/hybrid-ad-lab/azure-entra/" class="nav-item prev">
+                    <span class="nav-label"><i class="fas fa-arrow-left"></i> Previous</span>
+                    <span class="nav-title">Azure Entra ID Sync</span>
+                </a>
+                <a href="/projects/hybrid-ad-lab/" class="nav-item next">
+                    <span class="nav-label">Next <i class="fas fa-arrow-right"></i></span>
+                    <span class="nav-title">Back to Lab Overview</span>
+                </a>
+            </nav>
+
+        </article>
+    </main>
+
+    <footer class="article-footer" style="position:relative;z-index:1;">
+        <p>&copy; 2025 <a href="/">0x1Ak4sh</a> - All rights reserved.</p>
+    </footer>
+    <button class="back-to-top" title="Back to top"><i class="fas fa-arrow-up"></i></button>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.1.0/jquery.magnific-popup.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-powershell.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <script src="/js/snake.js"></script>
+    <script src="/js/article.js?v=1.5"></script>
+</body>
+
+</html>

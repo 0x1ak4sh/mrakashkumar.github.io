@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5">
+    <title>WireGuard Mesh VPN | Hybrid AD Lab | 0x1Ak4sh</title>
+    <meta name="description" content="Connecting Vultr, Oracle Cloud, and AWS machines into a single private WireGuard mesh network so Active Directory works across all three cloud providers.">
+    <meta name="robots" content="noindex,follow">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/8d67cb621b.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="/css/article.css?v=1.5">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.1.0/magnific-popup.min.css">
+</head>
+
+<body class="article-page">
+    <div class="reading-progress"></div>
+    <div id="canvas_snake" class="canvas canvas-snake" data-colorone="#0b1115" data-colortwo="#a4ff91"
+        style="position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;opacity:0.3;"></div>
+
+    <nav class="article-nav">
+        <div class="nav-left">
+            <a href="/projects/hybrid-ad-lab/" class="nav-back">
+                <i class="fas fa-arrow-left"></i>
+                <span>Back to Lab Overview</span>
+            </a>
+            <a href="/" class="nav-logo">0x1Ak4sh</a>
+        </div>
+        <div class="nav-right">
+            <button class="nav-share-btn" onclick="document.querySelector('.share-section').scrollIntoView({behavior:'smooth'})" title="Share">
+                <i class="fas fa-share-alt"></i>
+            </button>
+        </div>
+    </nav>
+
+    <section class="article-hero">
+        <div class="hero-content">
+            <div class="hero-badges">
+                <span class="badge badge-category"><i class="fas fa-network-wired"></i> VPN / Networking</span>
+            </div>
+            <h1 class="hero-title">WireGuard Mesh VPN</h1>
+            <p style="color: rgba(255,255,255,0.7); font-size: 1.05rem; margin: 0.5rem 0 1rem; max-width: 650px;">
+                Connecting Vultr, Oracle Cloud, and AWS into one private network. DC01 on Vultr is the hub. Every other machine connects to it as a peer. All machines use the DC as their DNS server so Active Directory works across all three clouds.
+            </p>
+            <div class="hero-tags">
+                <a href="#" class="hero-tag">#wireguard</a>
+                <a href="#" class="hero-tag">#vpn</a>
+                <a href="#" class="hero-tag">#multi-cloud</a>
+                <a href="#" class="hero-tag">#networking</a>
+            </div>
+        </div>
+    </section>
+
+    <main class="article-layout" style="position:relative;z-index:1;">
+        <aside class="toc-sidebar">
+            <div class="toc-title">Contents</div>
+            <ul class="toc-list">
+                <li><a href="#why">Why WireGuard</a></li>
+                <li><a href="#install-windows">Install on DC01</a></li>
+                <li><a href="#keys">Key Generation</a></li>
+                <li><a href="#hub-config">Hub Config (DC01)</a></li>
+                <li><a href="#verify-windows">Verify on Windows</a></li>
+                <li><a href="#peer-oracle">Oracle Peer Config</a></li>
+                <li><a href="#add-peer">Add DC01 Peer Entry</a></li>
+                <li><a href="#verify-tunnel">Verify Tunnel</a></li>
+                <li><a href="#dns">DNS for AD</a></li>
+                <li><a href="#tunnel-map">Full Tunnel Map</a></li>
+            </ul>
+        </aside>
+
+        <article class="article-content">
+
+            <figure class="intro-image">
+                <img src="/projects/hybrid-ad-lab/img/WireguardSetup.png" alt="WireGuard mesh VPN connecting multi-cloud AD infrastructure">
+                <figcaption>WireGuard mesh stitching Vultr, Oracle, and AWS into one private network</figcaption>
+            </figure>
+
+            <div class="tech-stack">
+                <div class="tech-item"><i class="fas fa-network-wired"></i> WireGuard 0.5.3</div>
+                <div class="tech-item"><i class="fab fa-windows"></i> Windows Server 2022</div>
+                <div class="tech-item"><i class="fab fa-linux"></i> Ubuntu 24.04</div>
+                <div class="tech-item"><i class="fab fa-oracle"></i> Oracle Linux 8</div>
+                <div class="tech-item"><i class="fas fa-cloud"></i> Multi-Cloud Mesh</div>
+                <div class="tech-item"><i class="fas fa-key"></i> Ed25519 Keys</div>
+                <div class="tech-item"><i class="fas fa-tachometer-alt"></i> Kernel Module</div>
+                <div class="tech-item"><i class="fas fa-route"></i> Hub &amp; Spoke</div>
+            </div>
+
+            <h2 id="why">Why WireGuard</h2>
+            <p>Vultr, Oracle Cloud, and AWS are completely separate networks. By default they cannot reach each other at all. Active Directory relies on constant communication — LDAP, Kerberos, DNS, replication — between all machines. Without a VPN, a machine on Oracle Cloud has no way to contact the Domain Controller on Vultr.</p>
+            <p>WireGuard creates an encrypted Layer 3 tunnel. Each machine gets a private IP in the <code>10.10.0.0/24</code> range. DC01 at <code>10.10.0.1</code> is the hub — every other machine connects to it as a peer. The hub routes traffic between all peers.</p>
+
+            <div class="mermaid-container">
+                <div class="mermaid">
+graph TB
+    HUB["STARK-TOWER<br/>10.10.0.1<br/>WireGuard Hub<br/>Vultr"]
+
+    P2["VOUGHT-HQ<br/>10.10.0.2<br/>Oracle Cloud"]
+    P3["BATCAVE<br/>10.10.0.3<br/>Oracle Cloud"]
+    P4["FLATIRON<br/>10.10.0.4<br/>Vultr"]
+    P5["WATCHTOWER<br/>10.10.0.5<br/>AWS EC2"]
+
+    HUB <-->|"UDP 51820"| P2
+    HUB <-->|"UDP 51820"| P3
+    HUB <-->|"UDP 51820"| P4
+    HUB <-->|"UDP 51820"| P5
+
+    style HUB fill:#1a3a1a,stroke:#a4ff91,color:#fff
+                </div>
+            </div>
+
+            <h2 id="install-windows">Step 1 — Install WireGuard on DC01 (Windows)</h2>
+            <p>Downloaded and installed WireGuard on the Windows Server from PowerShell:</p>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> PowerShell</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code><span class="prompt">PS></span> Invoke-WebRequest -Uri "https://download.wireguard.com/windows-client/wireguard-installer.exe" -OutFile "C:\wireguard-installer.exe"
+<span class="prompt">PS></span> Start-Process "C:\wireguard-installer.exe" -Wait</code>
+                </div>
+            </div>
+
+            <p>After installation, opened the WireGuard GUI. The first step is creating a new tunnel from the dropdown.</p>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/Pasted image 20260515005251.png" alt="WireGuard GUI on Windows showing the empty interface with the dropdown menu to add a tunnel">
+                <figcaption>WireGuard opened — using the dropdown to create a new tunnel</figcaption>
+            </figure>
+
+            <h2 id="keys">Step 2 — Key Generation</h2>
+            <p>WireGuard uses public/private key pairs. Each machine generates its own pair. On Windows, the GUI generates keys automatically when you create a new tunnel. On Linux, you generate them manually.</p>
+
+            <p>The keys used for DC01 in this lab:</p>
+
+            <div class="code-block">
+                <div class="code-block-header">
+                    <span class="code-lang">DC01 Keys — for reference</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <pre><code class="language-bash">PublicKey  = /qe58vBz5fDxhCmq9OQ3Nc+CjVHWluCsD7IQfb+UsAc=
+# PrivateKey stays on the server — never share it</code></pre>
+            </div>
+
+            <div class="prompt-box prompt-tip">
+                <div class="prompt-title"><i class="fas fa-lightbulb"></i> Key Generation on Linux</div>
+                <p>On Linux machines, generate keys with: <code>wg genkey | sudo tee /etc/wireguard/private.key | wg pubkey | sudo tee /etc/wireguard/public.key</code> — then copy the public key and add it as a peer on DC01.</p>
+            </div>
+
+            <h2 id="hub-config">Step 3 — Create the Hub Tunnel on DC01</h2>
+            <p>In WireGuard on DC01, clicked "Add Tunnel" → "Create New Tunnel". The interface section was filled in like this:</p>
+
+            <div class="code-block">
+                <div class="code-block-header">
+                    <span class="code-lang">WireGuard Config — DC01 [Interface] section</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <pre><code class="language-bash">[Interface]
+PrivateKey = &lt;DC01-PRIVATE-KEY&gt;
+Address = 10.10.0.1/24
+ListenPort = 51820
+DNS = 127.0.0.1</code></pre>
+            </div>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/Pasted image 20260515005429.png" alt="WireGuard new tunnel dialog on Windows DC01 showing the Interface section with Address 10.10.0.1 and ListenPort 51820">
+                <figcaption>Tunnel config on DC01 — Address is 10.10.0.1/24, ListenPort is 51820</figcaption>
+            </figure>
+
+            <p>After saving and activating, the tunnel shows as active with the public key, listener port, and address.</p>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/Pasted image 20260515005523.png" alt="WireGuard GUI showing the tunnel is active with its public key and 10.10.0.1 address displayed">
+                <figcaption>Tunnel active — public key shown, address confirmed at 10.10.0.1</figcaption>
+            </figure>
+
+            <h2 id="verify-windows">Step 4 — Verify the Interface on Windows</h2>
+            <p>Ran <code>ipconfig</code> to confirm the WireGuard virtual adapter appeared with the right IP:</p>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/Pasted image 20260515005556.png" alt="ipconfig output on Windows showing WireGuard adapter with IP address 10.10.0.1">
+                <figcaption>ipconfig confirms WireGuard adapter is up at 10.10.0.1</figcaption>
+            </figure>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> PowerShell — list adapters</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code><span class="prompt">PS></span> Get-NetAdapter | Format-Table Name, Status, InterfaceDescription</code>
+                </div>
+            </div>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/Pasted image 20260515005648.png" alt="PowerShell Get-NetAdapter output listing WireGuard Tunnel adapter alongside the main Ethernet adapter, both showing Up status">
+                <figcaption>WireGuard adapter visible alongside the main Ethernet — both showing Up</figcaption>
+            </figure>
+
+            <p>Also confirmed the Windows Firewall had the WireGuard inbound rule enabled:</p>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/Pasted image 20260515005829.png" alt="Windows Firewall advanced rules showing WireGuard inbound rule is enabled and set to Allow">
+                <figcaption>Firewall rule for WireGuard — inbound, allow, enabled</figcaption>
+            </figure>
+
+            <h2 id="peer-oracle">Step 5 — Oracle Machine Peer Config</h2>
+            <p>For the Oracle Windows machine (VOUGHT-HQ), a tunnel was created pointing back at DC01. The Oracle machine gets WireGuard IP <code>10.10.0.2</code>.</p>
+
+            <div class="code-block">
+                <div class="code-block-header">
+                    <span class="code-lang">WireGuard Config — Oracle peer (/etc/wireguard/wg0.conf or GUI)</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <pre><code class="language-bash">[Interface]
+PrivateKey = &lt;ORACLE-MACHINE-PRIVATE-KEY&gt;
+Address = 10.10.0.2/24
+ListenPort = 51820
+
+[Peer]
+PublicKey = /qe58vBz5fDxhCmq9OQ3Nc+CjVHWluCsD7IQfb+UsAc=
+AllowedIPs = 10.10.0.0/24
+Endpoint = &lt;DC01-VULTR-PUBLIC-IP&gt;:51820
+PersistentKeepalive = 25</code></pre>
+            </div>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/Pasted image 20260515030939.png" alt="WireGuard GUI on the Oracle machine showing tunnel config with DC01 as the peer and address 10.10.0.2">
+                <figcaption>WireGuard configured on the Oracle machine — peers with DC01 at 10.10.0.1</figcaption>
+            </figure>
+
+            <p>Both machines' WireGuard GUIs side by side — machine 1 at <code>10.10.0.1</code> and machine 2 at <code>10.10.0.2</code>:</p>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/Pasted image 20260515031200.png" alt="WireGuard on DC01 showing active tunnel with address 10.10.0.1">
+                <figcaption>DC01 WireGuard — hub at 10.10.0.1</figcaption>
+            </figure>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/Pasted image 20260515031215.png" alt="WireGuard on Oracle machine showing active tunnel with address 10.10.0.2 and DC01 listed as peer">
+                <figcaption>Oracle machine WireGuard — peer at 10.10.0.2</figcaption>
+            </figure>
+
+            <h2 id="add-peer">Step 6 — Add Oracle Machine as Peer on DC01</h2>
+            <p>Back on DC01, edited the existing tunnel and added the Oracle machine as a peer. Each new machine you add gets its own <code>[Peer]</code> block:</p>
+
+            <div class="code-block">
+                <div class="code-block-header">
+                    <span class="code-lang">DC01 wg0 — add Oracle peer</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <pre><code class="language-bash">[Peer]
+PublicKey = OVSXZgFPNAVYFGWiAiZX+1ZO+wtFZs7fLeePju9eAB0=
+AllowedIPs = 10.10.0.2/32
+Endpoint = &lt;ORACLE-PUBLIC-IP&gt;:51820
+PersistentKeepalive = 25
+
+# Add one [Peer] block per machine:
+# 10.10.0.3/32 = BATCAVE (Oracle Linux)
+# 10.10.0.5/32 = WATCHTOWER (AWS Jenkins)</code></pre>
+            </div>
+
+            <h2 id="verify-tunnel">Step 7 — Verify the Tunnel is Working</h2>
+            <p>Pinged from DC01 to the Oracle machine and back. Both should reply through the tunnel.</p>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/Pasted image 20260515031243.png" alt="PowerShell ping from DC01 to 10.10.0.2 showing successful replies with 14ms latency">
+                <figcaption>Ping from DC01 to Oracle machine — tunnel is working</figcaption>
+            </figure>
+
+            <figure class="article-img">
+                <img src="/projects/hybrid-ad-lab/img/Pasted image 20260515031303.png" alt="Terminal ping from Oracle machine back to DC01 at 10.10.0.1 showing successful replies">
+                <figcaption>Ping back from Oracle to DC01 — both directions working</figcaption>
+            </figure>
+
+            <h2 id="dns">Step 8 — DNS Configuration for Active Directory</h2>
+            <p>WireGuard only creates a routed tunnel — it does not handle DNS. Every machine that needs to contact AD must use the DC's WireGuard IP (<code>10.10.0.1</code>) as its primary DNS server. Without this, the machine cannot resolve <code>hq.apex-corp.xyz</code> and domain join will fail.</p>
+
+            <div class="code-tabs">
+                <div class="code-tabs-header">
+                    <button class="code-tab-btn active">Windows (PowerShell)</button>
+                    <button class="code-tab-btn">Linux (netplan)</button>
+                    <button class="code-tab-btn">Linux (krb5.conf)</button>
+                </div>
+                <div class="code-tab-content active">
+                    <pre><code class="language-powershell"># Point DNS at DC01 via WireGuard IP
+$adapter = Get-NetAdapter | Where-Object {$_.Status -eq "Up"} | Select-Object -First 1
+Set-DnsClientServerAddress -InterfaceIndex $adapter.ifIndex `
+  -ServerAddresses "10.10.0.1","8.8.8.8"
+
+# Verify it resolves AD names
+nslookup stark-tower.hq.apex-corp.xyz</code></pre>
+                </div>
+                <div class="code-tab-content">
+                    <pre><code class="language-bash"># Create /etc/netplan/99-custom-dns.yaml
+network:
+  version: 2
+  ethernets:
+    enp39s0:          # replace with your interface name (ip link show)
+      nameservers:
+        addresses: [10.10.0.1, 8.8.8.8]
+        search: [hq.apex-corp.xyz]
+      dhcp4-overrides:
+        use-dns: false
+        use-domains: false
+
+# Apply
+sudo chmod 600 /etc/netplan/99-custom-dns.yaml
+sudo netplan try</code></pre>
+                </div>
+                <div class="code-tab-content">
+                    <pre><code class="language-bash"># /etc/krb5.conf — required for Linux AD domain join
+[libdefaults]
+    default_realm = HQ.APEX-CORP.XYZ
+    rdns = false       # ← without this, domain join fails silently
+
+[realms]
+    HQ.APEX-CORP.XYZ = {
+        kdc = stark-tower.hq.apex-corp.xyz
+        admin_server = stark-tower.hq.apex-corp.xyz
+    }
+
+[domain_realm]
+    .hq.apex-corp.xyz = HQ.APEX-CORP.XYZ
+    hq.apex-corp.xyz = HQ.APEX-CORP.XYZ</code></pre>
+                </div>
+            </div>
+
+            <h2 id="tunnel-map">Full Tunnel Map</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Machine</th>
+                        <th>WireGuard IP</th>
+                        <th>Cloud</th>
+                        <th>Role</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td><code>STARK-TOWER</code> (DC01)</td><td><code>10.10.0.1</code></td><td>Vultr</td><td>Hub — all peers connect here</td></tr>
+                    <tr><td><code>VOUGHT-HQ</code> (DC02)</td><td><code>10.10.0.2</code></td><td>Oracle Cloud</td><td>Child DC peer</td></tr>
+                    <tr><td><code>BATCAVE</code> (LINUX01)</td><td><code>10.10.0.3</code></td><td>Oracle Cloud</td><td>AD-joined Linux peer</td></tr>
+                    <tr><td><code>FLATIRON</code> (WS01)</td><td><code>10.10.0.4</code></td><td>Vultr</td><td>Workstation peer</td></tr>
+                    <tr><td><code>WATCHTOWER</code> (LINUX02)</td><td><code>10.10.0.5</code></td><td>AWS EC2</td><td>Jenkins server peer</td></tr>
+                </tbody>
+            </table>
+
+            <div class="terminal-demo">
+                <div class="terminal-header">
+                    <span class="terminal-dot red"></span>
+                    <span class="terminal-dot yellow"></span>
+                    <span class="terminal-dot green"></span>
+                    <span class="terminal-title">All peers reachable from BATCAVE (Oracle Linux)</span>
+                </div>
+                <div class="terminal-body">
+                    <div><span class="t-prompt">$</span> <span class="t-command">ping -c 2 10.10.0.1 && ping -c 2 10.10.0.2 && ping -c 2 10.10.0.5</span></div>
+                    <div><span class="t-output">64 bytes from 10.10.0.1: icmp_seq=1 ttl=128 time=14.2 ms   ← DC01 Vultr<br/>64 bytes from 10.10.0.2: icmp_seq=1 ttl=128 time=17.8 ms   ← VOUGHT Oracle<br/>64 bytes from 10.10.0.5: icmp_seq=1 ttl=64  time=48.3 ms   ← WATCHTOWER AWS</span></div>
+                    <div><span class="t-success">[+] All three cloud providers reachable through WireGuard hub</span></div>
+                    <div><span class="t-prompt">$</span> <span class="t-command">nslookup stark-tower.hq.apex-corp.xyz</span></div>
+                    <div><span class="t-output">Server: 10.10.0.1<br/>Address: 10.10.0.1#53<br/><br/>Name: stark-tower.hq.apex-corp.xyz<br/>Address: 10.10.0.1</span></div>
+                    <div><span class="t-success">[+] DNS working — AD domain resolves through VPN</span></div>
+                </div>
+            </div>
+
+            <h2 id="checklist">Mesh Verification Checklist</h2>
+            <ul class="checklist">
+                <li>DC01 (STARK-TOWER) — hub configured with all peer public keys</li>
+                <li>VOUGHT-HQ (Oracle) — connects to hub, reachable at 10.10.0.2</li>
+                <li>BATCAVE (Oracle Linux) — connects to hub, reachable at 10.10.0.3</li>
+                <li>FLATIRON (Vultr) — connects to hub, reachable at 10.10.0.4</li>
+                <li>WATCHTOWER (AWS) — connects to hub, reachable at 10.10.0.5</li>
+                <li>DNS configured — all peers use 10.10.0.1 for AD name resolution</li>
+                <li>PersistentKeepalive = 25 set on all peers behind NAT</li>
+            </ul>
+
+            <nav class="article-nav-bottom">
+                <a href="/projects/hybrid-ad-lab/active-directory/" class="nav-item prev">
+                    <span class="nav-label"><i class="fas fa-arrow-left"></i> Previous</span>
+                    <span class="nav-title">Active Directory Setup</span>
+                </a>
+                <a href="/projects/hybrid-ad-lab/oracle-deployment/" class="nav-item next">
+                    <span class="nav-label">Next <i class="fas fa-arrow-right"></i></span>
+                    <span class="nav-title">Oracle Cloud Deployment</span>
+                </a>
+            </nav>
+
+
+
+            <div class="share-section">
+                <h4>Share this page</h4>
+                <div class="share-buttons">
+                    <button class="share-btn" data-action="twitter"><i class="fab fa-x-twitter"></i> Twitter</button>
+                    <button class="share-btn" data-action="linkedin"><i class="fab fa-linkedin"></i> LinkedIn</button>
+                    <button class="share-btn" data-action="copy"><i class="fas fa-link"></i> Copy Link</button>
+                </div>
+            </div>
+
+        </article>
+    </main>
+
+    <footer class="article-footer" style="position:relative;z-index:1;">
+        <p>&copy; 2025 <a href="/">0x1Ak4sh</a> - All rights reserved.</p>
+    </footer>
+    <button class="back-to-top" title="Back to top"><i class="fas fa-arrow-up"></i></button>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.1.0/jquery.magnific-popup.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-powershell.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <script src="/js/snake.js"></script>
+    <script src="/js/article.js?v=1.5"></script>
+</body>
+
+</html>

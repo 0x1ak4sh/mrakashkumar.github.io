@@ -1,0 +1,345 @@
+/* ===========================================
+   Theme Configuration - 0x1Ak4sh Portfolio
+   Primary Color: #a4ff91 (Neon Green)
+   Background: Dark Theme
+   Font: Space Grotesk
+   =========================================== */
+
+/* ----- Font Family ----- */
+body,
+.content .title,
+input,
+textarea,
+button,
+input[type=submit],
+.select2-selection--single {
+    font-family: 'Space Grotesk', sans-serif;
+}
+
+/* ----- Primary Color: Background ----- */
+.preloader .spinner .double-bounce1,
+.preloader .spinner .double-bounce2,
+.lnk:hover .arrow:before,
+.button:hover .arrow:before,
+.lnk:hover .arrow:after,
+.button:hover .arrow:after,
+.resume-items .resume-item.active .date:before,
+.skills-list ul li .progress .percentage,
+.single-post-text ul>li:before,
+.comment-text ul>li:before,
+.content-sidebar .main-menu ul li.page_item_has_children.current_page_item>a:before,
+.content-sidebar .main-menu ul li.page_item_has_children.current_page_item>a:after,
+.content-sidebar .main-menu ul li.page_item_has_children:hover>a:before,
+.content-sidebar .main-menu ul li.page_item_has_children:hover>a:after,
+.content-sidebar .main-menu ul li.page_item_has_children.current_page_parent>a:before,
+.content-sidebar .main-menu ul li.page_item_has_children.current_page_parent>a:after,
+.content-sidebar .main-menu ul li.page_item_has_children.current_page_ancestor>a:before,
+.content-sidebar .main-menu ul li.page_item_has_children.current_page_ancestor>a:after,
+.content-sidebar .close:hover:before,
+.content-sidebar .close:hover:after,
+.header .menu-btn:hover span,
+.header .menu-btn:hover span:before,
+.header .menu-btn:hover span:after,
+.info-list ul li strong,
+.profile .main-menu ul li.page_item_has_children.current_page_item>a:before,
+.profile .main-menu ul li.page_item_has_children.current_page_item>a:after,
+.profile .main-menu ul li.page_item_has_children:hover>a:before,
+.profile .main-menu ul li.page_item_has_children:hover>a:after,
+.profile .main-menu ul li.page_item_has_children.current_page_parent>a:before,
+.profile .main-menu ul li.page_item_has_children.current_page_parent>a:after,
+.profile .main-menu ul li.page_item_has_children.current_page_ancestor>a:before,
+.profile .main-menu ul li.page_item_has_children.current_page_ancestor>a:after,
+.service-items .service-item .icon,
+.revs-carousel .owl-dot.active,
+.custom-content-reveal span.custom-content-close,
+.fc-calendar .fc-row>div.fc-today,
+.fc-calendar .fc-content:hover span.fc-date,
+.fc-calendar .fc-row>div.fc-today span.fc-date,
+.skills-list.dotted ul li .progress .percentage .da span,
+.preloader .spinner.default-circle:before,
+.preloader .spinner.default-circle:after,
+.preloader .spinner.clock:before,
+.preloader .spinner.box-rotation:after,
+.header .cart-btn .cart-icon .cart-count,
+.revs-carousel .swiper-pagination-bullet.swiper-pagination-bullet-active,
+.solid-icons-style .service-items .service-item .icon,
+.solid-icons-style .pricing-items .pricing-item .icon,
+.solid-icons-style .fuct-items .fuct-item .icon,
+.solid-icons-style .resume-title .icon,
+.solid-icons-style .skill-title .icon,
+.card-started .profile .lnk.solid-style .ion,
+.header .top-menu.menu-minimal ul li a .name {
+    background: #a4ff91;
+}
+
+/* ----- Primary Color: Text ----- */
+.lnk:hover,
+.button:hover,
+.lnk:hover .ion,
+.button:hover .ion,
+a,
+a:hover,
+input:focus,
+textarea:focus,
+.header .top-menu ul li:hover a,
+.header .top-menu ul li.active a,
+.header .top-menu ul li.current-menu-item a,
+.header .top-menu ul li:hover a .icon,
+.header .top-menu ul li.active a .icon,
+.header .top-menu ul li:hover a .link,
+.header .top-menu ul li.active a .link,
+.header .top-menu ul li.current-menu-item a .icon,
+.header .top-menu ul li.current-menu-item a .link,
+.header .profile .subtitle,
+.card-started .profile .subtitle,
+.content-sidebar .profile .subtitle,
+.card-started .profile .social a:hover .ion,
+.card-started .profile .social a:hover .fab,
+.card-started .profile .social a:hover .fas,
+.content-sidebar .profile .social a:hover .ion,
+.content-sidebar .profile .social a:hover .fab,
+.content-sidebar .profile .social a:hover .fas,
+.pricing-items .pricing-item .icon,
+.fuct-items .fuct-item .icon,
+.resume-title .icon,
+.skill-title .icon,
+.resume-items .resume-item.active .date,
+.content.works .filter-menu .f_btn.active,
+.box-item:hover .desc .name,
+.single-post-text p a,
+.comment-text p a,
+.post-text-bottom span.cat-links a,
+.post-text-bottom .tags-links a,
+.post-text-bottom .tags-links span,
+.page-numbers.current,
+.page-links a,
+.post-comments .post-comment .desc .name,
+.post-comments .post-comment .desc span.comment-reply a:hover,
+.content-sidebar .main-menu ul li.current_page_item>a,
+.content-sidebar .main-menu ul li:hover>a,
+.content-sidebar .main-menu ul li.current_page_parent>a,
+.content-sidebar .main-menu ul li.current_page_ancestor>a,
+.content-sidebar .widget ul li a:hover,
+.content-sidebar .tagcloud a,
+.content-sidebar .profile .typed-cursor,
+.card-started .profile .typed-cursor,
+.content .title .first-word,
+.content .title::first-letter,
+.content .title .first-letter::first-letter,
+.content-sidebar h2.widget-title .first-word,
+.content-sidebar h2.widget-title::first-letter,
+.content-sidebar h2.widget-title .first-letter::first-letter,
+.box-item .date,
+.profile .main-menu ul li.current-menu-item a,
+.profile .main-menu ul li.current_page_item>a,
+.profile .main-menu ul li:hover>a,
+.profile .main-menu ul li.current_page_parent>a,
+.profile .main-menu ul li.current_page_ancestor>a,
+.custom-header nav span:before,
+.fc-calendar .fc-row>div.fc-content:hover:after,
+.skills-list.list ul li .name:before,
+.preloader .spinner.recursive-circle,
+.single-post-text p a,
+.comment-text p a,
+.blog-content p a,
+.minimal-icons-style .service-items .service-item .icon,
+.minimal-icons-style .pricing-items .pricing-item .icon,
+.minimal-icons-style .fuct-items .fuct-item .icon,
+.minimal-icons-style .resume-title .icon,
+.minimal-icons-style .skill-title .icon,
+.border-icons-style .service-items .service-item .icon,
+.border-icons-style .pricing-items .pricing-item .icon,
+.border-icons-style .fuct-items .fuct-item .icon,
+.border-icons-style .resume-title .icon,
+.border-icons-style .skill-title .icon,
+.lnk:hover .fa,
+.button:hover .fa {
+    color: #a4ff91;
+}
+
+.content .title .first-word,
+.content .title:first-letter,
+.content-sidebar h2.widget-title .first-word,
+.content-sidebar h2.widget-title:first-letter {
+    color: #a4ff91 !important;
+}
+
+/* ----- Primary Color: Gradients ----- */
+.card-started .profile .image:before,
+.content-sidebar .profile .image:before,
+.content .title:before,
+.box-item .image .info:before,
+.content-sidebar h2.widget-title:before,
+.card-started:after {
+    background: linear-gradient(135deg, rgba(164, 255, 145, 0.4) 0%, rgba(164, 255, 145, 0.01) 100%);
+}
+
+.box-item .image .info:before {
+    background: linear-gradient(135deg, rgba(164, 255, 145, 0.5) 0%, rgba(164, 255, 145, 0.01) 100%);
+}
+
+.card-started .profile .slide,
+.content-sidebar .profile .slide {
+    background-color: rgba(164, 255, 145, 0.1);
+}
+
+.pricing-items .pricing-item .feature-list ul li strong {
+    background: rgba(164, 255, 145, 0.15);
+}
+
+.cursor {
+    background-color: rgba(164, 255, 145, 0.25);
+}
+
+.cursor.cursor-zoom {
+    border-color: rgba(164, 255, 145, 1);
+}
+
+/* ----- Primary Color: Borders ----- */
+input:focus,
+textarea:focus,
+.revs-carousel .owl-dots .owl-dot,
+.custom-header,
+.post-text-bottom .tags-links a,
+.post-text-bottom .tags-links span,
+.content-sidebar .tagcloud a,
+.resume-items .resume-item.active .date,
+.box-item .date,
+.content.skills .skills-list.circles .progress .bar,
+.content.skills .skills-list.circles .progress .fill,
+.preloader .spinner.clock,
+.preloader .spinner.box-rotation,
+.skills-list.circles .progress .bar,
+.skills-list.circles .progress.p51 .fill,
+.skills-list.circles .progress.p52 .fill,
+.skills-list.circles .progress.p53 .fill,
+.skills-list.circles .progress.p54 .fill,
+.skills-list.circles .progress.p55 .fill,
+.skills-list.circles .progress.p56 .fill,
+.skills-list.circles .progress.p57 .fill,
+.skills-list.circles .progress.p58 .fill,
+.skills-list.circles .progress.p59 .fill,
+.skills-list.circles .progress.p60 .fill,
+.skills-list.circles .progress.p61 .fill,
+.skills-list.circles .progress.p62 .fill,
+.skills-list.circles .progress.p63 .fill,
+.skills-list.circles .progress.p64 .fill,
+.skills-list.circles .progress.p65 .fill,
+.skills-list.circles .progress.p66 .fill,
+.skills-list.circles .progress.p67 .fill,
+.skills-list.circles .progress.p68 .fill,
+.skills-list.circles .progress.p69 .fill,
+.skills-list.circles .progress.p70 .fill,
+.skills-list.circles .progress.p71 .fill,
+.skills-list.circles .progress.p72 .fill,
+.skills-list.circles .progress.p73 .fill,
+.skills-list.circles .progress.p74 .fill,
+.skills-list.circles .progress.p75 .fill,
+.skills-list.circles .progress.p76 .fill,
+.skills-list.circles .progress.p77 .fill,
+.skills-list.circles .progress.p78 .fill,
+.skills-list.circles .progress.p79 .fill,
+.skills-list.circles .progress.p80 .fill,
+.skills-list.circles .progress.p81 .fill,
+.skills-list.circles .progress.p82 .fill,
+.skills-list.circles .progress.p83 .fill,
+.skills-list.circles .progress.p84 .fill,
+.skills-list.circles .progress.p85 .fill,
+.skills-list.circles .progress.p86 .fill,
+.skills-list.circles .progress.p87 .fill,
+.skills-list.circles .progress.p88 .fill,
+.skills-list.circles .progress.p89 .fill,
+.skills-list.circles .progress.p90 .fill,
+.skills-list.circles .progress.p91 .fill,
+.skills-list.circles .progress.p92 .fill,
+.skills-list.circles .progress.p93 .fill,
+.skills-list.circles .progress.p94 .fill,
+.skills-list.circles .progress.p95 .fill,
+.skills-list.circles .progress.p96 .fill,
+.skills-list.circles .progress.p97 .fill,
+.skills-list.circles .progress.p98 .fill,
+.skills-list.circles .progress.p99 .fill,
+.skills-list.circles .progress.p100 .fill,
+.revs-carousel .swiper-pagination-bullet,
+.border-icons-style .service-items .service-item .icon,
+.border-icons-style .pricing-items .pricing-item .icon,
+.border-icons-style .fuct-items .fuct-item .icon,
+.border-icons-style .resume-title .icon,
+.border-icons-style .skill-title .icon {
+    border-color: #a4ff91;
+}
+
+.preloader .spinner.recursive-circle,
+.preloader .spinner.recursive-circle:after {
+    border-color: #a4ff91;
+    border-top-color: transparent;
+}
+
+blockquote {
+    border-left-color: #a4ff91;
+}
+
+.preloader .spinner.simple-circle {
+    border-right-color: #a4ff91;
+}
+
+.preloader .spinner.quantum-spinner,
+.preloader .spinner.quantum-spinner:before,
+.preloader .spinner.quantum-spinner:after {
+    border-top-color: #a4ff91;
+}
+
+/* ----- Service Icon Gradient ----- */
+.service-items .service-item .icon {
+    background: linear-gradient(135deg, rgba(164, 255, 145, 0.15) 0%, rgba(164, 255, 145, 0.01) 100%);
+    color: #a4ff91;
+}
+
+/* ----- Dark Theme Card Background ----- */
+body .header .menu-btn,
+body .card-started .profile,
+body .card-started .profile .slide:before,
+body .card-started .profile .slide:after,
+body .card-inner,
+body .card-inner:before,
+body .card-inner:after,
+body .skills-list.circles .progress:after,
+body .mfp-wrap.popup-box-inline,
+body .info-list ul li strong:after,
+body .content-sidebar,
+body .profile .main-menu-fixed:before,
+body .header .cart-btn,
+body .header .cart-btn .cart-widget,
+body .header .top-menu {
+    background: #1d252c;
+}
+
+body .header .cart-btn .cart-widget:before {
+    border-right-color: #1d252c;
+}
+
+.card-started .profile .image img,
+.content-sidebar .profile .image img {
+    border-color: #1d252c;
+}
+
+@media (max-width: 1240px) {
+    body .header {
+        background: #1d252c;
+    }
+}
+
+@media (max-width: 680px) {
+    body .header .top-menu ul.menu {
+        background: #1d252c;
+    }
+}
+
+/* ----- Profile Photo Radius ----- */
+.card-started .profile .image img,
+.content-sidebar .profile .image img,
+.card-started .profile .image:before,
+.content-sidebar .profile .image:before {
+    -webkit-border-radius: 10%;
+    border-radius: 10%;
+}
