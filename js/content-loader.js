@@ -34,6 +34,18 @@
             tags: ['honeypot', 'vultr', 'detection', 'blueteam'],
             image: '/media/HomePageOfTPot.png',
             url: '/projects/honeypot-tpot-setup/'
+        },
+        {
+            type: 'project',
+            slug: 'beaconhub',
+            title: 'Beacon Hub — Virtual Wi-Fi Pentesting Lab',
+            description: 'A virtual Wi-Fi penetration testing lab that runs on your machine without any extra hardware. Create access points, capture handshakes, and practice wireless attacks inside a Linux VM.',
+            category: 'Tool',
+            language: 'Infrastructure',
+            date: '2026-06-30',
+            tags: ['wifi', 'pentesting', 'virtual-lab', 'vagrant'],
+            image: '/media/beaconhub/logo.png',
+            url: '/projects/beaconhub/'
         }
     ];
 

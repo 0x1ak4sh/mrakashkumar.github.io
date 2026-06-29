@@ -1,2 +1,4 @@
 # Exclude the DEleteThis folder the user wants to manually delete
 DEleteThis/
+WifiAI/
+opencode.json

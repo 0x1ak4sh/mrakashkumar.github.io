@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5">
+    <title>Beacon Hub — Virtual Wi-Fi Penetration Testing Lab | 0x1Ak4sh</title>
+    <meta name="description" content="Beacon Hub is a virtual Wi-Fi penetration testing lab for learning and practicing wireless security in a safe local environment using Vagrant, VirtualBox, and Linux wireless simulation.">
+    <meta name="robots" content="index,follow">
+    <link rel="canonical" href="https://mrakashkumar.in/projects/beaconhub/">
+
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://mrakashkumar.in/projects/beaconhub/">
+    <meta property="og:title" content="Beacon Hub — Virtual Wi-Fi Penetration Testing Lab">
+    <meta property="og:description" content="Learn Wi-Fi security without extra hardware. Virtual WPA2, WEP, and Enterprise networks inside a Debian VM.">
+    <meta property="og:image" content="https://mrakashkumar.in/media/beaconhub/logo.png">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Beacon Hub — Virtual Wi-Fi Penetration Testing Lab | 0x1Ak4sh">
+    <meta name="twitter:description" content="Learn Wi-Fi security without extra hardware. Virtual WPA2, WEP, and Enterprise networks inside a Debian VM.">
+    <meta name="twitter:image" content="https://mrakashkumar.in/media/beaconhub/logo.png">
+
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/8d67cb621b.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="/css/article.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.1.0/magnific-popup.min.css">
+
+    <style>
+        .article-content figure { text-align: center; }
+        .article-content figure img {
+            display: inline-block; margin: 0 auto;
+            max-height: 700px; width: auto; max-width: 100%;
+        }
+        .article-content figure a.image-popup { display: inline-block; }
+    </style>
+</head>
+
+<body class="article-page">
+
+    <div class="reading-progress"></div>
+
+    <div id="canvas_snake" class="canvas canvas-snake" data-colorone="#0b1115" data-colortwo="#00d4ff"
+        style="position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;opacity:0.25;"></div>
+
+    <nav class="article-nav">
+        <div class="nav-left">
+            <a href="/" class="nav-back"><i class="fas fa-arrow-left"></i><span>Back</span></a>
+            <a href="/" class="nav-logo">0x1Ak4sh</a>
+        </div>
+        <div class="nav-right">
+            <button class="nav-share-btn" onclick="document.querySelector('.share-section').scrollIntoView({behavior:'smooth'})" title="Share">
+                <i class="fas fa-share-alt"></i>
+            </button>
+        </div>
+    </nav>
+
+    <section class="article-hero">
+        <div class="hero-bg" style="background-image: url('/media/beaconhub/logo.png'); background-color: #0a1628;"></div>
+        <div class="hero-content">
+            <div class="hero-badges">
+                <span class="badge badge-category"><i class="fas fa-wifi"></i> Wi-Fi Lab</span>
+                <span class="badge badge-difficulty medium"><i class="fas fa-laptop-code"></i> Offensive</span>
+            </div>
+            <h1 class="hero-title">Beacon Hub — Virtual Wi-Fi Pentesting Lab</h1>
+            <p style="color: rgba(255,255,255,0.7); font-size: 1.05rem; margin: 0.5rem 0 1rem; max-width: 680px;">
+                A virtual Wi-Fi lab that runs on your machine without any extra hardware.
+                Create access points, connect clients, capture handshakes, and practice attacks — all inside a Linux VM.
+            </p>
+
+            <div class="project-stats">
+                <div class="stat-item"><i class="fas fa-terminal"></i> Vagrant + VirtualBox</div>
+                <div class="stat-item"><i class="fas fa-wifi"></i> WPA2 / WEP / Enterprise</div>
+                <div class="stat-item"><i class="fas fa-microchip"></i> Virtual Radios</div>
+                <div class="stat-item"><i class="fab fa-github"></i> Open Source</div>
+            </div>
+
+            <div class="hero-tags">
+                <a href="#" class="hero-tag">#wifi</a>
+                <a href="#" class="hero-tag">#pentesting</a>
+                <a href="#" class="hero-tag">#virtual-lab</a>
+                <a href="#" class="hero-tag">#vagrant</a>
+                <a href="#" class="hero-tag">#wpa2</a>
+                <a href="#" class="hero-tag">#wep</a>
+            </div>
+        </div>
+    </section>
+
+    <main class="article-layout" style="position:relative;z-index:1;">
+
+        <aside class="toc-sidebar">
+            <div class="toc-title">Contents</div>
+            <ul class="toc-list">
+                <li><a href="#what">What Is Beacon Hub</a></li>
+                <li><a href="#why">Why Virtual?</a></li>
+                <li><a href="#capabilities">What You Can Test</a></li>
+                <li><a href="#how">How It Works</a></li>
+                <li><a href="#screenshots">Screenshots</a></li>
+                <li><a href="#repo">GitHub Repo</a></li>
+            </ul>
+        </aside>
+
+        <article class="article-content">
+
+            <h2 id="what">What Is Beacon Hub</h2>
+            <p>
+                Beacon Hub is a virtual Wi-Fi penetration testing lab for learning and practicing wireless security
+                in a safe local environment. It runs inside a lightweight Debian virtual machine and uses Linux
+                wireless simulation (<code>mac80211_hwsim</code>), so you can create access points, clients,
+                captures, and attacks without buying external Wi-Fi adapters or testing on real networks.
+            </p>
+            <p>
+                The project is built for education, practice, and demonstrations. It is not a production tool — it is a
+                lab environment meant to help you understand how Wi-Fi attacks work under the hood.
+            </p>
+
+            <div class="tech-stack">
+                <div class="tech-item"><i class="fab fa-linux"></i> Debian VM</div>
+                <div class="tech-item"><i class="fas fa-box"></i> Vagrant</div>
+                <div class="tech-item"><i class="fab fa-virtualbox"></i> VirtualBox</div>
+                <div class="tech-item"><i class="fas fa-wifi"></i> mac80211_hwsim</div>
+                <div class="tech-item"><i class="fas fa-tower-broadcast"></i> hostapd</div>
+                <div class="tech-item"><i class="fas fa-network-wired"></i> dnsmasq</div>
+            </div>
+
+            <h2 id="why">Why Virtual?</h2>
+            <p>
+                Learning Wi-Fi security usually needs extra hardware — compatible chipsets, antennas, and a safe
+                test network. Beacon Hub keeps everything local and virtual. The virtual networks created inside
+                the VM are not visible to nearby phones, laptops, or routers. They exist only inside your machine.
+            </p>
+            <p>
+                This means you can practice deauthentication, handshake capture, WEP cracking, and more without
+                touching any real network or breaking any laws about unauthorized access.
+            </p>
+
+            <h2 id="capabilities">What You Can Test</h2>
+            <p>Beacon Hub currently supports practical lab workflows for:</p>
+
+            <ul>
+                <li>WPA2-PSK networks — create, connect, capture handshake</li>
+                <li>WEP networks — capture IVs and practice cracking</li>
+                <li>WPA2-Enterprise networks — RADIUS-style authentication</li>
+                <li>Virtual access points and virtual clients</li>
+                <li>Monitor mode adapters</li>
+                <li>Deauthentication testing</li>
+                <li>WPA handshake capture and extraction</li>
+                <li>WEP IV capture and cracking workflow</li>
+                <li>Packet capture and live lab logs</li>
+                <li>Guided training scenarios</li>
+            </ul>
+
+            <p>
+                Future versions are planned to support MITM, spoofing, session hijacking, evil twin portals,
+                captive portal workflows, and more advanced scenarios.
+            </p>
+
+            <h2 id="how">How It Works</h2>
+            <p>
+                Beacon Hub combines several Linux tools to create a fully virtual Wi-Fi environment:
+            </p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Component</th>
+                        <th>Role</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Vagrant</strong></td>
+                        <td>Creates and manages the Debian VM. One <code>vagrant up</code> command builds the entire lab.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>VirtualBox</strong></td>
+                        <td>Runs the Debian VM on your machine.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>mac80211_hwsim</strong></td>
+                        <td>Linux kernel module that creates virtual Wi-Fi radios. They behave like real adapters but don't send signals outside your computer.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>hostapd</strong></td>
+                        <td>Creates virtual access points (WPA2, WEP, open, enterprise).</td>
+                    </tr>
+                    <tr>
+                        <td><strong>dnsmasq</strong></td>
+                        <td>Assigns IP addresses to connected virtual clients.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>wpa_supplicant</strong></td>
+                        <td>Simulates Wi-Fi clients connecting to the virtual networks.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>aircrack-ng</strong></td>
+                        <td>Tools for capture, deauthentication, WEP and WPA handshake cracking.</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <p>
+                The web interface (served from the VM) lets you deploy networks, manage clients, and view
+                captures through a browser — no need to SSH in and run commands manually.
+            </p>
+
+            <h2 id="screenshots">Screenshots</h2>
+
+            <figure>
+                <a href="/media/beaconhub/Dashboard.png" class="image-popup">
+                    <img src="/media/beaconhub/Dashboard.png" alt="Beacon Hub Dashboard">
+                </a>
+                <figcaption>Home dashboard — deploy networks and manage the lab from your browser.</figcaption>
+            </figure>
+
+            <figure>
+                <a href="/media/beaconhub/AccessPoint.png" class="image-popup">
+                    <img src="/media/beaconhub/AccessPoint.png" alt="Beacon Hub Access Point Deployment">
+                </a>
+                <figcaption>Access point deployment — configure SSID, security type, and channels.</figcaption>
+            </figure>
+
+            <figure>
+                <a href="/media/beaconhub/Adapters.png" class="image-popup">
+                    <img src="/media/beaconhub/Adapters.png" alt="Beacon Hub Virtual Adapters">
+                </a>
+                <figcaption>Virtual adapters — monitor mode and managed interfaces created by mac80211_hwsim.</figcaption>
+            </figure>
+
+            <h2 id="repo">GitHub Repo</h2>
+            <p>
+                The full source code, setup instructions, and documentation are available on GitHub:
+            </p>
+            <p style="text-align:center; margin: 2rem 0;">
+                <a href="https://github.com/0x1ak4sh/BeaconHub" target="_blank" class="btn btn-primary" style="display:inline-flex;align-items:center;gap:0.5rem;padding:0.75rem 1.5rem;background:#24292e;color:#fff;border-radius:6px;text-decoration:none;font-weight:500;">
+                    <i class="fab fa-github"></i> View on GitHub — 0x1ak4sh/BeaconHub
+                </a>
+            </p>
+
+            <div class="share-section">
+                <h4>Share this project</h4>
+                <div class="share-buttons">
+                    <button class="share-btn" data-action="twitter"><i class="fab fa-x-twitter"></i> Twitter</button>
+                    <button class="share-btn" data-action="linkedin"><i class="fab fa-linkedin"></i> LinkedIn</button>
+                    <button class="share-btn" data-action="telegram"><i class="fab fa-telegram"></i> Telegram</button>
+                    <button class="share-btn" data-action="copy"><i class="fas fa-link"></i> Copy Link</button>
+                </div>
+            </div>
+
+        </article>
+    </main>
+
+    <footer class="article-footer" style="position:relative;z-index:1;">
+        <p>&copy; 2025 <a href="/">0x1Ak4sh</a> - All rights reserved.</p>
+    </footer>
+
+    <button class="back-to-top" title="Back to top">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.1.0/jquery.magnific-popup.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="/js/snake.js"></script>
+    <script src="/js/article.js"></script>
+</body>
+
+</html>
