@@ -46,9 +46,7 @@
             tags: ['wifi', 'pentesting', 'virtual-lab', 'vagrant'],
             image: '/media/beaconhub/logo.png',
             url: '/projects/beaconhub/'
-        }
-    ];
-
+        },
         // ---- ARTICLES ----
         {
             type: 'article',
