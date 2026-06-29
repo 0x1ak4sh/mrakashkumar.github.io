@@ -58,7 +58,7 @@
             date: '2026-06-30',
             readTime: '25 min',
             tags: ['c2', 'sliver', 'mythic', 'redteam', 'infrastructure'],
-            image: '/articles/c2-deployment/assets/Deploy%20C2%20Network.png',
+            image: '/articles/c2-deployment/assets/C2-deployment.png',
             url: '/articles/c2-deployment/'
         }
     ];
