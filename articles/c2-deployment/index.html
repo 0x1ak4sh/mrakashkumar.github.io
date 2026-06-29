@@ -370,7 +370,7 @@
                     <code>    }</code>
                     <code>    abort @scanner_ua</code>
                     <code></code>
-                    <code>    @legitc2 expression `{path}.startsWith(\"/api/v1/data\") || {header.User-Agent} == \"Mozilla/5.0...\"`</code>
+                    <code>    @legitc2 expression `{path}.startsWith("/api/v1/data") || {header.User-Agent} == "Mozilla/5.0..."`</code>
                     <code>    handle @legitc2 {</code>
                     <code>        reverse_proxy 127.0.0.1:8081</code>
                     <code>    }</code>
