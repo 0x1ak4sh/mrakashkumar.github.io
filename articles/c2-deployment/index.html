@@ -229,30 +229,6 @@
                 redirected to an external domain.
             </p>
 
-            <div class="cmd-block">
-                <div class="cmd-header">
-                    <span class="cmd-tool"><i class="fas fa-file-code"></i> /etc/caddy/Caddyfile</span>
-                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
-                </div>
-                <div class="cmd-body">
-                    <code><span class="prompt">$</span> {</code>
-                    <code>    auto_https off</code>
-                    <code>}</code>
-                    <code></code>
-                    <code><span class="prompt">$</span> https://cdn.apex-corp.xyz:443 {</code>
-                    <code>    tls internal</code>
-                    <code>    @legit_c2 {</code>
-                    <code>        header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"</code>
-                    <code>        path /api/v1/data</code>
-                    <code>    }</code>
-                    <code>    reverse_proxy @legit_c2 https://127.0.0.1:443 {</code>
-                    <code>        transport http { tls_insecure_skip_verify }</code>
-                    <code>    }</code>
-                    <code>    redir https://aws.amazon.com/cloudfront/ 302</code>
-                    <code>}</code>
-                </div>
-            </div>
-
             <figure>
                 <a href="/articles/c2-deployment/assets/Pasted%20image%2020260531080818.png" class="image-popup">
                     <img src="/articles/c2-deployment/assets/Pasted%20image%2020260531080818.png" alt="Basic Caddyfile">
