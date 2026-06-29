@@ -542,6 +542,7 @@ body.article-page ::selection {
     line-height: 1.6;
     color: var(--text-primary);
     white-space: pre;
+    display: block;
 }
 
 .cmd-body .prompt {

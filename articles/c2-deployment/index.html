@@ -350,39 +350,6 @@
                 to Sliver on port 8081, and serves a decoy static site for everything else.
             </p>
 
-            <div class="cmd-block">
-                <div class="cmd-header">
-                    <span class="cmd-tool"><i class="fas fa-file-code"></i> /etc/caddy/Caddyfile</span>
-                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
-                </div>
-                <div class="cmd-body">
-                    <code>cdn.apex-corp.xyz {</code>
-                    <code>    @scanner_ua {</code>
-                    <code>        header User-Agent *curl*</code>
-                    <code>        header User-Agent *wget*</code>
-                    <code>        header User-Agent *python-requests*</code>
-                    <code>        header User-Agent *nikto*</code>
-                    <code>        header User-Agent *nmap*</code>
-                    <code>        header User-Agent *sqlmap*</code>
-                    <code>        header User-Agent *massscan*</code>
-                    <code>        header User-Agent *zgrab*</code>
-                    <code>        header User-Agent *nessus*</code>
-                    <code>    }</code>
-                    <code>    abort @scanner_ua</code>
-                    <code></code>
-                    <code>    @legitc2 expression `{path}.startsWith("/api/v1/data") || {header.User-Agent} == "Mozilla/5.0..."`</code>
-                    <code>    handle @legitc2 {</code>
-                    <code>        reverse_proxy 127.0.0.1:8081</code>
-                    <code>    }</code>
-                    <code></code>
-                    <code>    handle {</code>
-                    <code>        root * /var/www/html/decoy</code>
-                    <code>        file_server { hide .git .env *.py *.key }</code>
-                    <code>    }</code>
-                    <code>}</code>
-                </div>
-            </div>
-
             <figure>
                 <a href="/articles/c2-deployment/assets/Pasted%20image%2020260601000720.png" class="image-popup">
                     <img src="/articles/c2-deployment/assets/Pasted%20image%2020260601000720.png" alt="Advanced Caddyfile">
@@ -485,9 +452,7 @@
                     <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
                 </div>
                 <div class="cmd-body">
-                    <code><span class="prompt">$</span> git clone https://github.com/its-a-feature/Mythic.git</code>
-                    <code><span class="prompt">$</span> cd Mythic</code>
-                    <code><span class="prompt">$</span> sudo ./mythic-cli start</code>
+                    <code><span class="prompt">$</span> git clone https://github.com/its-a-feature/Mythic.git && cd Mythic && sudo ./mythic-cli start</code>
                 </div>
             </div>
 
