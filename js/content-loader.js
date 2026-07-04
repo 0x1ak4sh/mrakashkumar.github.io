@@ -2,6 +2,7 @@
  * Content Loader - 0x1Ak4sh Portfolio Homepage
  * Renders projects in #projects-grid and articles in #articles-grid
  * Simple, no filters - just show the content cards directly.
+ * v2 — includes Evilginx + GoPhish article.
  */
 (function () {
     'use strict';
