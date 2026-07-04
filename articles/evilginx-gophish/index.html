@@ -114,26 +114,19 @@
                 <figcaption>Figure 1: Evilginx and GoPhish lab infrastructure overview.</figcaption>
             </figure>
 
-            <blockquote>
-                <p><strong>Author:</strong> Akash Kumar (0x1Ak4sh)<br>
-                <strong>Domain used:</strong> apex-corp.xyz<br>
-                <strong>Stack:</strong> Postfix &middot; Dovecot &middot; Roundcube &middot; GoPhish &middot; Caddy &middot; Evilginx3<br>
-                <strong>Infrastructure:</strong> DigitalOcean (2 VPS, Ubuntu 24.04)</p>
-            </blockquote>
-
-            <hr>
-
             <h2 id="story">1. The Story</h2>
 
-            <p>Apex Corp just finished a big cloud migration. All the on-premises servers &mdash; Active Directory, Exchange, workstations &mdash; got decommissioned and powered off. The team wiped everything and moved to Microsoft 365.</p>
+            <p>As you know, I have a project called <a href="/projects/hybrid-ad-lab/">Active Directory Hybrid Lab</a>. Inside that, I had connected Azure AD Connect and it synced the user sets and their passwords from on-prem AD to Entra ID. There were almost 50 users synced from the old Active Directory. Even when I deleted and destroyed the servers after that project was finished, the users were still alive on the cloud.</p>
 
-            <p>But they forgot one thing.</p>
+            <p>So for this project, I thought about using these accounts — because they could still log in to <code>login.microsoftonline.com</code>. But they didn't have real Outlook since that needs a paid license. So I bought a virtual private server and built a mail server for the domain I already had — <code>apex-corp.xyz</code>. That domain now catches all the emails. Instead of creating a mailbox for every user, I set up a catch-all that catches every mail. It could send mails outside to my Gmail account, and receive from outside too. It didn't have great reputation though — emails kept landing in spam. But it worked. That's the main thing.</p>
 
-            <p>The Microsoft Entra ID tenant was still live. Every user account that was synced from the old Active Directory &mdash; <code>t.stark</code>, <code>h.campbell</code>, <code>homelander</code> and more &mdash; still existed in the cloud. Their passwords still worked because Password Hash Sync (PHS) was enabled before the lab was shut down.</p>
+            <p>For GoPhish, I used this mail server as the SMTP relay. I could have used a paid SMTP service for better deliverability, but this was just a simulation.</p>
 
-            <p>An attacker who knows the domain is <code>apex-corp.xyz</code> can look this up, figure out there is still an active Microsoft tenant, and set up a phishing infrastructure targeting these orphaned cloud accounts.</p>
+            <p>For Evilginx, I used Caddy for request filtering and redirection to avoid detection by defenders and bots.</p>
 
-            <p><strong>This project builds that exact infrastructure &mdash; end to end &mdash; for a phishing simulation.</strong></p>
+            <p>You may notice Marvel character names throughout this article. If you have read the hybrid lab project, I intentionally used Marvel character names there too. The HTML email template that gets dropped into the mailbox uses a Marvel-inspired theme — it appeals to recipients to "join the war." It's just a demo showing how phishing works.</p>
+
+            <p>The front-facing domain in front of Evilginx serves a Marvel-inspired decoy page I created with AI. It's what every bot, SOC analyst, or defender sees when they visit without the valid token or cookie.</p>
 
             <blockquote>
                 <p>This is a controlled simulation for educational and portfolio purposes only. All targets were accounts I owned in my own lab environment.</p>
@@ -145,24 +138,12 @@
 
             <p>Before we get into commands, here is the full attack flow so everything makes sense as you build it.</p>
 
-            <h3>Attack Flow</h3>
-
-            <div class="mermaid-container">
-                <div class="mermaid">
-graph TD
-    A["GoPhish Campaign - Sends phishing email"] --> B["Postfix on VPS 1 - Delivers email locally"]
-    B --> C["Roundcube Webmail - t.stark opens inbox"]
-    C --> D["Victim clicks link in the email"]
-    D --> E["Caddy Reverse Proxy on VPS 2 - Checks token, gates access"]
-    E --> F["Evilginx on VPS 2 - Transparent AiTM Proxy"]
-    F --> G["Real Microsoft Login - login.microsoftonline.com"]
-    G --> H["User enters real Entra ID credentials"]
-    H --> F
-    F --> I["Evilginx captures username + password + session cookie"]
-    I --> J["User redirected to real Microsoft portal - Notices nothing"]
-    I --> K["Attacker imports cookie - Logs in as t.stark - MFA bypassed"]
-                </div>
-            </div>
+            <figure>
+                <a href="/articles/evilginx-gophish/assets/AttackFlow.png" class="image-popup">
+                    <img src="/articles/evilginx-gophish/assets/AttackFlow.png" alt="Attack Flow Diagram">
+                </a>
+                <figcaption>Attack flow for the AiTM phishing simulation infrastructure.</figcaption>
+            </figure>
 
             <p><strong>The key insight:</strong> Evilginx is not a fake page. It is a real-time transparent proxy. The victim sees the actual Microsoft login page &mdash; because Evilginx is fetching it from Microsoft and relaying it. The difference is that Evilginx intercepts the session cookie on the way back. That cookie is what lets you log in without a password or MFA.</p>
 
@@ -2989,45 +2970,15 @@ graph TD
 
             <p>Run these checks after the full setup is complete:</p>
 
-            <div class="cmd-block">
-                <div class="cmd-header">
-                    <span class="cmd-tool"><i class="fas fa-terminal"></i> Terminal</span>
-                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
-                </div>
-                <div class="cmd-body">
-                    <code><span class="prompt">#</span> 1. No Evilginx or GoPhish headers in responses</code>
-                    <code><span class="prompt">$</span> curl -sI https://login.apex-corp.xyz | grep -i -E "x-|server"</code>
-                    <code><span class="prompt">#</span> Expected: Server: nginx/1.18.0 (Ubuntu) and nothing else</code>
-                    <code></code>
-                    <code><span class="prompt">#</span> 2. Bots get the decoy site, not a real error</code>
-                    <code><span class="prompt">$</span> curl -A "curl" https://login.apex-corp.xyz | head -5</code>
-                    <code><span class="prompt">$</span> curl -A "nmap" https://login.apex-corp.xyz | head -5</code>
-                    <code><span class="prompt">#</span> Expected: Apex Corp HTML</code>
-                    <code></code>
-                    <code><span class="prompt">#</span> 3. Random scanner paths also get the decoy site</code>
-                    <code><span class="prompt">$</span> curl -s https://login.apex-corp.xyz/wp-admin | head -5</code>
-                    <code><span class="prompt">$</span> curl -s https://login.apex-corp.xyz/.env | head -5</code>
-                    <code><span class="prompt">#</span> Expected: Apex Corp HTML</code>
-                    <code></code>
-                    <code><span class="prompt">#</span> 4. Lure path without a valid token &rarr; decoy site</code>
-                    <code><span class="prompt">$</span> curl -A "Mozilla/5.0 (Windows NT 10.0; Win64; x64)" \</code>
-                    <code>  https://login.apex-corp.xyz/access | head -5</code>
-                    <code><span class="prompt">#</span> Expected: Apex Corp HTML</code>
-                    <code></code>
-                    <code><span class="prompt">#</span> 5. Lure with valid token &rarr; proxied to Evilginx</code>
-                    <code><span class="prompt">$</span> curl -sI -A "Mozilla/5.0 (Windows NT 10.0; Win64; x64)" \</code>
-                    <code>  "https://login.apex-corp.xyz/access?utm_source=scarlet24"</code>
-                    <code><span class="prompt">#</span> Expected: 302 redirect toward Microsoft login</code>
-                    <code></code>
-                    <code><span class="prompt">#</span> 6. Certificate transparency &mdash; only wildcard should appear</code>
-                    <code><span class="prompt">#</span> Visit: https://crt.sh/?q=apex-corp.xyz</code>
-                    <code><span class="prompt">#</span> Should NOT show individual subdomain certs (auth-prod, etc.)</code>
-                    <code></code>
-                    <code><span class="prompt">#</span> 7. Cookie format in browser DevTools</code>
-                    <code><span class="prompt">#</span> After visiting lure &mdash; cookie name should NOT be xxxx-xxxx</code>
-                    <code><span class="prompt">#</span> Cookie value should NOT be 64 unbroken hex characters</code>
-                </div>
-            </div>
+            <ul class="checklist">
+                <li><strong>No Evilginx or GoPhish headers</strong> &mdash; Run <code>curl -sI https://login.apex-corp.xyz | grep -i -E "x-|server"</code> &mdash; only <code>Server: nginx/1.18.0 (Ubuntu)</code> should appear, nothing else.</li>
+                <li><strong>Bots get the decoy site</strong> &mdash; <code>curl -A "curl" https://login.apex-corp.xyz</code> and <code>curl -A "nmap" https://login.apex-corp.xyz</code> should return the Apex Corp decoy page, not an error.</li>
+                <li><strong>Scanner paths return decoy</strong> &mdash; Paths like <code>/wp-admin</code> or <code>/.env</code> should return the decoy page HTML, not a blank error or 404.</li>
+                <li><strong>Lure path without token &rarr; decoy</strong> &mdash; Accessing <code>/access</code> without the valid token (or with a real browser UA) should show the decoy site.</li>
+                <li><strong>Lure path with valid token &rarr; Evilginx</strong> &mdash; <code>curl -sI "https://login.apex-corp.xyz/access?utm_source=scarlet24"</code> with a browser UA should return a <code>302</code> redirect toward the real Microsoft login.</li>
+                <li><strong>Certificate transparency clean</strong> &mdash; Visit <code>https://crt.sh/?q=apex-corp.xyz</code> — should NOT show individual subdomain certs like <code>auth-prod</code> or <code>sso-prod</code>. Only the wildcard should appear.</li>
+                <li><strong>Cookie OPSEC</strong> &mdash; After visiting the lure, inspect cookies in DevTools. The cookie name should NOT look like <code>xxxx-xxxx</code> and the value should NOT be 64 unbroken hex characters.</li>
+            </ul>
 
             <hr>
 
@@ -3124,7 +3075,6 @@ graph TD
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
     <script src="/js/snake.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
     <script src="/js/article.js"></script>
 </body>
 </html>
