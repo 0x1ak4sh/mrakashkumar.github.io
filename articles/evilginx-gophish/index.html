@@ -147,23 +147,20 @@
 
             <h3>Attack Flow</h3>
 
-            <div class="cmd-block">
-                <div class="cmd-header">
-                    <span class="cmd-tool"><i class="fas fa-code"></i> Attack Flow</span>
-                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
-                </div>
-                <div class="cmd-body">
-                    <code>A[GoPhish Campaign - Sends phishing email] --&gt; B[Postfix on VPS 1 - Delivers email locally]</code>
-                    <code>B --&gt; C[Roundcube Webmail - t.stark opens inbox]</code>
-                    <code>C --&gt; D[Victim clicks link in the email]</code>
-                    <code>D --&gt; E[Caddy Reverse Proxy on VPS 2 - Checks token, gates access]</code>
-                    <code>E --&gt; F[Evilginx on VPS 2 - Transparent AiTM Proxy]</code>
-                    <code>F --&gt; G[Real Microsoft Login - login.microsoftonline.com]</code>
-                    <code>G --&gt; H[User enters real Entra ID credentials]</code>
-                    <code>H --&gt; F</code>
-                    <code>F --&gt; I[Evilginx captures username + password + session cookie]</code>
-                    <code>I --&gt; J[User redirected to real Microsoft portal - Notices nothing]</code>
-                    <code>I --&gt; K[Attacker imports cookie - Logs in as t.stark - MFA bypassed]</code>
+            <div class="mermaid-container">
+                <div class="mermaid">
+graph TD
+    A["GoPhish Campaign - Sends phishing email"] --> B["Postfix on VPS 1 - Delivers email locally"]
+    B --> C["Roundcube Webmail - t.stark opens inbox"]
+    C --> D["Victim clicks link in the email"]
+    D --> E["Caddy Reverse Proxy on VPS 2 - Checks token, gates access"]
+    E --> F["Evilginx on VPS 2 - Transparent AiTM Proxy"]
+    F --> G["Real Microsoft Login - login.microsoftonline.com"]
+    G --> H["User enters real Entra ID credentials"]
+    H --> F
+    F --> I["Evilginx captures username + password + session cookie"]
+    I --> J["User redirected to real Microsoft portal - Notices nothing"]
+    I --> K["Attacker imports cookie - Logs in as t.stark - MFA bypassed"]
                 </div>
             </div>
 
@@ -3127,6 +3124,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
     <script src="/js/snake.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
     <script src="/js/article.js"></script>
 </body>
 </html>
