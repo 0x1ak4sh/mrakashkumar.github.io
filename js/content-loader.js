@@ -60,6 +60,17 @@
             tags: ['c2', 'sliver', 'mythic', 'redteam', 'infrastructure'],
             image: '/articles/c2-deployment/assets/C2-deployment.png',
             url: '/articles/c2-deployment/'
+        },
+        {
+            title: 'AiTM Phishing Simulation — Evilginx + GoPhish + Roundcube',
+            description: 'Building a complete AiTM phishing infrastructure with Evilginx, GoPhish, Roundcube mail server, and Caddy reverse proxy on DigitalOcean. End-to-end red team phishing simulation.',
+            category: 'Tutorial',
+            difficulty: 'medium',
+            date: '2026-07-05',
+            readTime: '45 min',
+            tags: ['phishing', 'evilginx', 'gophish', 'roundcube', 'redteam', 'infrastructure'],
+            image: '/articles/evilginx-gophish/assets/EvilginxandGoPhishLab.png',
+            url: '/articles/evilginx-gophish/'
         }
     ];
 
