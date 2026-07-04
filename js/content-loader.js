@@ -62,7 +62,9 @@
             url: '/articles/c2-deployment/'
         },
         {
-            title: 'AiTM Phishing Simulation — Evilginx + GoPhish + Roundcube',
+            type: 'article',
+            slug: 'evilginx-gophish',
+            title: 'Evilginx & GoPhish — OPSEC and Traffic Filtering',
             description: 'Building a complete AiTM phishing infrastructure with Evilginx, GoPhish, Roundcube mail server, and Caddy reverse proxy on DigitalOcean. End-to-end red team phishing simulation.',
             category: 'Tutorial',
             difficulty: 'medium',
