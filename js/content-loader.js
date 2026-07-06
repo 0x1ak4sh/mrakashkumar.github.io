@@ -85,7 +85,7 @@
             date: '2026-07-07',
             readTime: '15 min',
             tags: ['p4wnp1', 'raspberry-pi', 'hid', 'usb', 'redteam', 'physical-access'],
-            image: '/articles/p4wnp1-aloha/assets/pi-zero-board.jpg',
+            image: '/articles/p4wnp1-aloha/assets/p4wnp1-thumbnail.png',
             url: '/articles/p4wnp1-aloha/'
         }
     ];
