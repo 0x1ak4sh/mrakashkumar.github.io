@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5">
+    <title>Red Team Dropbox — Raspberry Pi with Tailscale | 0x1Ak4sh</title>
+    <meta name="description" content="Building a red team dropbox using a Raspberry Pi and Tailscale for remote internal network access. No VPS, no SSH tunnels, just a mesh VPN.">
+    <meta name="robots" content="index,follow">
+    <link rel="canonical" href="https://mrakashkumar.in/projects/dropbox-raspberry-pi/">
+
+    <meta property="og:type" content="project">
+    <meta property="og:url" content="https://mrakashkumar.in/projects/dropbox-raspberry-pi/">
+    <meta property="og:title" content="Red Team Dropbox — Raspberry Pi with Tailscale">
+    <meta property="og:description" content="Building a red team dropbox using a Raspberry Pi and Tailscale for remote internal network access.">
+    <meta property="og:image" content="https://mrakashkumar.in/projects/dropbox-raspberry-pi/assets/dropbox-thumbnail.png">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Red Team Dropbox — Raspberry Pi with Tailscale | 0x1Ak4sh">
+    <meta name="twitter:description" content="Building a red team dropbox using a Raspberry Pi and Tailscale.">
+    <meta name="twitter:image" content="https://mrakashkumar.in/projects/dropbox-raspberry-pi/assets/dropbox-thumbnail.png">
+
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/8d67cb621b.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="/css/article.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.1.0/magnific-popup.min.css">
+
+    <style>
+        .article-content figure { text-align: center; }
+        .article-content figure img {
+            display: inline-block; margin: 0 auto;
+            max-height: 700px; width: auto; max-width: 100%;
+        }
+        .article-content figure a.image-popup { display: inline-block; }
+    </style>
+</head>
+
+<body class="article-page">
+
+    <div class="reading-progress"></div>
+
+    <div id="canvas_snake" class="canvas canvas-snake" data-colorone="#0b1115" data-colortwo="#ff6b35"
+        style="position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;opacity:0.25;"></div>
+
+    <nav class="article-nav">
+        <div class="nav-left">
+            <a href="/" class="nav-back"><i class="fas fa-arrow-left"></i><span>Back</span></a>
+            <a href="/" class="nav-logo">0x1Ak4sh</a>
+        </div>
+        <div class="nav-right">
+            <button class="nav-share-btn" onclick="document.querySelector('.share-section').scrollIntoView({behavior:'smooth'})" title="Share">
+                <i class="fas fa-share-alt"></i>
+            </button>
+        </div>
+    </nav>
+
+    <section class="article-hero">
+        <div class="hero-bg" style="background-image: url('/projects/dropbox-raspberry-pi/assets/dropbox-thumbnail.png'); background-color: #0d1117;"></div>
+        <div class="hero-content">
+            <div class="hero-badges">
+                <span class="badge badge-category"><i class="fas fa-network-wired"></i> Physical Access</span>
+                <span class="badge badge-difficulty medium"><i class="fas fa-cogs"></i> Red Team</span>
+            </div>
+            <h1 class="hero-title">Red Team Dropbox &mdash; Raspberry Pi with Tailscale</h1>
+            <p style="color: rgba(255,255,255,0.7); font-size: 1.05rem; margin: 0.5rem 0 1rem; max-width: 680px;">
+                A Raspberry Pi dropbox that gives you remote access to internal networks using Tailscale.
+                No VPS, no SSH tunnels, no port forwarding.
+            </p>
+
+            <div class="project-stats">
+                <div class="stat-item"><i class="fas fa-microchip"></i> Raspberry Pi 4</div>
+                <div class="stat-item"><i class="fas fa-globe"></i> Tailscale VPN</div>
+                <div class="stat-item"><i class="fas fa-arrows-spin"></i> Subnet Routing</div>
+                <div class="stat-item"><i class="fas fa-shield-halved"></i> SSH Disabled</div>
+            </div>
+
+            <div class="hero-tags">
+                <a href="#" class="hero-tag">#raspberrypi</a>
+                <a href="#" class="hero-tag">#tailscale</a>
+                <a href="#" class="hero-tag">#dropbox</a>
+                <a href="#" class="hero-tag">#redteam</a>
+                <a href="#" class="hero-tag">#vpn</a>
+                <a href="#" class="hero-tag">#pivoting</a>
+            </div>
+        </div>
+    </section>
+
+    <main class="article-layout" style="position:relative;z-index:1;">
+
+        <aside class="toc-sidebar">
+            <div class="toc-title">Contents</div>
+            <ul class="toc-list">
+                <li><a href="#what-is">1. What Is a Dropbox?</a></li>
+                <li><a href="#approach">2. Tailscale vs Reverse SSH</a></li>
+                <li><a href="#hardware">3. Hardware</a></li>
+                <li><a href="#flashing">4. Flashing the OS</a></li>
+                <li><a href="#install-tailscale">5. Installing Tailscale</a></li>
+                <li><a href="#verify">6. Verifying the Connection</a></li>
+                <li><a href="#remote-access">7. Remote Access</a></li>
+                <li><a href="#subnet-routing">8. Subnet Routing</a></li>
+                <li><a href="#conclusion">9. Conclusion</a></li>
+            </ul>
+        </aside>
+
+        <article class="article-content">
+
+            <figure>
+                <a href="/projects/dropbox-raspberry-pi/assets/hardware-pi-zero.png" class="image-popup">
+                    <img src="/projects/dropbox-raspberry-pi/assets/hardware-pi-zero.png" alt="Raspberry Pi Zero and Wi-Fi Adapter">
+                </a>
+                <figcaption>Raspberry Pi Zero with a USB Wi-Fi adapter.</figcaption>
+            </figure>
+
+            <figure>
+                <a href="/projects/dropbox-raspberry-pi/assets/hardware-pi-4.png" class="image-popup">
+                    <img src="/projects/dropbox-raspberry-pi/assets/hardware-pi-4.png" alt="Raspberry Pi 4">
+                </a>
+                <figcaption>Raspberry Pi 4 inside a case with a fan.</figcaption>
+            </figure>
+
+            <h2 id="what-is">1. What Is a Dropbox?</h2>
+
+            <p>A dropbox is a small device that you plug into a target network during a red team engagement. It sits on the internal network and gives you remote access from anywhere. You can run tools like nmap, Responder, or CrackMapExec through it without being on site.</p>
+
+            <p>The setup is simple: a Raspberry Pi with an Ethernet connection and a way to reach it from the internet.</p>
+
+            <hr>
+
+            <h2 id="approach">2. Tailscale vs Reverse SSH</h2>
+
+            <p>The common approach is to use SSH reverse port forwarding. You set up a VPS with a public IP, and the Pi opens an outbound SSH tunnel to it. Then you SSH into the VPS and get forwarded to the Pi. This works but needs a VPS, SSH key management, and tools like autossh to keep the tunnel alive. The folks at <a href="https://breachforce.net/build-your-own-red-team-dropbox-for-vapt-red-teaming">BreachForce have a detailed guide</a> on this method.</p>
+
+            <p>We will do the same thing differently. Instead of a VPS and SSH tunnels, we use <strong>Tailscale</strong>. Tailscale is a mesh VPN built on WireGuard. Every device in your Tailscale network gets a private IP and can reach every other device directly. No port forwarding, no VPS, no complex config.</p>
+
+            <p>Here is how they compare:</p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>SSH Reverse Tunnel</th>
+                        <th>Tailscale</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Needs a VPS with public IP</td>
+                        <td>No server needed</td>
+                    </tr>
+                    <tr>
+                        <td>Manual SSH key management</td>
+                        <td>OAuth login (Google, GitHub, Microsoft)</td>
+                    </tr>
+                    <tr>
+                        <td>Tunnel breaks on network drop</td>
+                        <td>Auto-reconnects</td>
+                    </tr>
+                    <tr>
+                        <td>Port 22 outbound must be open</td>
+                        <td>Uses HTTPS (port 443) &mdash; almost never blocked</td>
+                    </tr>
+                    <tr>
+                        <td>Needs autossh to stay alive</td>
+                        <td>Zero config</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <hr>
+
+            <h2 id="hardware">3. Hardware</h2>
+
+            <p>You can use a Raspberry Pi Zero W or a Raspberry Pi 4. The Pi 4 has more power and Gigabit Ethernet, which is better for running tools. I used a Pi 4 for this build.</p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Component</th>
+                        <th>Details</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Board</td>
+                        <td>Raspberry Pi 4B, 4GB RAM</td>
+                    </tr>
+                    <tr>
+                        <td>Storage</td>
+                        <td>64GB microSD (Class 10)</td>
+                    </tr>
+                    <tr>
+                        <td>Power</td>
+                        <td>USB-C 5V/3A adapter</td>
+                    </tr>
+                    <tr>
+                        <td>Network</td>
+                        <td>Built-in Gigabit Ethernet</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <hr>
+
+            <h2 id="flashing">4. Flashing the OS</h2>
+
+            <h3>Step 4.1 &mdash; Open Raspberry Pi Imager</h3>
+
+            <p>Download and open <a href="https://www.raspberrypi.com/software/">Raspberry Pi Imager</a>. The homepage looks like this:</p>
+
+            <figure>
+                <a href="/projects/dropbox-raspberry-pi/assets/imager-home.png" class="image-popup">
+                    <img src="/projects/dropbox-raspberry-pi/assets/imager-home.png" alt="Raspberry Pi Imager Homepage">
+                </a>
+                <figcaption>Raspberry Pi Imager v1.8.5 homepage.</figcaption>
+            </figure>
+
+            <h3>Step 4.2 &mdash; Select the OS</h3>
+
+            <p>Click <strong>Choose OS</strong> and select <strong>Raspberry Pi OS Lite (64-bit)</strong>. This is the headless version with no desktop, which is all we need.</p>
+
+            <figure>
+                <a href="/projects/dropbox-raspberry-pi/assets/imager-os-select.png" class="image-popup">
+                    <img src="/projects/dropbox-raspberry-pi/assets/imager-os-select.png" alt="Select OS for Flashing">
+                </a>
+                <figcaption>Selecting Raspberry Pi OS Lite (64-bit) in the Imager.</figcaption>
+            </figure>
+
+            <h3>Step 4.3 &mdash; Configure and Flash</h3>
+
+            <p>Click the gear icon and set:</p>
+            <ul>
+                <li><strong>Hostname:</strong> <code>dropbox-1</code></li>
+                <li><strong>Enable SSH:</strong> Password authentication</li>
+                <li><strong>Username/password:</strong> <code>pi</code> / your password</li>
+            </ul>
+
+            <p>Select your microSD card as storage and click <strong>Write</strong>.</p>
+
+            <hr>
+
+            <h2 id="install-tailscale">5. Installing Tailscale</h2>
+
+            <h3>Step 5.1 &mdash; SSH into the Pi</h3>
+
+            <p>Insert the microSD card into the Pi, connect Ethernet, and power it on. Find its IP and SSH in:</p>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> Terminal</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code>ssh pi@dropbox-1.local</code>
+                </div>
+            </div>
+
+            <h3>Step 5.2 &mdash; Install Tailscale</h3>
+
+            <p>Run the install script:</p>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> Terminal</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code>curl -fsSL https://tailscale.com/install.sh | sh</code>
+                </div>
+            </div>
+
+            <h3>Step 5.3 &mdash; Authenticate</h3>
+
+            <p>Start Tailscale:</p>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> Terminal</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code>sudo tailscale up --ssh</code>
+                </div>
+            </div>
+
+            <p>This prints a URL in the terminal. Open it in your browser:</p>
+
+            <figure>
+                <a href="/projects/dropbox-raspberry-pi/assets/tailscale-auth-url.png" class="image-popup">
+                    <img src="/projects/dropbox-raspberry-pi/assets/tailscale-auth-url.png" alt="Tailscale Authentication URL">
+                </a>
+                <figcaption>Tailscale prints a URL to authenticate the device.</figcaption>
+            </figure>
+
+            <p>The browser opens the Tailscale website asking you to connect the device to your account:</p>
+
+            <figure>
+                <a href="/projects/dropbox-raspberry-pi/assets/tailscale-connect.png" class="image-popup">
+                    <img src="/projects/dropbox-raspberry-pi/assets/tailscale-connect.png" alt="Tailscale Connect Device">
+                </a>
+                <figcaption>Authorizing the Raspberry Pi in the Tailscale web portal.</figcaption>
+            </figure>
+
+            <p>Click <strong>Connect</strong>. The device is now on your Tailscale network.</p>
+
+            <hr>
+
+            <h2 id="verify">6. Verifying the Connection</h2>
+
+            <p>Run <code>ip a</code> or <code>ifconfig</code> on the Pi to see the new Tailscale interface:</p>
+
+            <figure>
+                <a href="/projects/dropbox-raspberry-pi/assets/tailscale-interface.png" class="image-popup">
+                    <img src="/projects/dropbox-raspberry-pi/assets/tailscale-interface.png" alt="Tailscale Interface on Raspberry Pi">
+                </a>
+                <figcaption>The tailscale0 interface with its Tailscale IP address.</figcaption>
+            </figure>
+
+            <p>The Pi gets a <code>100.x.x.x</code> IP address on the Tailscale network.</p>
+
+            <h3>Disable Key Expiry</h3>
+
+            <p>Go to the <a href="https://login.tailscale.com/admin/machines">Tailscale admin console</a>, find your device, and click <strong>Disable key expiry</strong>. This keeps the device connected indefinitely:</p>
+
+            <figure>
+                <a href="/projects/dropbox-raspberry-pi/assets/tailscale-key-expiry.png" class="image-popup">
+                    <img src="/projects/dropbox-raspberry-pi/assets/tailscale-key-expiry.png" alt="Disable Key Expiry">
+                </a>
+                <figcaption>Disabling key expiry on the Tailscale admin dashboard.</figcaption>
+            </figure>
+
+            <h3>Check Local Network Interface</h3>
+
+            <p>Verify the Pi's local Ethernet IP:</p>
+
+            <figure>
+                <a href="/projects/dropbox-raspberry-pi/assets/eth0-interface.png" class="image-popup">
+                    <img src="/projects/dropbox-raspberry-pi/assets/eth0-interface.png" alt="Ethernet Interface on Pi">
+                </a>
+                <figcaption>The eth0 interface shows the Pi's local network IP.</figcaption>
+            </figure>
+
+            <hr>
+
+            <h2 id="remote-access">7. Remote Access</h2>
+
+            <p>On your Windows PC (or any machine with Tailscale installed), check your own Tailscale IP:</p>
+
+            <figure>
+                <a href="/projects/dropbox-raspberry-pi/assets/windows-tailscale-ip.png" class="image-popup">
+                    <img src="/projects/dropbox-raspberry-pi/assets/windows-tailscale-ip.png" alt="Windows Tailscale IP">
+                </a>
+                <figcaption>Windows command prompt showing the Tailscale adapter IP.</figcaption>
+            </figure>
+
+            <p>Now you can ping the Pi from your Windows machine using its Tailscale IP:</p>
+
+            <figure>
+                <a href="/projects/dropbox-raspberry-pi/assets/ping-test.png" class="image-popup">
+                    <img src="/projects/dropbox-raspberry-pi/assets/ping-test.png" alt="Ping Test to Dropbox">
+                </a>
+                <figcaption>Pinging the Raspberry Pi dropbox from a Windows PC over the Tailscale network.</figcaption>
+            </figure>
+
+            <p>You can also SSH directly:</p>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> Terminal</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code>ssh pi@dropbox-1</code>
+                </div>
+            </div>
+
+            <p>Tailscale's MagicDNS resolves the hostname automatically so you do not need to remember the IP.</p>
+
+            <hr>
+
+            <h2 id="subnet-routing">8. Subnet Routing</h2>
+
+            <p>This is the most useful feature. Subnet routing lets you access the entire target network from your laptop through the Pi, not just the Pi itself.</p>
+
+            <h3>Step 8.1 &mdash; Enable IP Forwarding on the Pi</h3>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> Terminal (on Pi)</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code>echo 'net.ipv4.ip_forward = 1' | sudo tee -a /etc/sysctl.d/99-tailscale.conf</code>
+                    <code>echo 'net.ipv6.conf.all.forwarding = 1' | sudo tee -a /etc/sysctl.d/99-tailscale.conf</code>
+                    <code>sudo sysctl -p /etc/sysctl.d/99-tailscale.conf</code>
+                </div>
+            </div>
+
+            <h3>Step 8.2 &mdash; Advertise the Target Subnet</h3>
+
+            <p>Replace <code>192.168.1.0/24</code> with the actual subnet of the target network:</p>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> Terminal (on Pi)</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code>sudo tailscale up --ssh --advertise-routes=192.168.1.0/24 --accept-routes</code>
+                </div>
+            </div>
+
+            <h3>Step 8.3 &mdash; Approve Routes in Admin Console</h3>
+
+            <p>Go to the Tailscale admin console, click <strong>Edit route settings</strong> for your device, and enable the subnet route:</p>
+
+            <figure>
+                <a href="/projects/dropbox-raspberry-pi/assets/subnet-routes.png" class="image-popup">
+                    <img src="/projects/dropbox-raspberry-pi/assets/subnet-routes.png" alt="Approve Subnet Routes">
+                </a>
+                <figcaption>Enabling the subnet route in the Tailscale admin dashboard.</figcaption>
+            </figure>
+
+            <h3>Step 8.4 &mdash; Accept Routes on Your Laptop</h3>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> Terminal (on laptop)</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code><span class="comment"># Linux / macOS</span></code>
+                    <code>sudo tailscale up --accept-routes</code>
+                    <code></code>
+                    <code><span class="comment"># Windows — Tailscale system tray → Preferences → Use Tailscale subnets</span></code>
+                </div>
+            </div>
+
+            <p>Now from your laptop you can directly access hosts on the target network:</p>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> Terminal (on laptop)</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code>nmap -sV 192.168.1.0/24</code>
+                    <code>responder -I tailscale0</code>
+                </div>
+            </div>
+
+            <p>The traffic goes from your laptop through the Tailscale tunnel, exits the Pi's Ethernet port, and enters the target network.</p>
+
+            <hr>
+
+            <h2 id="conclusion">9. Conclusion</h2>
+
+            <p>A red team dropbox does not need to be complicated. A Raspberry Pi, a microSD card, Raspberry Pi OS Lite, and Tailscale are all you need. No VPS, no SSH tunnels, no port forwarding. Tailscale handles all the networking.</p>
+
+            <p>For engagements, ship the device to the client. They plug it into a network port. Within 90 seconds you have internal network access from anywhere.</p>
+
+            <blockquote>
+                <p>This project was built for educational and portfolio purposes. All testing was performed against my own lab network. No unauthorized access was performed against any external systems.</p>
+            </blockquote>
+
+            <hr>
+
+            <h2 id="references">References</h2>
+
+            <ul>
+                <li><a href="https://tailscale.com/kb/">Tailscale Documentation</a></li>
+                <li><a href="https://tailscale.com/kb/1193/tailscale-ssh">Tailscale SSH</a></li>
+                <li><a href="https://tailscale.com/kb/1019/subnets">Tailscale Subnet Routing</a></li>
+                <li><a href="https://breachforce.net/build-your-own-red-team-dropbox-for-vapt-red-teaming">BreachForce &mdash; Build Your Own Red Team Dropbox</a></li>
+                <li><a href="https://www.raspberrypi.com/software/">Raspberry Pi Imager</a></li>
+            </ul>
+
+            <!-- Share -->
+            <div class="share-section">
+                <h4>Share this article</h4>
+                <div class="share-buttons">
+                    <button class="share-btn" data-action="twitter"><i class="fab fa-x-twitter"></i> Twitter</button>
+                    <button class="share-btn" data-action="linkedin"><i class="fab fa-linkedin"></i> LinkedIn</button>
+                    <button class="share-btn" data-action="telegram"><i class="fab fa-telegram"></i> Telegram</button>
+                    <button class="share-btn" data-action="copy"><i class="fas fa-link"></i> Copy Link</button>
+                </div>
+            </div>
+
+        </article>
+    </main>
+
+    <footer class="article-footer" style="position:relative;z-index:1;">
+        <p>&copy; 2025 <a href="/">0x1Ak4sh</a> - All rights reserved.</p>
+    </footer>
+
+    <button class="back-to-top" title="Back to top">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.1.0/jquery.magnific-popup.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="/js/snake.js"></script>
+    <script src="/js/article.js"></script>
+</body>
+
+</html>

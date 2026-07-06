@@ -2,7 +2,7 @@
  * Content Loader - 0x1Ak4sh Portfolio Homepage
  * Renders projects in #projects-grid and articles in #articles-grid
  * Simple, no filters - just show the content cards directly.
- * v3 — includes Evilginx + GoPhish and P4wnP1 Aloha articles.
+ * v4 — includes Dropbox and P4wnP1 Aloha projects.
  */
 (function () {
     'use strict';
@@ -47,6 +47,18 @@
             tags: ['wifi', 'pentesting', 'virtual-lab', 'vagrant'],
             image: '/media/beaconhub/logo.png',
             url: '/projects/beaconhub/'
+        },
+        {
+            type: 'project',
+            slug: 'dropbox-raspberry-pi',
+            title: 'Red Team Dropbox — Raspberry Pi with Tailscale',
+            description: 'A Raspberry Pi dropbox for remote internal network access using Tailscale. No VPS, no SSH tunnels, no port forwarding — just a mesh VPN.',
+            category: 'Setup Guide',
+            language: 'Physical Access',
+            date: '2026-07-07',
+            tags: ['raspberry-pi', 'tailscale', 'dropbox', 'redteam', 'vpn', 'pivoting'],
+            image: '/projects/dropbox-raspberry-pi/assets/dropbox-thumbnail.png',
+            url: '/projects/dropbox-raspberry-pi/'
         },
         // ---- ARTICLES ----
         {
