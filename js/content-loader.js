@@ -76,17 +76,16 @@
             url: '/articles/evilginx-gophish/'
         },
         {
-            type: 'article',
+            type: 'project',
             slug: 'p4wnp1-aloha',
             title: 'P4wnP1 A.L.O.A. — Malicious USB on a Raspberry Pi Zero',
-            description: 'Turning a $10 Raspberry Pi Zero into a flexible USB attack platform with HID injection, wireless out-of-band control via Wi-Fi AP, and mass storage capabilities — all configured from your phone.',
-            category: 'Tutorial',
-            difficulty: 'medium',
+            description: 'Turning a Raspberry Pi Zero into a USB attack platform with HID injection, wireless control via Wi-Fi AP, and mass storage capabilities — all configured from your phone.',
+            category: 'Setup Guide',
+            language: 'Physical Access',
             date: '2026-07-07',
-            readTime: '15 min',
             tags: ['p4wnp1', 'raspberry-pi', 'hid', 'usb', 'redteam', 'physical-access'],
-            image: '/articles/p4wnp1-aloha/assets/p4wnp1-thumbnail.png',
-            url: '/articles/p4wnp1-aloha/'
+            image: '/projects/p4wnp1-aloha/assets/p4wnp1-thumbnail.png',
+            url: '/projects/p4wnp1-aloha/'
         }
     ];
 
