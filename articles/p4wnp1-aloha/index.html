@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5">
+    <title>P4wnP1 A.L.O.A. — Malicious USB on a Raspberry Pi Zero | 0x1Ak4sh</title>
+    <meta name="description" content="Building a P4wnP1 A.L.O.A. malicious USB attack platform on a Raspberry Pi Zero. HID injection, Web UI, Wi-Fi AP, and remote control from your phone.">
+    <meta name="robots" content="index,follow">
+    <link rel="canonical" href="https://mrakashkumar.in/articles/p4wnp1-aloha/">
+
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://mrakashkumar.in/articles/p4wnp1-aloha/">
+    <meta property="og:title" content="P4wnP1 A.L.O.A. — Malicious USB on a Raspberry Pi Zero">
+    <meta property="og:description" content="Building a P4wnP1 A.L.O.A. malicious USB attack platform on a Raspberry Pi Zero. HID injection, Web UI, Wi-Fi AP, and remote control from your phone.">
+    <meta property="og:image" content="https://mrakashkumar.in/articles/p4wnp1-aloha/assets/pi-zero-board.jpg">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="P4wnP1 A.L.O.A. — Malicious USB on a Raspberry Pi Zero | 0x1Ak4sh">
+    <meta name="twitter:description" content="Building a P4wnP1 A.L.O.A. malicious USB attack platform on a Raspberry Pi Zero.">
+    <meta name="twitter:image" content="https://mrakashkumar.in/articles/p4wnp1-aloha/assets/pi-zero-board.jpg">
+
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/8d67cb621b.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="/css/article.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.1.0/magnific-popup.min.css">
+
+    <style>
+        .article-content figure { text-align: center; }
+        .article-content figure img {
+            display: inline-block; margin: 0 auto;
+            max-height: 700px; width: auto; max-width: 100%;
+        }
+        .article-content figure a.image-popup { display: inline-block; }
+        .article-content figure img.img-mobile {
+            max-height: 380px;
+        }
+    </style>
+</head>
+
+<body class="article-page">
+
+    <div class="reading-progress"></div>
+
+    <div id="canvas_snake" class="canvas canvas-snake" data-colorone="#0b1115" data-colortwo="#ff6b35"
+        style="position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;opacity:0.25;"></div>
+
+    <nav class="article-nav">
+        <div class="nav-left">
+            <a href="/" class="nav-back"><i class="fas fa-arrow-left"></i><span>Back</span></a>
+            <a href="/" class="nav-logo">0x1Ak4sh</a>
+        </div>
+        <div class="nav-right">
+            <button class="nav-share-btn" onclick="document.querySelector('.share-section').scrollIntoView({behavior:'smooth'})" title="Share">
+                <i class="fas fa-share-alt"></i>
+            </button>
+        </div>
+    </nav>
+
+    <section class="article-hero">
+        <div class="hero-bg" style="background-image: url('/articles/p4wnp1-aloha/assets/pi-zero-board.jpg'); background-color: #0d1117;"></div>
+        <div class="hero-content">
+            <div class="hero-badges">
+                <span class="badge badge-category"><i class="fas fa-usb"></i> Physical Access</span>
+                <span class="badge badge-difficulty medium"><i class="fas fa-cogs"></i> Red Team</span>
+            </div>
+            <h1 class="hero-title">P4wnP1 A.L.O.A. &mdash; Malicious USB on a Raspberry Pi Zero</h1>
+            <p style="color: rgba(255,255,255,0.7); font-size: 1.05rem; margin: 0.5rem 0 1rem; max-width: 680px;">
+                Turning a $10 Raspberry Pi Zero into a flexible USB attack platform with HID injection,
+                wireless out-of-band control, and mass storage capabilities &mdash; all configured from your phone.
+            </p>
+
+            <div class="project-stats">
+                <div class="stat-item"><i class="fas fa-microchip"></i> Raspberry Pi Zero W</div>
+                <div class="stat-item"><i class="fas fa-keyboard"></i> HID Injection</div>
+                <div class="stat-item"><i class="fas fa-wifi"></i> Wi-Fi AP</div>
+                <div class="stat-item"><i class="fas fa-database"></i> Mass Storage</div>
+            </div>
+
+            <div class="hero-tags">
+                <a href="#" class="hero-tag">#p4wnp1</a>
+                <a href="#" class="hero-tag">#raspberrypi</a>
+                <a href="#" class="hero-tag">#hid</a>
+                <a href="#" class="hero-tag">#usb</a>
+                <a href="#" class="hero-tag">#redteam</a>
+                <a href="#" class="hero-tag">#physical-access</a>
+            </div>
+        </div>
+    </section>
+
+    <main class="article-layout" style="position:relative;z-index:1;">
+
+        <aside class="toc-sidebar">
+            <div class="toc-title">Contents</div>
+            <ul class="toc-list">
+                <li><a href="#what-is">1. What Is P4wnP1 A.L.O.A.?</a></li>
+                <li><a href="#hardware">2. Hardware</a></li>
+                <li><a href="#flashing">3. Part 1 &mdash; Flashing the OS</a></li>
+                <li><a href="#wifi-ap">4. Part 2 &mdash; Connecting via Wi-Fi AP</a></li>
+                <li><a href="#web-ui">5. Part 3 &mdash; Exploring the Web UI</a></li>
+                <li><a href="#ssh">6. Part 4 &mdash; Remote Access via SSH</a></li>
+                <li><a href="#cli-attacks">7. Part 5 &mdash; Triggering Attacks from the CLI</a></li>
+                <li><a href="#mass-storage">8. Part 6 &mdash; USB Mass Storage Mode</a></li>
+                <li><a href="#use-cases">9. Real-World Use Cases</a></li>
+                <li><a href="#conclusion">10. Conclusion</a></li>
+                <li><a href="#references">11. References</a></li>
+            </ul>
+        </aside>
+
+        <article class="article-content">
+
+            <figure>
+                <a href="/articles/p4wnp1-aloha/assets/pi-zero-board.jpg" class="image-popup">
+                    <img src="/articles/p4wnp1-aloha/assets/pi-zero-board.jpg" alt="Raspberry Pi Zero W Board">
+                </a>
+                <figcaption>Figure 1: Raspberry Pi Zero W &mdash; the board used for the P4wnP1 build.</figcaption>
+            </figure>
+
+            <h2 id="what-is">1. What Is P4wnP1 A.L.O.A.?</h2>
+
+            <p>If you have ever heard of a USB Rubber Ducky or a Bash Bunny, <strong>P4wnP1 A.L.O.A.</strong> (A Little Offensive Appliance) is the open-source, highly customizable version of those tools, designed to run on a cheap $10 Raspberry Pi Zero W.</p>
+
+            <p>Originally created by security researcher <strong>mame82</strong> and continually updated by contributors like <strong>RoganDawes</strong>, P4wnP1 is a custom framework that turns your Pi Zero into a flexible USB attack platform.</p>
+
+            <p>When you plug it into a target computer, it does not just act like a flash drive. It can emulate multiple USB devices at the same time:</p>
+
+            <ul>
+                <li><strong>Keyboard (HID):</strong> Types keystrokes at superhuman speeds to open terminals, run scripts, or bypass UAC.</li>
+                <li><strong>Mouse (HID):</strong> Moves the cursor and clicks automatically.</li>
+                <li><strong>Network Interface (RNDIS / ECM):</strong> Tricks the target computer into thinking it is plugged into an Ethernet network, enabling network-based attacks or hash capturing with tools like Responder.</li>
+                <li><strong>Mass Storage:</strong> Acts like a standard USB flash drive to exfiltrate data or silently drop payloads.</li>
+            </ul>
+
+            <p>Unlike commercial tools that cost hundreds of dollars, P4wnP1 runs on a Pi Zero you probably already have lying around. In this article we set one up, explore its Web UI, trigger keystroke injections from the command line, and test USB mass storage capabilities &mdash; all controlled wirelessly from a phone.</p>
+
+            <hr>
+
+            <h2 id="hardware">2. Hardware</h2>
+
+            <p>You only need a few components:</p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Component</th>
+                        <th>Details</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Board</td>
+                        <td>Raspberry Pi Zero W or Zero 2W</td>
+                    </tr>
+                    <tr>
+                        <td>Storage</td>
+                        <td>16GB+ microSD Card (Class 10)</td>
+                    </tr>
+                    <tr>
+                        <td>Cable</td>
+                        <td>Micro-USB to USB-A data cable (must support data, not charge-only)</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="prompt-box prompt-danger">
+                <div class="prompt-title"><i class="fas fa-exclamation-triangle"></i> Critical &mdash; Use the Correct USB Port</div>
+                <p>The Raspberry Pi Zero has two Micro-USB ports. One is labeled <strong>"PWR IN"</strong> (Power only) and the other is <strong>"USB"</strong> (Data + Power). You <strong>must</strong> plug your cable into the <strong>USB</strong> data port. The target computer provides power while also recognizing the data connection.</p>
+            </div>
+
+            <hr>
+
+            <h2 id="flashing">3. Part 1 &mdash; Flashing the OS</h2>
+
+            <h3>Step 3.1 &mdash; Download the Image</h3>
+
+            <p>Go to the official GitHub repository:</p>
+            <ul>
+                <li>For Pi Zero W: <a href="https://github.com/mame82/P4wnP1_aloa">mame82/P4wnP1_aloa</a></li>
+                <li>For Pi Zero 2W: <a href="https://github.com/RoganDawes/P4wnP1_alohomora">RoganDawes/P4wnP1_alohomora</a></li>
+            </ul>
+            <p>Download the latest <code>.img.xz</code> release file.</p>
+
+            <h3>Step 3.2 &mdash; Flash the SD Card</h3>
+
+            <p>Use <strong>Raspberry Pi Imager</strong> or <strong>balenaEtcher</strong> to write the image to your microSD card.</p>
+            <ol>
+                <li>Choose the downloaded <code>.img.xz</code> file as the source</li>
+                <li>Select your microSD card</li>
+                <li>Click <strong>Write</strong></li>
+            </ol>
+
+            <h3>Step 3.3 &mdash; Insert and Plug In</h3>
+
+            <p>Put the flashed microSD card into your Pi Zero. Plug the Micro-USB cable into the <strong>USB data port</strong> and the other end into your target computer. Wait about 60&ndash;90 seconds for it to boot.</p>
+
+            <blockquote>
+                <p>No monitor, no keyboard, no setup wizard. P4wnP1 boots silently and is ready immediately. The target computer sees a keyboard, a mouse, a network adapter, and a storage device &mdash; all from a single USB cable.</p>
+            </blockquote>
+
+            <hr>
+
+            <h2 id="wifi-ap">4. Part 2 &mdash; Connecting via Wi-Fi Access Point</h2>
+
+            <p>One of the most powerful features of P4wnP1 is its covert out-of-band control. After booting, it automatically broadcasts its own hidden Wi-Fi Access Point.</p>
+
+            <ol>
+                <li>On your phone or a secondary laptop, scan for Wi-Fi networks</li>
+                <li>Connect to the P4wnP1 network (default password: <code>MaMe82-P4wnP1</code>)</li>
+                <li>Open your browser and go to: <code>http://172.24.0.1:8000</code></li>
+            </ol>
+
+            <p>You can now stand completely detached from the target machine, yet fully control the USB payloads executing on it. No one watching the target's screen will see you interacting with it.</p>
+
+            <hr>
+
+            <h2 id="web-ui">5. Part 3 &mdash; Exploring the Web UI</h2>
+
+            <p>The Web UI is clean, intuitive, and lets you configure everything in real time. I opened it on my phone while connected to the Pi's Wi-Fi hotspot.</p>
+
+            <p>The main dashboard shows the generic settings, with tabs for Trigger Actions, USB templates, Wi-Fi templates, Bluetooth templates, and Network templates &mdash; all configurable to run automatically on startup:</p>
+
+            <figure>
+                <a href="/articles/p4wnp1-aloha/assets/main-dashboard.jpg" class="image-popup">
+                    <img src="/articles/p4wnp1-aloha/assets/main-dashboard.jpg" alt="P4wnP1 Main Dashboard" class="img-mobile">
+                </a>
+                <figcaption>Figure 2: P4wnP1 main dashboard showing the generic settings and configuration tabs.</figcaption>
+            </figure>
+
+            <blockquote>
+                <p>The Web UI is where the magic happens. You can toggle between keyboard, mouse, storage, and network modes &mdash; all from your phone, without ever touching the target.</p>
+            </blockquote>
+
+            <h3>USB Configuration</h3>
+
+            <p>From the USB settings tab you can see how flexible the framework is. You can enable Ethernet over USB for Linux (ECM) or Windows (RNDIS), configure MAC addresses, and dynamically toggle the device between Keyboard, Mouse, Custom HID, or Mass Storage &mdash; without unplugging anything:</p>
+
+            <figure>
+                <a href="/articles/p4wnp1-aloha/assets/usb-configuration.jpg" class="image-popup">
+                    <img src="/articles/p4wnp1-aloha/assets/usb-configuration.jpg" alt="USB Configuration" class="img-mobile">
+                </a>
+                <figcaption>Figure 3: USB configuration settings in the Web UI.</figcaption>
+            </figure>
+
+            <h3>HID Script Editor</h3>
+
+            <p>The Web UI has a built-in HID Script editor. The device comes pre-loaded with JavaScript and DuckyScript payloads, and you can write your own in real time:</p>
+
+            <figure>
+                <a href="/articles/p4wnp1-aloha/assets/hid-script-editor.jpg" class="image-popup">
+                    <img src="/articles/p4wnp1-aloha/assets/hid-script-editor.jpg" alt="HID Script Editor" class="img-mobile">
+                </a>
+                <figcaption>Figure 4: The built-in HID Script editor with pre-loaded payloads.</figcaption>
+            </figure>
+
+            <p>Here is a look at the raw code inside the editor &mdash; this dictates exactly what keystrokes get injected into the target when the payload triggers:</p>
+
+            <figure>
+                <a href="/articles/p4wnp1-aloha/assets/hid-script-code.jpg" class="image-popup">
+                    <img src="/articles/p4wnp1-aloha/assets/hid-script-code.jpg" alt="HID Script Code" class="img-mobile">
+                </a>
+                <figcaption>Figure 5: The raw JavaScript/DuckyScript code inside the HID editor.</figcaption>
+            </figure>
+
+            <h3>Wi-Fi Configuration</h3>
+
+            <p>From the Wi-Fi settings you can configure the device to connect to existing networks in Client Mode, deploy configurations, or store specific network settings &mdash; making it adaptable to different target environments:</p>
+
+            <figure>
+                <a href="/articles/p4wnp1-aloha/assets/wifi-configuration.jpg" class="image-popup">
+                    <img src="/articles/p4wnp1-aloha/assets/wifi-configuration.jpg" alt="Wi-Fi Configuration" class="img-mobile">
+                </a>
+                <figcaption>Figure 6: Wi-Fi configuration settings in the Web UI.</figcaption>
+            </figure>
+
+            <hr>
+
+            <h2 id="ssh">6. Part 4 &mdash; Remote Access via SSH</h2>
+
+            <p>P4wnP1 runs a full Linux OS under the hood, so it is always accessible via SSH when you are connected to its network.</p>
+
+            <div class="cmd-block">
+                <div class="cmd-header">
+                    <span class="cmd-tool"><i class="fas fa-terminal"></i> Terminal</span>
+                    <button class="cmd-copy"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="cmd-body">
+                    <code>ssh root@172.24.0.1</code>
+                    <code><span class="comment"># Default password: toor</span></code>
+                </div>
+            </div>
+
+            <figure>
+                <a href="/articles/p4wnp1-aloha/assets/ssh-access.png" class="image-popup">
+                    <img src="/articles/p4wnp1-aloha/assets/ssh-access.png" alt="SSH into P4wnP1">
+                </a>
+                <figcaption>Figure 7: Establishing an SSH connection into the Raspberry Pi Zero running P4wnP1.</figcaption>
+            </figure>
+
+            <p>Once inside, you have full root access to the Pi. You can modify config files, install additional tools, or run payloads from the terminal instead of the Web UI.</p>
+
+            <blockquote>
+                <p>The Pi is running a stripped-down Kali Linux under the hood. Anything you can do on Kali, you can do on this device &mdash; port scanning, hash capturing, reverse shells. It all runs silently from inside the target's USB port.</p>
+            </blockquote>
+
+            <hr>
+
+            <h2 id="cli-attacks">7. Part 5 &mdash; Triggering Attacks from the Command Line</h2>
+
+            <p>While the Web UI is great for configuration, P4wnP1 also has a powerful CLI utility for triggering attacks directly from the terminal.</p>
+
+            <h3>Hello World Injection</h3>
+
+            <p>To test the HID capabilities, I used the CLI to run a simple keystroke injection. It automatically typed "Hello World" on my connected laptop:</p>
+
+            <figure>
+                <a href="/articles/p4wnp1-aloha/assets/hid-hello-world.png" class="image-popup">
+                    <img src="/articles/p4wnp1-aloha/assets/hid-hello-world.png" alt="HID Keystroke Injection - Hello World">
+                </a>
+                <figcaption>Figure 8: HID keystroke injection &mdash; typing "Hello World" on the target laptop.</figcaption>
+            </figure>
+
+            <p>The keystrokes appeared instantly on the target screen. No delay, no warning, no user interaction required.</p>
+
+            <h3>Multi-Line Injection Test</h3>
+
+            <p>I then pushed it further with a more advanced multi-line injection. While it threw an error because the OS tried to interpret the plain English text as commands, the test proved how fast and effective HID injection works:</p>
+
+            <figure>
+                <a href="/articles/p4wnp1-aloha/assets/hid-multiline-test.png" class="image-popup">
+                    <img src="/articles/p4wnp1-aloha/assets/hid-multiline-test.png" alt="Multi-Line HID Injection Test">
+                </a>
+                <figcaption>Figure 9: Multi-line injection test &mdash; the OS threw an error interpreting English text as commands.</figcaption>
+            </figure>
+
+            <blockquote>
+                <p>In a real engagement, that "Hello World" text would be a base64-encoded PowerShell command downloading and executing a reverse shell or C2 beacon &mdash; all in under a second.</p>
+            </blockquote>
+
+            <hr>
+
+            <h2 id="mass-storage">8. Part 6 &mdash; USB Mass Storage Mode</h2>
+
+            <p>The device can also act as a USB Mass Storage device, which is useful for two things during an engagement:</p>
+            <ul>
+                <li><strong>Data exfiltration:</strong> Copy files from the target onto the Pi's storage silently</li>
+                <li><strong>Payload delivery:</strong> Drop files that auto-execute when the drive is opened</li>
+            </ul>
+
+            <p>By passing the <code>usb</code> argument to the CLI, I verified the device can dynamically switch to mass storage mode:</p>
+
+            <figure>
+                <a href="/articles/p4wnp1-aloha/assets/usb-mass-storage.png" class="image-popup">
+                    <img src="/articles/p4wnp1-aloha/assets/usb-mass-storage.png" alt="USB Mass Storage Mode">
+                </a>
+                <figcaption>Figure 10: Verifying USB Mass Storage mode via the CLI.</figcaption>
+            </figure>
+
+            <hr>
+
+            <h2 id="use-cases">9. Real-World Use Cases</h2>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Scenario</th>
+                        <th>How P4wnP1 Handles It</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Unlocked workstation in an office</td>
+                        <td>Plug in, inject a PowerShell one-liner, capture a reverse shell</td>
+                    </tr>
+                    <tr>
+                        <td>Kiosk terminal or reception desk</td>
+                        <td>Emulate keyboard, open a browser, navigate to a phishing page</td>
+                    </tr>
+                    <tr>
+                        <td>Target user steps away from laptop</td>
+                        <td>Trigger the payload from your phone via Wi-Fi</td>
+                    </tr>
+                    <tr>
+                        <td>Need files from a machine</td>
+                        <td>Switch to mass storage mode, silently copy data</td>
+                    </tr>
+                    <tr>
+                        <td>Laptop with USB blocked</td>
+                        <td>Switch to RNDIS Ethernet mode, pivot into the network</td>
+                    </tr>
+                    <tr>
+                        <td>Drop and leave</td>
+                        <td>Script an auto-execute payload on USB insertion, walk away</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <blockquote>
+                <p>Physical access is the ultimate attack vector. If I can touch your computer, I own your computer. P4wnP1 makes that reality fit in your pocket.</p>
+            </blockquote>
+
+            <hr>
+
+            <h2 id="conclusion">10. Conclusion</h2>
+
+            <p>P4wnP1 A.L.O.A. turns an inexpensive $10 Raspberry Pi Zero into an incredibly versatile physical attack platform. Whether you are controlling it via SSH over USB, triggering payloads from the command line, or configuring attacks wirelessly from your phone while standing across the room &mdash; it proves that physical security remains one of the most critical layers of defense.</p>
+
+            <p>The combination of multi-device emulation (keyboard, mouse, network, storage) and wireless out-of-band control makes it more flexible than most commercial USB attack tools. And at a fraction of the cost.</p>
+
+            <blockquote>
+                <p>This project was built for educational and portfolio purposes only. All testing was performed against my own lab equipment. No unauthorized access was performed against any external systems. Always get explicit written permission before conducting physical penetration tests.</p>
+            </blockquote>
+
+            <hr>
+
+            <h2 id="references">11. References</h2>
+
+            <ul>
+                <li><a href="https://github.com/mame82/P4wnP1_aloa">mame82 / P4wnP1 A.L.O.A. &mdash; Original GitHub Repository</a></li>
+                <li><a href="https://github.com/RoganDawes/P4wnP1_alohomora">RoganDawes / P4wnP1 Alohomora &mdash; Updated for Pi Zero 2W</a></li>
+                <li><a href="https://hak5.org/products/usb-rubber-ducky">Hak5 USB Rubber Ducky</a></li>
+                <li><a href="https://hak5.org/products/bash-bunny">Hak5 Bash Bunny</a></li>
+            </ul>
+
+            <!-- Share -->
+            <div class="share-section">
+                <h4>Share this article</h4>
+                <div class="share-buttons">
+                    <button class="share-btn" data-action="twitter"><i class="fab fa-x-twitter"></i> Twitter</button>
+                    <button class="share-btn" data-action="linkedin"><i class="fab fa-linkedin"></i> LinkedIn</button>
+                    <button class="share-btn" data-action="telegram"><i class="fab fa-telegram"></i> Telegram</button>
+                    <button class="share-btn" data-action="copy"><i class="fas fa-link"></i> Copy Link</button>
+                </div>
+            </div>
+
+        </article>
+    </main>
+
+    <footer class="article-footer" style="position:relative;z-index:1;">
+        <p>&copy; 2025 <a href="/">0x1Ak4sh</a> - All rights reserved.</p>
+    </footer>
+
+    <button class="back-to-top" title="Back to top">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.1.0/jquery.magnific-popup.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="/js/snake.js"></script>
+    <script src="/js/article.js"></script>
+</body>
+
+</html>

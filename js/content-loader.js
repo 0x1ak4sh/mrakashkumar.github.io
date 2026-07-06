@@ -2,7 +2,7 @@
  * Content Loader - 0x1Ak4sh Portfolio Homepage
  * Renders projects in #projects-grid and articles in #articles-grid
  * Simple, no filters - just show the content cards directly.
- * v2 — includes Evilginx + GoPhish article.
+ * v3 — includes Evilginx + GoPhish and P4wnP1 Aloha articles.
  */
 (function () {
     'use strict';
@@ -74,6 +74,19 @@
             tags: ['phishing', 'evilginx', 'gophish', 'roundcube', 'redteam', 'infrastructure'],
             image: '/articles/evilginx-gophish/assets/EvilginxandGoPhishLab.png',
             url: '/articles/evilginx-gophish/'
+        },
+        {
+            type: 'article',
+            slug: 'p4wnp1-aloha',
+            title: 'P4wnP1 A.L.O.A. — Malicious USB on a Raspberry Pi Zero',
+            description: 'Turning a $10 Raspberry Pi Zero into a flexible USB attack platform with HID injection, wireless out-of-band control via Wi-Fi AP, and mass storage capabilities — all configured from your phone.',
+            category: 'Tutorial',
+            difficulty: 'medium',
+            date: '2026-07-07',
+            readTime: '15 min',
+            tags: ['p4wnp1', 'raspberry-pi', 'hid', 'usb', 'redteam', 'physical-access'],
+            image: '/articles/p4wnp1-aloha/assets/pi-zero-board.jpg',
+            url: '/articles/p4wnp1-aloha/'
         }
     ];
 
