@@ -1,0 +1,26 @@
+# 0x1Ak4sh — Akash Kumar
+
+> Red teamer, penetration tester, and cybersecurity professional. Portfolio and lab documentation site built with GitHub Pages.
+
+## Projects
+
+- [Hybrid Active Directory Enterprise Lab](https://mrakashkumar.in/projects/hybrid-ad-lab/): Multi-cloud hybrid AD lab spanning Vultr, AWS, and Azure. 7 machines, 3 cloud providers, 50+ AD users, 6 attack paths.
+  - [Active Directory Setup](https://mrakashkumar.in/projects/hybrid-ad-lab/active-directory/): Forest root domain, OUs, 50+ users, AD CS with ESC1 template, SMB shares, Kerberoastable accounts.
+  - [WireGuard Mesh VPN](https://mrakashkumar.in/projects/hybrid-ad-lab/wireguard/): Multi-cloud WireGuard mesh connecting Vultr, Oracle, and AWS into one private subnet.
+  - [Oracle Cloud Deployment](https://mrakashkumar.in/projects/hybrid-ad-lab/oracle-deployment/): Child domain controller and Linux workstation on Oracle Cloud, domain joined via WireGuard.
+  - [AWS Jenkins Setup](https://mrakashkumar.in/projects/hybrid-ad-lab/aws-jenkins/): EC2 Jenkins server with planted vulnerabilities — anonymous access, credential exposure, full attack chain to Domain Admin.
+  - [Azure Entra ID Sync](https://mrakashkumar.in/projects/hybrid-ad-lab/azure-entra/): Hybrid identity sync with Microsoft Entra Connect, PHS, UPN suffix fix, cloud login testing.
+  - [Exchange Server 2019](https://mrakashkumar.in/projects/hybrid-ad-lab/exchange-server/): Full Exchange 2019 deployment, OWA, Let's Encrypt SSL, WriteDACL attack surface.
+- [T-Pot Honeypot — 3M Attacks in 20 Days](https://mrakashkumar.in/projects/honeypot-tpot-setup/): Deployed T-Pot CE on Vultr. 3 million attacks, worldwide sources, Kibana analysis.
+- [Beacon Hub — Virtual Wi-Fi Pentesting Lab](https://mrakashkumar.in/projects/beaconhub/): Virtual Wi-Fi lab using Vagrant, VirtualBox, mac80211_hwsim. Practice WPA2/WEP/Enterprise attacks without hardware.
+- [P4wnP1 A.L.O.A. — Malicious USB on Pi Zero](https://mrakashkumar.in/projects/p4wnp1-aloha/): USB attack platform with HID injection, Wi-Fi AP control, mass storage on Raspberry Pi Zero.
+- [Red Team Dropbox — Raspberry Pi with Tailscale](https://mrakashkumar.in/projects/dropbox-raspberry-pi/): Dropbox for internal network access using Tailscale mesh VPN. No VPS or port forwarding needed.
+
+## Articles
+
+- [C2 Network Redirection & Traffic Filtering](https://mrakashkumar.in/articles/c2-deployment/): Sliver and Mythic C2 behind Caddy reverse proxy and Cloudflare. Traffic filtering, agent generation, Wireshark analysis.
+- [Evilginx & GoPhish — OPSEC and Traffic Filtering](https://mrakashkumar.in/articles/evilginx-gophish/): Full AiTM phishing infrastructure with Evilginx, GoPhish, Roundcube, Caddy. 67 screenshots, OPSEC modifications, token-gated proxying.
+
+## Overview
+
+Built by Akash Kumar (0x1Ak4sh). Site serves as a portfolio of hands-on cybersecurity lab projects covering Active Directory, red team infrastructure, phishing simulation, honeypots, Wi-Fi security, and physical access tools.
