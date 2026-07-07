@@ -306,7 +306,7 @@ Remove-Item -Path "C:\ExchangePrep" -Recurse -Force</code></pre>
 
             <div class="prompt-box prompt-danger">
                 <div class="prompt-title"><i class="fas fa-skull-crossbones"></i> Error: /PrepareAllDomains fails</div>
-                <p>Running the standard <code>/PrepareAllDomains</code> switch returned a <code>DomainNotReachableException</code> because the child domain <code>vought.hq.apex-corp.xyz</code> was decommissioned. The setup script crashed trying to contact it.</p>
+                <p>Running the standard <code>/PrepareAllDomains</code> switch returned a <code>DomainNotReachableException</code> because the child domain <code>vought.hq.apex-corp.xyz</code> was temporarily unreachable. The setup script crashed trying to contact it.</p>
                 <p><strong>Fix:</strong> Run a targeted prep only for the active domain:</p>
                 <p><code>D:\Setup.exe /PrepareDomain:hq.apex-corp.xyz /IAcceptExchangeServerLicenseTerms_DiagnosticDataOFF</code></p>
             </div>
@@ -530,7 +530,7 @@ Set-ReceiveConnector -Identity "$serverName\Default Frontend $serverName" -Permi
     </main>
 
     <footer class="article-footer" style="position:relative;z-index:1;">
-        <p>&copy; 2025 <a href="/">0x1Ak4sh</a> - All rights reserved.</p>
+        <p>&copy; 2026 <a href="/">0x1Ak4sh</a> - All rights reserved.</p>
     </footer>
     <button class="back-to-top" title="Back to top"><i class="fas fa-arrow-up"></i></button>
 
