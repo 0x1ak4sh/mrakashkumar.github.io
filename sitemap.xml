@@ -2,77 +2,72 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://mrakashkumar.in/</loc>
-    <lastmod>2026-06-29T00:00:00+00:00</lastmod>
-    <priority>1.00</priority>
+    <changefreq>monthly</changefreq>
+    <priority>1.0</priority>
   </url>
   <url>
     <loc>https://mrakashkumar.in/projects/hybrid-ad-lab/</loc>
-    <lastmod>2026-06-28T00:00:00+00:00</lastmod>
-    <priority>0.90</priority>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://mrakashkumar.in/projects/ad-root-domain/</loc>
-    <lastmod>2026-06-25T00:00:00+00:00</lastmod>
-    <priority>0.80</priority>
+    <loc>https://mrakashkumar.in/projects/hybrid-ad-lab/active-directory/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://mrakashkumar.in/projects/hybrid-ad-lab/wireguard/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://mrakashkumar.in/projects/hybrid-ad-lab/oracle-deployment/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://mrakashkumar.in/projects/hybrid-ad-lab/aws-jenkins/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://mrakashkumar.in/projects/hybrid-ad-lab/azure-entra/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://mrakashkumar.in/projects/hybrid-ad-lab/exchange-server/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://mrakashkumar.in/projects/honeypot-tpot-setup/</loc>
-    <lastmod>2026-06-20T00:00:00+00:00</lastmod>
-    <priority>0.80</priority>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://mrakashkumar.in/projects/redteam-toolkit/</loc>
-    <lastmod>2025-06-01T00:00:00+00:00</lastmod>
-    <priority>0.80</priority>
+    <loc>https://mrakashkumar.in/projects/beaconhub/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://mrakashkumar.in/projects/ad-enum-script/</loc>
-    <lastmod>2025-05-15T00:00:00+00:00</lastmod>
-    <priority>0.80</priority>
+    <loc>https://mrakashkumar.in/projects/p4wnp1-aloha/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://mrakashkumar.in/projects/homelab-ad-setup/</loc>
-    <lastmod>2025-05-01T00:00:00+00:00</lastmod>
-    <priority>0.80</priority>
+    <loc>https://mrakashkumar.in/projects/dropbox-raspberry-pi/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://mrakashkumar.in/projects/evilginx-c2-infra/</loc>
-    <lastmod>2025-04-15T00:00:00+00:00</lastmod>
-    <priority>0.80</priority>
+    <loc>https://mrakashkumar.in/articles/c2-deployment/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://mrakashkumar.in/projects/siem-homelab/</loc>
-    <lastmod>2025-03-28T00:00:00+00:00</lastmod>
-    <priority>0.80</priority>
-  </url>
-  <url>
-    <loc>https://mrakashkumar.in/projects/phishing-mail-server/</loc>
-    <lastmod>2025-03-10T00:00:00+00:00</lastmod>
-    <priority>0.80</priority>
-  </url>
-  <url>
-    <loc>https://mrakashkumar.in/projects/c2-redirector-setup/</loc>
-    <lastmod>2025-02-20T00:00:00+00:00</lastmod>
-    <priority>0.80</priority>
-  </url>
-  <url>
-    <loc>https://mrakashkumar.in/articles/how-to-setup-forest-domain-between-two-server/</loc>
-    <lastmod>2026-05-09T00:00:00+00:00</lastmod>
-    <priority>0.80</priority>
-  </url>
-  <url>
-    <loc>https://mrakashkumar.in/articles/htb-active-directory-lab/</loc>
-    <lastmod>2025-06-15T00:00:00+00:00</lastmod>
-    <priority>0.80</priority>
-  </url>
-  <url>
-    <loc>https://mrakashkumar.in/articles/mythic-c2-setup/</loc>
-    <lastmod>2025-05-28T00:00:00+00:00</lastmod>
-    <priority>0.80</priority>
-  </url>
-  <url>
-    <loc>https://docs.mrakashkumar.in/</loc>
-    <lastmod>2023-12-13T16:54:20+00:00</lastmod>
-    <priority>0.60</priority>
+    <loc>https://mrakashkumar.in/articles/evilginx-gophish/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
   </url>
 </urlset>
