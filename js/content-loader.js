@@ -98,6 +98,18 @@
             tags: ['p4wnp1', 'raspberry-pi', 'hid', 'usb', 'redteam', 'physical-access'],
             image: '/projects/p4wnp1-aloha/assets/p4wnp1-thumbnail.png',
             url: '/projects/p4wnp1-aloha/'
+        },
+        {
+            type: 'project',
+            slug: 'foothold',
+            title: 'Foothold — 365 Days of Hacking on HackTheBox',
+            description: '213+ HackTheBox machines solved in 2024 — one machine a day. Searchable database of attack paths, CVEs, screenshots, and writeups from a 7-month hacking streak.',
+            category: 'Tool',
+            language: 'HTB Machines',
+            date: '2026-07-10',
+            tags: ['hackthebox', 'ctf', 'penetration-testing', 'exploitation', 'cve', 'oscp'],
+            image: '/projects/foothold/assets/thumbnail.png',
+            url: '/projects/foothold/'
         }
     ];
 

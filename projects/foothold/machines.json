@@ -1,0 +1,3879 @@
+[
+  {
+    "day": 1,
+    "name": "Netmon",
+    "difficulty": "Unknown",
+    "os": "Windows",
+    "tags": [
+      "Command Injection",
+      "Privilege Escalation",
+      "CVE Exploit",
+      "Reverse Shell",
+      "Web Exploitation",
+      "Network Exploitation"
+    ],
+    "cves": [
+      "CVE-2018-9276"
+    ],
+    "summary": "- After loggin in, i found that , there was a vulnerability of command injjection, so i just added another user.",
+    "slug": "netmon",
+    "images": [
+      "17",
+      "18",
+      "19",
+      "20",
+      "21",
+      "22",
+      "23"
+    ],
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d5-5c49-4c4c-ae3a-83b04b193b4f.png"
+  },
+  {
+    "day": 1,
+    "name": "Precious",
+    "difficulty": "Unknown",
+    "os": "Linux",
+    "tags": [
+      "Command Injection",
+      "CVE Exploit",
+      "Reverse Shell",
+      "Web Exploitation",
+      "Deserialization"
+    ],
+    "cves": [
+      "CVE-2022-25765"
+    ],
+    "summary": "- After moving around for some privelages, i found a hidden directory with the password of the user.",
+    "slug": "precious",
+    "images": [
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7",
+      "8",
+      "9",
+      "10",
+      "11",
+      "12",
+      "13",
+      "14",
+      "15",
+      "16"
+    ],
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90cf-d47b-4dd7-a54b-b967342a30f9.png"
+  },
+  {
+    "day": 2,
+    "name": "Wifinetic",
+    "difficulty": "Unknown",
+    "os": "Linux",
+    "tags": [
+      "Privilege Escalation",
+      "Network Exploitation"
+    ],
+    "cves": [],
+    "summary": "and that password was reused and we got ssh with the user that was listed in the /etc/passwd file called netadmin.",
+    "slug": "wifinetic",
+    "images": [
+      "24",
+      "25",
+      "26",
+      "27",
+      "28",
+      "29",
+      "30",
+      "31"
+    ],
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90cd-90e9-4398-8166-7c30c37f6cd4.png"
+  },
+  {
+    "day": 3,
+    "name": "CozyHosting",
+    "difficulty": "Unknown",
+    "os": "Linux",
+    "tags": [
+      "Reverse Shell",
+      "Web Exploitation",
+      "Network Exploitation"
+    ],
+    "cves": [],
+    "summary": "coafter logging in the reverse shell, and openig the jar file, i found a database, in that database, there was this password hashes, i craked and tried to login with the user that was in the /etc/passwd josh.",
+    "slug": "cozyhosting",
+    "images": [
+      "32",
+      "33",
+      "34",
+      "35",
+      "36",
+      "37",
+      "38",
+      "39",
+      "40",
+      "41",
+      "42",
+      "43",
+      "44",
+      "45",
+      "46",
+      "47"
+    ],
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90cd-9a2c-40d7-8062-aa30443a590f.png"
+  },
+  {
+    "day": 4,
+    "name": "Analytics",
+    "difficulty": "Easy",
+    "os": "Linux",
+    "tags": [
+      "Command Injection",
+      "Privilege Escalation",
+      "CVE Exploit",
+      "Web Exploitation"
+    ],
+    "cves": [
+      "CVE-2023-38646",
+      "CVE-2023-32629",
+      "CVE-2023-2640"
+    ],
+    "summary": "Exploited a vulnerable Metabase (CVE-2023–38646) for initial access. Easy root achieved using CVE-2023-32629 GameOver(lay) exploit on the box.",
+    "slug": "analytics",
+    "images": [
+      "48",
+      "49",
+      "50",
+      "51",
+      "52",
+      "53",
+      "54",
+      "55",
+      "56",
+      "57",
+      "58",
+      "59",
+      "60"
+    ],
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90cd-8621-4fe0-8f67-d82cd669e6d4.png"
+  },
+  {
+    "day": 5,
+    "name": "Bashed",
+    "difficulty": "Easy",
+    "os": "Linux",
+    "tags": [
+      "Privilege Escalation",
+      "Reverse Shell",
+      "Web Exploitation"
+    ],
+    "cves": [],
+    "summary": "Quickly Obtained Root Access via Simple Exploits: A Straightforward Path to Box Compromise.",
+    "slug": "bashed",
+    "images": [
+      "61",
+      "62",
+      "63",
+      "64",
+      "65",
+      "66",
+      "67",
+      "68"
+    ],
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d6-f64a-49bf-9082-06f7269225c7.png"
+  },
+  {
+    "day": 6,
+    "name": "RedPanda",
+    "difficulty": "Easy",
+    "os": "Linux",
+    "tags": [
+      "SSTI",
+      "XXE",
+      "Privilege Escalation",
+      "Web Exploitation",
+      "Network Exploitation"
+    ],
+    "cves": [],
+    "summary": "Discovered open HTTP and SSH ports, unveiling a Java-based web app on Spring Boot. Exploited an SSTI vulnerability within the web app, ultimately gaining root access through an XXE injection vulnerability.",
+    "slug": "redpanda",
+    "images": [
+      "69",
+      "70",
+      "71",
+      "72",
+      "73",
+      "74",
+      "75",
+      "76",
+      "77"
+    ],
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d0-3b5b-4699-b3a0-4a7185247853.png"
+  },
+  {
+    "day": 7,
+    "name": "Lame",
+    "difficulty": "Easy",
+    "os": "Linux",
+    "tags": [
+      "Command Injection"
+    ],
+    "cves": [],
+    "summary": "Got in easily using an old Samba RCE exploit.",
+    "slug": "lame",
+    "images": "78",
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d7-a3c6-4bf5-944f-b6d62ba830bb.png"
+  },
+  {
+    "day": 8,
+    "name": "Blue",
+    "difficulty": "Easy",
+    "os": "Windows",
+    "tags": [
+      "Network Exploitation"
+    ],
+    "cves": [],
+    "summary": "Used the MS17-010 exploit, also referred to as Eternal Blue. It was a straightforward task.",
+    "slug": "blue",
+    "images": "79",
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d7-430a-45af-8f66-de5eab941ad9.png"
+  },
+  {
+    "day": 9,
+    "name": "Bizness",
+    "difficulty": "Easy",
+    "os": "Linux",
+    "tags": [
+      "Privilege Escalation",
+      "Web Exploitation"
+    ],
+    "cves": [],
+    "summary": "Got initial access using a recent CVE and achieved root access by successfully cracking the hashed credentials stored on the machine.",
+    "slug": "bizness",
+    "images": [
+      "80",
+      "81",
+      "82"
+    ],
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90cd-4f42-4bda-b45c-6ea719efed69.png"
+  },
+  {
+    "day": 10,
+    "name": "PhotoBomb",
+    "difficulty": "Easy",
+    "os": "Linux",
+    "tags": [
+      "Command Injection",
+      "Web Exploitation"
+    ],
+    "cves": [],
+    "summary": "Discovered leaked credentials within a JavaScript file, intercepting a request and executing a code injection. Following that, a path hijack was executed due to the file's executability by a regular user as root, relying on a relative path.",
+    "slug": "photobomb",
+    "images": [
+      "83",
+      "84",
+      "85"
+    ],
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90cf-fa3b-4e8b-978b-a2a707db9d5b.png"
+  },
+  {
+    "day": 11,
+    "name": "Jerry",
+    "difficulty": "Easy",
+    "os": "Linux",
+    "tags": [
+      "Web Exploitation"
+    ],
+    "cves": [],
+    "summary": "Used the default credentials on Tomcat. Then, I crafted a .war payload and uploaded it to the application. Once I got the shell, I went straight to the root.",
+    "slug": "jerry",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d5-eec2-40f8-a422-d4825b3c1a89.png"
+  },
+  {
+    "day": 12,
+    "name": "Hospital",
+    "difficulty": "Medium",
+    "os": "Linux",
+    "tags": [
+      "Command Injection",
+      "Privilege Escalation",
+      "CVE Exploit",
+      "Password Cracking",
+      "Web Exploitation"
+    ],
+    "cves": [
+      "CVE-2023-36664"
+    ],
+    "summary": "Uploaded a PHP shell for access, exploited a recent vulnerability (CVE) for root access, and regained control via Ghostscript command injection in the mail service.",
+    "slug": "hospital",
+    "images": [
+      "86",
+      "87",
+      "88",
+      "89",
+      "90",
+      "91",
+      "92",
+      "93",
+      "94",
+      "95",
+      "96",
+      "97",
+      "98",
+      "99",
+      "100",
+      "101",
+      "102"
+    ],
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90cd-6c1e-4c0d-8636-9dd54f1c051b.png"
+  },
+  {
+    "day": 13,
+    "name": "Clicker",
+    "difficulty": "Medium",
+    "os": "Android",
+    "tags": [
+      "Command Injection",
+      "CVE Exploit",
+      "Web Exploitation",
+      "Cryptography",
+      "CRLF Injection"
+    ],
+    "cves": [],
+    "summary": "Mounted NFS shares. Exploited CRLF and other vulnerabilities for initial access. Copied SSH key for a user. Used \"perl_startup\" vulnerability for root.",
+    "slug": "clicker",
+    "images": [
+      "103",
+      "104",
+      "105",
+      "106",
+      "107",
+      "108",
+      "109",
+      "110",
+      "111",
+      "112",
+      "113",
+      "114",
+      "115",
+      "116",
+      "117",
+      "118",
+      "119",
+      "120",
+      "121",
+      "122",
+      "123",
+      "124",
+      "125",
+      "126",
+      "127",
+      "128",
+      "129",
+      "130",
+      "131",
+      "132"
+    ],
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90cd-8d46-459d-b58f-27e9ca6b384c.png"
+  },
+  {
+    "day": 14,
+    "name": "Broker",
+    "difficulty": "Medium",
+    "os": "Linux",
+    "tags": [
+      "Privilege Escalation",
+      "CVE Exploit",
+      "Web Exploitation"
+    ],
+    "cves": [
+      "CVE-2023-46604"
+    ],
+    "summary": "Exploited a website running on ActiveMQ, a Java-based web application, using CVE-2023-46604 for user access. Achieved root privileges by leveraging Nginx, as my user could execute it as root without a password.",
+    "slug": "broker",
+    "images": [
+      "133",
+      "134",
+      "135",
+      "136",
+      "137",
+      "138",
+      "139",
+      "140"
+    ],
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90cd-6469-4140-8d2d-55ac9a674055.png"
+  },
+  {
+    "day": 15,
+    "name": "Pilgrimage",
+    "difficulty": "Easy",
+    "os": "Linux",
+    "tags": [
+      "SQL Injection",
+      "CVE Exploit",
+      "Web Exploitation"
+    ],
+    "cves": [
+      "CVE-2022-44268",
+      "CVE-2022-4510"
+    ],
+    "summary": "Discovered SSH and open HTTP port 80. Exploited ImageMagick CVE-2022-44268 to read files on an image size shrinker site. Revealed a password in a database. Exploited Binwalk CVE-2022-4510 for root.",
+    "slug": "pilgrimage",
+    "images": [
+      "141",
+      "142",
+      "143",
+      "144",
+      "145",
+      "146",
+      "147",
+      "148",
+      "149",
+      "150",
+      "151",
+      "152",
+      "153"
+    ],
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90cd-c034-4b99-b141-3002f63ec416.png"
+  },
+  {
+    "day": 16,
+    "name": "Academy",
+    "difficulty": "Easy",
+    "os": "Linux",
+    "tags": [
+      "CVE Exploit"
+    ],
+    "cves": [
+      "CVE-2018-15133"
+    ],
+    "summary": "explored and discovered a new vhost. Identified a Laravel site with an exposed API key. Used CVE-2018-15133 to exploit, gaining root. Accessed an executable via sudo for root privileges.",
+    "slug": "academy",
+    "images": [
+      "154",
+      "155",
+      "156",
+      "157",
+      "158",
+      "159",
+      "160",
+      "161",
+      "162"
+    ],
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d2-f0c5-48fa-a19e-3a6320e375b3.png"
+  },
+  {
+    "day": 17,
+    "name": "LaCasaDePapel",
+    "difficulty": "Easy",
+    "os": "Linux",
+    "tags": [
+      "LFI/RFI",
+      "Privilege Escalation",
+      "Web Exploitation",
+      "Network Exploitation",
+      "Cryptography"
+    ],
+    "cves": [],
+    "summary": "Used a CA Certificate obtained from a vulnerable FTP to access a website with an LFI vulnerability. Root access obtained by modifying a file under cron.",
+    "slug": "lacasadepapel",
+    "images": [
+      "163",
+      "164",
+      "165",
+      "166",
+      "167",
+      "168",
+      "169",
+      "170",
+      "171",
+      "172",
+      "173"
+    ],
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d5-4ae5-4e52-8fe9-dc35cd94873b.png"
+  },
+  {
+    "day": 18,
+    "name": "Monitored",
+    "difficulty": "Medium",
+    "os": "Linux",
+    "tags": [
+      "LFI/RFI",
+      "Privilege Escalation",
+      "Active Directory",
+      "Web Exploitation",
+      "Network Exploitation",
+      "Cryptography"
+    ],
+    "cves": [],
+    "summary": "Obtained credentials through SNMP enumeration, utilized them to generate an API key, and subsequently created an admin account on Nagios. To gain root access, modified a file that could be executed with root privileges.",
+    "slug": "monitored",
+    "images": [
+      "174",
+      "175",
+      "176",
+      "177",
+      "178",
+      "179"
+    ],
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90cd-4aa7-48bc-9394-c9f51e46b2b9.png"
+  },
+  {
+    "day": 19,
+    "name": "Valentine",
+    "difficulty": "Unknown",
+    "os": "Linux",
+    "tags": [
+      "LFI/RFI",
+      "CVE Exploit",
+      "Web Exploitation",
+      "Network Exploitation",
+      "Cryptography"
+    ],
+    "cves": [
+      "CVE-2014-0160"
+    ],
+    "summary": "i had a private key, but when in tried to acess the ssh with that private key, with the passphrase. it wasn’t working. so i went to 0xdf and found this command that decrypts the key with passphrase before even sshing into box.",
+    "slug": "valentine",
+    "images": [
+      "180",
+      "181",
+      "182",
+      "183",
+      "184",
+      "185",
+      "186",
+      "187",
+      "188",
+      "189"
+    ],
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d6-d35d-460e-bf02-85db013b4d95.png"
+  },
+  {
+    "day": 20,
+    "name": "OpenAdmin",
+    "difficulty": "Easy",
+    "os": "Linux",
+    "tags": [
+      "Command Injection"
+    ],
+    "cves": [],
+    "summary": "Exploited OpenNetAdmin for RCE. Internal app exposed credentials, enabling lateral move to another user. Used nano as root for the final flag.",
+    "slug": "openadmin",
+    "images": [
+      "190",
+      "191",
+      "192",
+      "193",
+      "194",
+      "195",
+      "196",
+      "197",
+      "198"
+    ],
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d4-871a-4692-976e-297a3e39400f.png"
+  },
+  {
+    "day": 21,
+    "name": "CAP",
+    "difficulty": "Easy",
+    "os": "Linux",
+    "tags": [
+      "Command Injection",
+      "Web Exploitation"
+    ],
+    "cves": [],
+    "summary": "The website appeared ordinary. Burp Suite interception revealed PHP 8.1.0-dev User-Agent RCE vulnerability. Attained root by executing a binary with sudo privileges.",
+    "slug": "cap",
+    "images": [
+      "199",
+      "200",
+      "201",
+      "202",
+      "203",
+      "204"
+    ],
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d2-73c7-4da0-a15f-662bbc048868.png"
+  },
+  {
+    "day": 22,
+    "name": "Forest",
+    "difficulty": "Easy",
+    "os": "Linux",
+    "tags": [
+      "Active Directory",
+      "Password Cracking"
+    ],
+    "cves": [],
+    "summary": "Identified a user using AS-REP roasting, cracked the hash, and created a user with sufficient permissions for DCSync attack. Extracted the administrator's hash using impacket-secretsdump.",
+    "slug": "forest",
+    "images": [
+      "205",
+      "206",
+      "207",
+      "208",
+      "209",
+      "210",
+      "211",
+      "212",
+      "213",
+      "214",
+      "215",
+      "216",
+      "217",
+      "218",
+      "219",
+      "220",
+      "221",
+      "222",
+      "223",
+      "224",
+      "225",
+      "226"
+    ],
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d4-b56c-4328-a5c3-0b326d506afe.png"
+  },
+  {
+    "day": 23,
+    "name": "Sauna",
+    "difficulty": "Easy",
+    "os": "Windows",
+    "tags": [
+      "LFI/RFI",
+      "Active Directory",
+      "Web Exploitation",
+      "Network Exploitation"
+    ],
+    "cves": [],
+    "summary": "Created user lists from the site, tried AS-REP Roasting with GetNPUsers.py, found a vulnerable user, and used secretsdump for DCSync, grabbing admin credentials.",
+    "slug": "sauna",
+    "images": [
+      "227",
+      "228",
+      "229",
+      "230",
+      "231",
+      "232",
+      "233",
+      "234"
+    ],
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d4-6f9b-4c4a-961e-46747d27abab.png"
+  },
+  {
+    "day": 24,
+    "name": "Nibbles",
+    "difficulty": "Easy",
+    "os": "Linux",
+    "tags": [
+      "LFI/RFI",
+      "Privilege Escalation",
+      "CVE Exploit",
+      "Web Exploitation",
+      "Network Exploitation",
+      "Cryptography"
+    ],
+    "cves": [
+      "CVE-2015-6967"
+    ],
+    "summary": "Exploited Nibbleblog 4.0.3 - CVE-2015-6967 for foothold. Ran a file with root privileges (password not required) to gain root access.",
+    "slug": "nibbles",
+    "images": [
+      "235",
+      "236",
+      "237"
+    ],
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d6-e925-4c5a-af30-59f1986473d4.png"
+  },
+  {
+    "day": 25,
+    "name": "TenTen",
+    "difficulty": "Medium",
+    "os": "Linux",
+    "tags": [
+      "LFI/RFI",
+      "CVE Exploit",
+      "Web Exploitation",
+      "Network Exploitation",
+      "Cryptography"
+    ],
+    "cves": [
+      "CVE-2015-6668"
+    ],
+    "summary": "Exploited WordPress CVE-2015-6668, found a regular photo, extracted SSH key with steghide, Executed a file as root user with sudo, without a password.",
+    "slug": "tenten",
+    "images": [
+      "238",
+      "239",
+      "240"
+    ],
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d7-8bbe-4784-b163-e10716c94342.png"
+  },
+  {
+    "day": 26,
+    "name": "CronOS",
+    "difficulty": "Medium",
+    "os": "Linux",
+    "tags": [
+      "SQL Injection",
+      "Command Injection",
+      "LFI/RFI",
+      "Privilege Escalation",
+      "Web Exploitation",
+      "Network Exploitation"
+    ],
+    "cves": [],
+    "summary": "Discovered a subdomain with SQLi vulnerability, followed by a command injection. Exploited a cron running a PHP file for root access by modification.",
+    "slug": "cronos",
+    "images": [
+      "241",
+      "242",
+      "243",
+      "244",
+      "245"
+    ],
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d7-83af-4bdf-af78-92f95836b41a.png"
+  },
+  {
+    "day": 27,
+    "name": "Arctic",
+    "difficulty": "Easy",
+    "os": "Windows",
+    "tags": [
+      "Web Exploitation",
+      "Network Exploitation"
+    ],
+    "cves": [],
+    "summary": "Exploited Adobe ColdFusion 8 for initial access, then gained root using MS10-059: Chimichurri vulnerability.",
+    "slug": "arctic",
+    "images": [
+      "246",
+      "247",
+      "248"
+    ],
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d7-877b-40aa-986a-c2602cdd0702.png"
+  },
+  {
+    "day": 28,
+    "name": "Bank",
+    "difficulty": "Easy",
+    "os": "Linux",
+    "tags": [
+      "Privilege Escalation",
+      "Web Exploitation",
+      "Network Exploitation",
+      "Cryptography"
+    ],
+    "cves": [],
+    "summary": "Found user credentials on a site, exploited an upload flaw after login. Obtained shell, utilized a setguid binary for direct root access.",
+    "slug": "bank",
+    "images": [
+      "249",
+      "250",
+      "251",
+      "252",
+      "253",
+      "254",
+      "255",
+      "256",
+      "257",
+      "258",
+      "259"
+    ],
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d7-5790-4e61-8bb2-a45737dc2a0e.png"
+  },
+  {
+    "day": 29,
+    "name": "Legacy",
+    "difficulty": "Easy",
+    "os": "Windows",
+    "tags": [
+      "Web Exploitation",
+      "Network Exploitation"
+    ],
+    "cves": [],
+    "summary": "Nmap vulnerability scripts uncovered MS08-067 and MS17-010 (EternalBlue) vulnerabilities. Exploited the machine using MS17-010.",
+    "slug": "legacy",
+    "images": [
+      "260",
+      "261",
+      "262",
+      "263"
+    ],
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d7-a094-4d19-acb4-e24b7ae44f57.png"
+  },
+  {
+    "day": 30,
+    "name": "Active",
+    "difficulty": "Easy",
+    "os": "Windows",
+    "tags": [
+      "Active Directory",
+      "Web Exploitation",
+      "Network Exploitation"
+    ],
+    "cves": [],
+    "summary": "Found user credentials via SMB (anonymous access), obtained administrator hashes using Kerberoasting (GetUserSPNs), and later accessed with psexec.",
+    "slug": "active",
+    "images": [
+      "264",
+      "265",
+      "266",
+      "267",
+      "268",
+      "269",
+      "270"
+    ],
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d5-dc8f-4276-afba-e99d3da016d3.png"
+  },
+  {
+    "day": 31,
+    "name": "Devel",
+    "difficulty": "Easy",
+    "os": "Windows",
+    "tags": [
+      "Web Exploitation",
+      "Network Exploitation"
+    ],
+    "cves": [],
+    "summary": "",
+    "slug": "devel",
+    "images": "271",
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d7-9cce-4bed-82d5-bd5f4bf2ab77.png"
+  },
+  {
+    "day": 32,
+    "name": "Squashed",
+    "difficulty": "Easy",
+    "os": "Linux",
+    "tags": [
+      "Web Exploitation"
+    ],
+    "cves": [],
+    "summary": "Created a user with specific user and group IDs to exploit misconfigured NFS shares, gaining initial access by placing a shell. Copied the .Xauthority cookie from a user running a desktop session, used it to capture a desktop screenshot, revealing the root password.",
+    "slug": "squashed",
+    "images": [
+      "272",
+      "273"
+    ],
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90cf-d02f-466c-b333-8c65c26214a7.png"
+  },
+  {
+    "day": 33,
+    "name": "TimeLapse",
+    "difficulty": "Easy",
+    "os": "Windows",
+    "tags": [
+      "Active Directory",
+      "Web Exploitation",
+      "Network Exploitation",
+      "Cryptography"
+    ],
+    "cves": [],
+    "summary": "Cracked PFX keys available through SMB, logged in with said keys. Discovered another user's password in the PowerShell history. This user was part of the LAPS Readers group, enabling me to read the local administrator's password.",
+    "slug": "timelapse",
+    "images": [
+      "274",
+      "275",
+      "276",
+      "277",
+      "278",
+      "279",
+      "280",
+      "281"
+    ],
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d0-996e-49e0-bb5d-ccd58a3c5743.png"
+  },
+  {
+    "day": 34,
+    "name": "Intelligence",
+    "difficulty": "Medium",
+    "os": "Windows",
+    "tags": [
+      "Active Directory",
+      "Web Exploitation",
+      "Network Exploitation"
+    ],
+    "cves": [],
+    "summary": "kerbrute userenum --dc 10.10.10.248 -d intelligence.htb users [0] 0:openvpn- 1:zshZ.",
+    "slug": "intelligence",
+    "images": [
+      "282",
+      "283",
+      "284",
+      "285",
+      "286",
+      "287",
+      "288",
+      "289",
+      "290",
+      "291",
+      "292",
+      "293",
+      "294",
+      "295",
+      "296",
+      "297"
+    ],
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d2-6584-4407-b80f-f5aa86068076.png"
+  },
+  {
+    "day": 35,
+    "name": "Optimum",
+    "difficulty": "Easy",
+    "os": "Windows",
+    "tags": [
+      "CVE Exploit",
+      "Web Exploitation",
+      "Network Exploitation"
+    ],
+    "cves": [
+      "CVE-2014-6287"
+    ],
+    "summary": "Exploited CVE-2014-6287 in the running HttpFileServer (HFS) on Windows, gaining shell access. Identified MS16-032 vulnerability with Sherlock.ps1, leading to administrator shell.",
+    "slug": "optimum",
+    "images": [
+      "298",
+      "299",
+      "300"
+    ],
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d7-9224-4228-85f9-7b86d909ee9d.png"
+  },
+  {
+    "day": 36,
+    "name": "Luanne",
+    "difficulty": "Easy",
+    "os": "FreeBSD",
+    "tags": [
+      "LFI/RFI",
+      "Web Exploitation",
+      "Network Exploitation",
+      "Cryptography"
+    ],
+    "cves": [],
+    "summary": "Supervisor on port 9001 with default credentials. Code injection into LUA during enumeration resulted in a shell. Found a .tar file containing the root password.",
+    "slug": "luanne",
+    "images": [
+      "301",
+      "302",
+      "303",
+      "304"
+    ],
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d2-e64c-48e1-a820-21d0b9ab3793.png"
+  },
+  {
+    "day": 37,
+    "name": "Cap",
+    "difficulty": "Easy",
+    "os": "Linux",
+    "tags": [
+      "LFI/RFI",
+      "Privilege Escalation",
+      "Web Exploitation",
+      "Network Exploitation",
+      "Cryptography"
+    ],
+    "cves": [],
+    "summary": "Discovered an IDOR vulnerability granting access to .pcap files belonging to others. Exploited it to find an FTP password, reused in SSH. Attained root via Python's cap_setuid vulnerability.",
+    "slug": "cap",
+    "images": [
+      "305",
+      "306"
+    ],
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d2-73c7-4da0-a15f-662bbc048868.png"
+  },
+  {
+    "day": 38,
+    "name": "Blocky",
+    "difficulty": "Easy",
+    "os": "Linux",
+    "tags": [
+      "Web Exploitation",
+      "Network Exploitation",
+      "Cryptography"
+    ],
+    "cves": [],
+    "summary": "Found a web server running WordPress. Dirbusted to discover .jar files containing SQL credentials, which also worked for SSH. After logging in, my user had all root privileges.",
+    "slug": "blocky",
+    "images": "307",
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d7-4633-46fa-aab8-4a848ce655ed.png"
+  },
+  {
+    "day": 39,
+    "name": "Jeeves",
+    "difficulty": "Medium",
+    "os": "Windows",
+    "tags": [
+      "Command Injection",
+      "LFI/RFI",
+      "Active Directory",
+      "Web Exploitation",
+      "Network Exploitation"
+    ],
+    "cves": [],
+    "summary": "Got code execution on an unauthenticated Jenkins instance. Found a Keepass database with the NTLM hash of the administrator, allowing Pass-The-Hash to log into the administrator account.",
+    "slug": "jeeves",
+    "images": [
+      "308",
+      "309",
+      "310",
+      "311"
+    ],
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d7-0cc5-49c3-be2b-06b1946db205.png"
+  },
+  {
+    "day": 40,
+    "name": "Shocker",
+    "difficulty": "Easy",
+    "os": "Linux",
+    "tags": [
+      "CVE Exploit",
+      "Reverse Shell",
+      "Web Exploitation",
+      "Network Exploitation",
+      "Cryptography"
+    ],
+    "cves": [
+      "CVE-2014-627"
+    ],
+    "summary": "Discovered ShellShock (AKA Bashdoor or CVE-2014-627), gaining shell access. Later, obtained root privileges by running Perl without a password.",
+    "slug": "shocker",
+    "images": [
+      "312",
+      "313"
+    ],
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d7-28dd-432f-9149-8c7e087fc543.png"
+  },
+  {
+    "day": 41,
+    "name": "Sniper",
+    "difficulty": "Medium",
+    "os": "Windows",
+    "tags": [
+      "LFI/RFI",
+      "Reverse Shell",
+      "Web Exploitation",
+      "Network Exploitation"
+    ],
+    "cves": [],
+    "summary": "Gained initial access through an RFI exploit, using a basic PHP web shell. Later, accessed another user's credentials stored in a file named \"db.php\". To escalate privileges to administrator, crafted a specific .chm payload using Out-CHM.ps1 from Nishang. Dropped it into a directory where it automatically executed after one minute, granting administrator access.",
+    "slug": "sniper",
+    "images": "314",
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d4-ba00-4fcb-b31d-3303bb9897cb.png"
+  },
+  {
+    "day": 42,
+    "name": "GoodGames",
+    "difficulty": "Easy",
+    "os": "Linux",
+    "tags": [
+      "SQL Injection",
+      "SSTI",
+      "Network Exploitation",
+      "Container Escape"
+    ],
+    "cves": [],
+    "summary": "Port 80 was the only open port. Discovered admin creds via SQL injection. Found a vulnerable subdomain with a Python server vulnerable to SSTI. Escaped Docker container as user directory was mounted from host machine.",
+    "slug": "goodgames",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d0-b1f5-482c-b2ab-b1f8cff7a32f.png"
+  },
+  {
+    "day": 43,
+    "name": "Escape",
+    "difficulty": "Medium",
+    "os": "Windows",
+    "tags": [
+      "LFI/RFI",
+      "Active Directory",
+      "Web Exploitation",
+      "Network Exploitation",
+      "Cryptography"
+    ],
+    "cves": [],
+    "summary": "Found MSSQL creds in PDF on SMB (null auth). Logged in, obtained NTLM hash with responder. Identified ADCS, exploited UserAuthentication Certificate with Certify and Rubeus for Admin.",
+    "slug": "escape",
+    "images": [
+      "315",
+      "316",
+      "317",
+      "318",
+      "319",
+      "320",
+      "321",
+      "322",
+      "323",
+      "324",
+      "325",
+      "326"
+    ],
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90cf-9430-4c02-848d-6ad68598878f.png"
+  },
+  {
+    "day": 44,
+    "name": "Crafty",
+    "difficulty": "Easy",
+    "os": "Windows",
+    "tags": [
+      "Web Exploitation",
+      "Network Exploitation"
+    ],
+    "cves": [],
+    "summary": "Entered machine through log4j vulnerability in Minecraft, discovered admin credentials in the file system.",
+    "slug": "crafty",
+    "images": [
+      "327",
+      "328"
+    ],
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90cd-3aa9-4658-aebb-b4f735768a3c.png"
+  },
+  {
+    "day": 45,
+    "name": "Authority",
+    "difficulty": "Medium",
+    "os": "Windows",
+    "tags": [
+      "Command Injection",
+      "LFI/RFI",
+      "Buffer Overflow",
+      "Active Directory",
+      "Password Cracking",
+      "Web Exploitation"
+    ],
+    "cves": [],
+    "summary": "",
+    "slug": "authority",
+    "images": [
+      "329",
+      "330",
+      "331",
+      "332",
+      "333",
+      "334",
+      "335",
+      "336",
+      "337",
+      "338",
+      "339",
+      "340"
+    ],
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90cd-b114-478f-87a8-3d12347658a2.png"
+  },
+  {
+    "day": 46,
+    "name": "PC",
+    "difficulty": "Easy",
+    "os": "Linux",
+    "tags": [
+      "SQL Injection",
+      "Command Injection",
+      "Active Directory",
+      "CVE Exploit",
+      "Web Exploitation",
+      "Network Exploitation"
+    ],
+    "cves": [
+      "CVE-2023-0297"
+    ],
+    "summary": "Discovered SSH password via SQL Injection within gRPC. Identified pyLoad application running as root, vulnerable to CVE-2023-0297 Unauthenticated Remote Code Execution.",
+    "slug": "pc",
+    "images": [
+      "341",
+      "342"
+    ],
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90cd-d870-40a4-9d34-4c6c3feeaa20.png"
+  },
+  {
+    "day": 47,
+    "name": "Paper",
+    "difficulty": "Easy",
+    "os": "Linux",
+    "tags": [
+      "Privilege Escalation",
+      "Web Exploitation",
+      "Network Exploitation",
+      "Cryptography"
+    ],
+    "cves": [],
+    "summary": "Discovered SSH credentials on a Rocket Chat server via a bot. Used LinPEAS to detect Polkit CVE, leading to root access.",
+    "slug": "paper",
+    "images": [
+      "343",
+      "344",
+      "345"
+    ],
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d0-d8d8-47f2-b1f9-09f3fa5abef2.png"
+  },
+  {
+    "day": 48,
+    "name": "Validation",
+    "difficulty": "Easy",
+    "os": "Linux",
+    "tags": [
+      "SQL Injection",
+      "Web Exploitation",
+      "File Upload",
+      "Network Exploitation",
+      "Cryptography"
+    ],
+    "cves": [],
+    "summary": "Discovered SQL injection vulnerability on a website during enumeration. Uploaded PHP webshell with SQL user's write permissions for shell access. Root password was reused from database config file.",
+    "slug": "validation",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d2-3646-43aa-84bb-2efc95d2c03b.png"
+  },
+  {
+    "day": 49,
+    "name": "Soccer",
+    "difficulty": "Easy",
+    "os": "Linux",
+    "tags": [
+      "SQL Injection",
+      "Web Exploitation",
+      "Network Exploitation",
+      "Cryptography"
+    ],
+    "cves": [],
+    "summary": "Exploited SQL injection via websocket used for ticker validation. Extracted user password from database using SqlMap. User had \"doas\" privileges for root on dstat. Root achieved in few steps.",
+    "slug": "soccer",
+    "images": [
+      "346",
+      "347",
+      "348",
+      "349"
+    ],
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90cf-bf27-467a-9ce1-75957e61d148.png"
+  },
+  {
+    "day": 50,
+    "name": "TwoMillion",
+    "difficulty": "Easy",
+    "os": "Linux",
+    "tags": [
+      "Command Injection",
+      "Privilege Escalation",
+      "CVE Exploit",
+      "Reverse Shell",
+      "Web Exploitation",
+      "Network Exploitation"
+    ],
+    "cves": [
+      "CVE-2023-0386"
+    ],
+    "summary": "Discovered command injection vulnerability through API manipulation. Obtained reverse shell and found user credentials in a database. Exploited OverlayFS CVE-2023-0386 for root access.",
+    "slug": "twomillion",
+    "images": [
+      "350",
+      "351",
+      "352",
+      "353",
+      "354"
+    ],
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90cd-c843-47e4-97f7-c0a2d69b78ce.png"
+  },
+  {
+    "day": 51,
+    "name": "Return",
+    "difficulty": "Easy",
+    "os": "Windows",
+    "tags": [
+      "Active Directory",
+      "Web Exploitation",
+      "Network Exploitation"
+    ],
+    "cves": [],
+    "summary": "",
+    "slug": "return",
+    "images": [
+      "355",
+      "356",
+      "357"
+    ],
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d2-01be-4583-a85e-1c4fabe2bd6a.png"
+  },
+  {
+    "day": 52,
+    "name": "Beep",
+    "difficulty": "Unknown",
+    "os": "Linux",
+    "tags": [
+      "LFI/RFI"
+    ],
+    "cves": [],
+    "summary": "there was many ways to get into box, i found the paswrod with LFI , and then used that to login in webmin. and then added, a cronjob to get a sheel back.",
+    "slug": "beep",
+    "images": "358",
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d7-9551-4a99-8df6-e48b2c403aca.png"
+  },
+  {
+    "day": 53,
+    "name": "Traverxec",
+    "difficulty": "Easy",
+    "os": "Linux",
+    "tags": [
+      "Command Injection",
+      "CVE Exploit",
+      "Web Exploitation",
+      "Network Exploitation",
+      "Cryptography"
+    ],
+    "cves": [],
+    "summary": " Exploited RCE vulnerability on Nostromo Web Server for shell access. Discovered user's SSH key in a backup file, granting access to run \"journalctl\" with root privileges.",
+    "slug": "traverxec",
+    "images": "359",
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d4-9e3d-4c96-a466-f35da13b64a9.png"
+  },
+  {
+    "day": 54,
+    "name": "Grandpa",
+    "difficulty": "Easy",
+    "os": "Linux",
+    "tags": [
+      "Privilege Escalation"
+    ],
+    "cves": [],
+    "summary": "Exploited IIS 6.0 using WebDav 'ScStoragePathFromUrl' Remote Overflow. Utilized Churrasco for root access with 2SEImpersonalPrivilege privilege.",
+    "slug": "grandpa",
+    "images": "360",
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d7-7dfb-467b-b584-1621695619c1.png"
+  },
+  {
+    "day": 55,
+    "name": "BlackField",
+    "difficulty": "Hard",
+    "os": "Windows",
+    "tags": [
+      "Active Directory",
+      "Web Exploitation",
+      "Network Exploitation"
+    ],
+    "cves": [],
+    "summary": "Found a list of users in SMB shares. Obtained a user hash through AS-REP roasting. Used this user to change another user's password. Accessed a specific SMB share containing the LSASS dump, revealing the NTLM hash of a user with SeBackupPrivilege.",
+    "slug": "blackfield",
+    "images": [
+      "361",
+      "362",
+      "363",
+      "364",
+      "365",
+      "366",
+      "367",
+      "368",
+      "369",
+      "370",
+      "371",
+      "372",
+      "373"
+    ],
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d3-6fa8-498d-b7a5-880f2563098d.png"
+  },
+  {
+    "day": 56,
+    "name": "Remote",
+    "difficulty": "Easy",
+    "os": "Windows",
+    "tags": [
+      "Command Injection",
+      "LFI/RFI",
+      "CVE Exploit",
+      "Web Exploitation",
+      "File Upload",
+      "Network Exploitation"
+    ],
+    "cves": [
+      "CVE-2019-18988"
+    ],
+    "summary": "Discovered user creds (Umbraco CMS) in public NFS share. Logged into CMS, exploited Authenticated RCE for shell. Utilized TeamViewer CVE-2019-18988 to decrypt stored passwords.",
+    "slug": "remote",
+    "images": "374",
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d4-5914-4db7-bbca-d5c21bae01f7.png"
+  },
+  {
+    "day": 57,
+    "name": "TraceBack",
+    "difficulty": "Easy",
+    "os": "Linux",
+    "tags": [
+      "Command Injection",
+      "Web Exploitation",
+      "File Upload"
+    ],
+    "cves": [],
+    "summary": "Found a PHP webshell on port 80, gained access. Moved laterally to another user, able to run a .lua file without password. For root, modified a file executed by root.",
+    "slug": "traceback",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d4-5dbe-4508-8122-e54b1b3af99f.png"
+  },
+  {
+    "day": 58,
+    "name": "Granny",
+    "difficulty": "Easy",
+    "os": "Windows",
+    "tags": [
+      "LFI/RFI",
+      "Active Directory",
+      "Web Exploitation",
+      "Network Exploitation",
+      "Cryptography"
+    ],
+    "cves": [],
+    "summary": "Exploited \"IIS WebDav ScStoragePathFromUrl Overflow\" on port 80 for initial access. Escalated privileges using MS15-051 vulnerability.",
+    "slug": "granny",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d7-7a65-4044-a6f5-c64eaf76d74f.png"
+  },
+  {
+    "day": 59,
+    "name": "Armageddon",
+    "difficulty": "Easy",
+    "os": "Linux",
+    "tags": [
+      "Command Injection",
+      "Privilege Escalation"
+    ],
+    "cves": [],
+    "summary": "Exploited Drupalgeddon2 RCE on running Drupal instance for shell access. Discovered creds in a conf file. Utilized permissions to install packages in snap for root access.",
+    "slug": "armageddon",
+    "images": [
+      "375",
+      "376",
+      "377"
+    ],
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d2-a5d4-41c0-b098-8545bce2c4c7.png"
+  },
+  {
+    "day": 60,
+    "name": "Mirai",
+    "difficulty": "Easy",
+    "os": "Linux",
+    "tags": [
+      "Privilege Escalation"
+    ],
+    "cves": [],
+    "summary": "Raspberry device running Pi-hole and Plex, accessed via default SSH credentials. Had root access to run any command. Recovered root.txt flag from a deleted USB drive.",
+    "slug": "mirai",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d7-35f0-4c1e-98e9-8c1eba913f50.png"
+  },
+  {
+    "day": 61,
+    "name": "ScriptKiddie",
+    "difficulty": "Easy",
+    "os": "Linux",
+    "tags": [
+      "Command Injection",
+      "LFI/RFI",
+      "CVE Exploit",
+      "Reverse Shell",
+      "Web Exploitation",
+      "Network Exploitation"
+    ],
+    "cves": [
+      "CVE-2020-7384"
+    ],
+    "summary": "Exploited CVE-2020-7384 for command injection on a website generating payloads with msfvenom. Injected command into a log, triggered by another user, resulting in a reverse shell. Eventually gained root privileges to run msfconsole.",
+    "slug": "scriptkiddie",
+    "images": [
+      "378",
+      "379",
+      "380",
+      "381",
+      "382"
+    ],
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d2-c70b-4356-be69-5756cc74ab10.png"
+  },
+  {
+    "day": 62,
+    "name": "Horizontall",
+    "difficulty": "Easy",
+    "os": "Linux",
+    "tags": [
+      "Command Injection",
+      "CVE Exploit"
+    ],
+    "cves": [
+      "CVE-2021-3129"
+    ],
+    "summary": "Discovered a subdomain in an obfuscated JavaScript file on a regular site. It was Strapi CMS, vulnerable to RCE. Then, a locally running Laravel instance was exploited with CVE-2021-3129.",
+    "slug": "horizontall",
+    "images": [
+      "383",
+      "384"
+    ],
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d2-4897-422d-a42c-540b83b5f011.png"
+  },
+  {
+    "day": 63,
+    "name": "Perfection",
+    "difficulty": "Easy",
+    "os": "Linux",
+    "tags": [
+      "Network Exploitation"
+    ],
+    "cves": [],
+    "summary": "This box was active at the time of the challenge — no detailed writeup was posted. The entry is preserved for completion.",
+    "slug": "perfection",
+    "images": [
+      "385",
+      "386",
+      "387"
+    ],
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90cd-2ee8-4997-a528-50a69f7f9c8e.png"
+  },
+  {
+    "day": 64,
+    "name": "Blunder",
+    "difficulty": "Easy",
+    "os": "Linux",
+    "tags": [
+      "Command Injection",
+      "LFI/RFI",
+      "Privilege Escalation",
+      "CVE Exploit",
+      "Password Cracking",
+      "Web Exploitation"
+    ],
+    "cves": [
+      "CVE-2019-14287"
+    ],
+    "summary": "Discovered Bludit CMS on port 80. Used brute force to access the admin panel. Uploaded a PHP shell for shell access. Found a user password in a config file. Lastly, exploited CVE-2019-14287 to gain root access.",
+    "slug": "blunder",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d3-74a8-4782-9663-ce6d36aa3060.png"
+  },
+  {
+    "day": 65,
+    "name": "BountyHunter",
+    "difficulty": "Easy",
+    "os": "Linux",
+    "tags": [
+      "LFI/RFI",
+      "XXE",
+      "Privilege Escalation",
+      "Web Exploitation",
+      "Network Exploitation",
+      "Cryptography"
+    ],
+    "cves": [],
+    "summary": "Found XML external entity injection on the site. Retrieved credentials from a conf file, reused for SSH login. Achieved root access by executing a specific Python script with root privileges.",
+    "slug": "bountyhunter",
+    "images": [
+      "388",
+      "389",
+      "390",
+      "391"
+    ],
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d2-5e54-4ac2-83de-6663cdbe4307.png"
+  },
+  {
+    "day": 66,
+    "name": "Builder",
+    "difficulty": "Medium",
+    "os": "Linux",
+    "tags": [
+      "CVE Exploit"
+    ],
+    "cves": [
+      "CVE-2024-23897"
+    ],
+    "summary": "Exploited Jenkins with CVE-2024-23897, allowing users to read files. Discovered user creds in conf files, then logged in. Found an encrypted SSH key, decrypted it via Jenkins script console.",
+    "slug": "builder",
+    "images": "392",
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90cd-2b07-4bd0-b2f5-9042af902540.png"
+  },
+  {
+    "day": 67,
+    "name": "Nunchucks",
+    "difficulty": "Easy",
+    "os": "Linux",
+    "tags": [
+      "SSTI",
+      "Privilege Escalation",
+      "Web Exploitation"
+    ],
+    "cves": [],
+    "summary": "Found a vulnerable subdomain susceptible to NodeJS-based Server Side Template Injection (SSTI) during fuzzing. Escalated to root by leveraging the 'Perl' setuid capability, bypassing AppArmor.",
+    "slug": "nunchucks",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d1-1883-4ad5-906c-6b22f9b89501.png"
+  },
+  {
+    "day": 68,
+    "name": "Waldo",
+    "difficulty": "Medium",
+    "os": "Linux",
+    "tags": [
+      "Command Injection",
+      "LFI/RFI",
+      "Privilege Escalation",
+      "Web Exploitation",
+      "Network Exploitation",
+      "Cryptography"
+    ],
+    "cves": [],
+    "summary": "A website's weak input validation exposed an SSH key. Escaped a restricted rbash shell and exploited Linux Capabilities for root access.",
+    "slug": "waldo",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d5-d7df-4336-bfa8-edecfb7c8275.png"
+  },
+  {
+    "day": 69,
+    "name": "Love",
+    "difficulty": "Easy",
+    "os": "Windows",
+    "tags": [
+      "Command Injection",
+      "LFI/RFI",
+      "SSRF",
+      "Privilege Escalation",
+      "Web Exploitation",
+      "Network Exploitation"
+    ],
+    "cves": [],
+    "summary": "Exploited SSRF in the File Scanner to obtain a password for the Voting System. Used a simple PHP RCE for shell access. ROOT access was straightforward due to the enabled \"AlwaysInstallElevated\" setting.",
+    "slug": "love",
+    "images": "393",
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d2-87ae-456d-b2a0-9a9c2e7efd2c.png"
+  },
+  {
+    "day": 70,
+    "name": "Jab",
+    "difficulty": "Medium",
+    "os": "Linux",
+    "tags": [
+      "Network Exploitation"
+    ],
+    "cves": [],
+    "summary": "This box was active at the time of the challenge — no detailed writeup was posted. The entry is preserved for completion.",
+    "slug": "jab",
+    "images": [
+      "394",
+      "395"
+    ],
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90cd-32e7-4f0c-afcb-31723b12e0b3.png"
+  },
+  {
+    "day": 71,
+    "name": "Manager",
+    "difficulty": "Medium",
+    "os": "Linux",
+    "tags": [
+      "Network Exploitation"
+    ],
+    "cves": [],
+    "summary": "This box was active at the time of the challenge — no detailed writeup was posted. The entry is preserved for completion.",
+    "slug": "manager",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90cd-7b22-4a83-bcde-170d0250f62b.png"
+  },
+  {
+    "day": 72,
+    "name": "Tabby",
+    "difficulty": "Easy",
+    "os": "Linux",
+    "tags": [
+      "LFI/RFI",
+      "Web Exploitation"
+    ],
+    "cves": [],
+    "summary": "Used LFI on the website to find Tomcat credentials. Uploaded a malicious WAR to gain shell access. Later, escalated privileges as an \"lxd\" group member.",
+    "slug": "tabby",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d3-6535-4a48-b036-9331ec8704ee.png"
+  },
+  {
+    "day": 73,
+    "name": "POV",
+    "difficulty": "Medium",
+    "os": "Linux",
+    "tags": [
+      "Network Exploitation"
+    ],
+    "cves": [],
+    "summary": "This box was active at the time of the challenge — no detailed writeup was posted. The entry is preserved for completion.",
+    "slug": "pov",
+    "images": [
+      "396",
+      "397",
+      "398",
+      "399"
+    ],
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90cd-42b9-4f59-8309-61ee15a8dc4c.png"
+  },
+  {
+    "day": 74,
+    "name": "Office",
+    "difficulty": "Hard",
+    "os": "Windows",
+    "tags": [
+      "Command Injection",
+      "LFI/RFI",
+      "Active Directory",
+      "Web Exploitation",
+      "Network Exploitation",
+      "Cryptography"
+    ],
+    "cves": [],
+    "summary": "This box was active at the time of the challenge — no detailed writeup was posted. The entry is preserved for completion.",
+    "slug": "office",
+    "images": [
+      "400",
+      "401",
+      "402",
+      "403",
+      "404"
+    ],
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90cd-3707-4af9-a81f-85d303c693a2.png"
+  },
+  {
+    "day": 75,
+    "name": "Ransom",
+    "difficulty": "Medium",
+    "os": "Linux",
+    "tags": [
+      "Network Exploitation"
+    ],
+    "cves": [],
+    "summary": "Bypassed the login page by altering the request type and performing type juggling. Discovered an encrypted ZIP file, then decrypted it using a known-plaintext attack with bkcrack.",
+    "slug": "ransom",
+    "images": [
+      "405",
+      "406",
+      "407",
+      "408",
+      "409"
+    ],
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d0-90ee-4f9d-a090-a5e3bf42a4df.png"
+  },
+  {
+    "day": 76,
+    "name": "Buff",
+    "difficulty": "Easy",
+    "os": "Linux",
+    "tags": [
+      "Command Injection",
+      "Buffer Overflow",
+      "Web Exploitation"
+    ],
+    "cves": [],
+    "summary": "Unauthenticated RCE in a normal web app for initial access. Then found a locally running instance of \"Cloud me\" on the box, vulnerable to a buffer overflow exploit.",
+    "slug": "buff",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d3-562b-4a5d-bfbc-bca88ea37123.png"
+  },
+  {
+    "day": 77,
+    "name": "Support",
+    "difficulty": "Easy",
+    "os": "Windows",
+    "tags": [
+      "LFI/RFI",
+      "Active Directory",
+      "Web Exploitation",
+      "Network Exploitation"
+    ],
+    "cves": [],
+    "summary": "Found .exe file in SMB shares with hardcoded credentials for LDAP queries. Reversed the binary to retrieve the password. As a member of a group with 'GenericALL' on the DC, obtained the TGT after exploiting it through several steps.",
+    "slug": "support",
+    "images": [
+      "410",
+      "411",
+      "412",
+      "413"
+    ],
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d0-2dbc-482f-a376-ea70464174a2.png"
+  },
+  {
+    "day": 78,
+    "name": "Antique",
+    "difficulty": "Easy",
+    "os": "Linux",
+    "tags": [
+      "Privilege Escalation",
+      "Network Exploitation"
+    ],
+    "cves": [],
+    "summary": "SNMP enumeration revealed credentials, providing telnet access. Executed commands via telnet for shell. Exploited vulnerable CUPS print manager software for root access.",
+    "slug": "antique",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d2-0651-4c6d-8a0a-fc296fd889fb.png"
+  },
+  {
+    "day": 79,
+    "name": "Busqueda",
+    "difficulty": "Easy",
+    "os": "Linux",
+    "tags": [
+      "Privilege Escalation"
+    ],
+    "cves": [],
+    "summary": "Performed Python eval injection on a website's search query, obtained shell. Found user's password in .git config. Ran Python file as root for root access.",
+    "slug": "busqueda",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90cf-7a40-446d-ae8f-2169885a8b0e.png"
+  },
+  {
+    "day": 80,
+    "name": "Toolbox",
+    "difficulty": "Easy",
+    "os": "Linux",
+    "tags": [
+      "SQL Injection",
+      "Privilege Escalation",
+      "Container Escape"
+    ],
+    "cves": [],
+    "summary": "Found a vhost during enumeration, which was an  admin panel vulnerable to SQL Injection. Exploited it to gain shell . Ended up in a Docker container within 'Boot2Docker', where default credentials granted direct root access.",
+    "slug": "toolbox",
+    "images": "414",
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d2-9726-448a-846d-c44a3a5abee5.png"
+  },
+  {
+    "day": 81,
+    "name": "Shoppy",
+    "difficulty": "Easy",
+    "os": "Linux",
+    "tags": [
+      "SQL Injection",
+      "Container Escape"
+    ],
+    "cves": [],
+    "summary": "Admin panel accessed via NoSQL injection. Then, used dumped hashes to log into chat server and found SSH password. Being a member of docker group, loaded an image with host file system.",
+    "slug": "shoppy",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d0-09aa-46ce-97ad-578b311f478c.png"
+  },
+  {
+    "day": 82,
+    "name": "ServMon",
+    "difficulty": "Easy",
+    "os": "Linux",
+    "tags": [
+      "LFI/RFI"
+    ],
+    "cves": [],
+    "summary": "NVMS-1000 instance had LFI vulnerability, yielding SSH creds. Local NSClient++ allowed script execution after pivoting.NSClient++ was running locally, granting permission to execute scripts on the host after pivoting.",
+    "slug": "servmon",
+    "images": "415",
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d4-4ad8-4089-8c95-fa975e2f1e11.png"
+  },
+  {
+    "day": 83,
+    "name": "WifineticTwo",
+    "difficulty": "Medium",
+    "os": "Linux",
+    "tags": [
+      "Web Exploitation"
+    ],
+    "cves": [],
+    "summary": "This box was active at the time of the challenge — no detailed writeup was posted. The entry is preserved for completion.",
+    "slug": "wifinetictwo",
+    "images": [
+      "416",
+      "417",
+      "418"
+    ],
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90cd-2086-4756-b4ef-0ca5d487e230.png"
+  },
+  {
+    "day": 84,
+    "name": "Headless",
+    "difficulty": "Easy",
+    "os": "Linux",
+    "tags": [
+      "Web Exploitation"
+    ],
+    "cves": [],
+    "summary": "This box was active at the time of the challenge — no detailed writeup was posted. The entry is preserved for completion.",
+    "slug": "headless",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90cd-1c70-4711-81a8-ee3377585bbc.png"
+  },
+  {
+    "day": 85,
+    "name": "Late",
+    "difficulty": "Easy",
+    "os": "Linux",
+    "tags": [
+      "SSTI",
+      "Web Exploitation"
+    ],
+    "cves": [],
+    "summary": "Online Image to Text' service, using OCR, based on Flask, was vulnerable to SSTI. Then, a specific file was running whenever someone logs into SSH. I had permission to append to it.",
+    "slug": "late",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d0-7794-45ff-8379-7cdacec1d7d1.png"
+  },
+  {
+    "day": 86,
+    "name": "Backdoor",
+    "difficulty": "Easy",
+    "os": "Linux",
+    "tags": [
+      "Command Injection",
+      "LFI/RFI",
+      "Network Exploitation",
+      "Cryptography"
+    ],
+    "cves": [],
+    "summary": "\"WordPress site, plugin vulnerable to Directory Traversal. Explored processes in '/proc', discovered gdbserver running, allowing RCE. Also, 'Screen' session found running as root.",
+    "slug": "backdoor",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d1-0ff1-4e38-acea-24c1b8e024a8.png"
+  },
+  {
+    "day": 87,
+    "name": "SwagShop",
+    "difficulty": "Easy",
+    "os": "Linux",
+    "tags": [
+      "SQL Injection",
+      "Command Injection",
+      "Web Exploitation"
+    ],
+    "cves": [],
+    "summary": "\"Magento CMS\" had a SQL injection vulnerability. Added admin user via SQLi and used those credentials for an Authenticated RCE. Finally, obtained root permission by running VIM.",
+    "slug": "swagshop",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d5-3042-4c53-9c99-8fa28c08a074.png"
+  },
+  {
+    "day": 88,
+    "name": "Napper",
+    "difficulty": "Hard",
+    "os": "Linux",
+    "tags": [
+      "Network Exploitation"
+    ],
+    "cves": [],
+    "summary": "This box was active at the time of the challenge — no detailed writeup was posted. The entry is preserved for completion.",
+    "slug": "napper",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90cd-7042-46fb-8e50-4d76ba5183bc.png"
+  },
+  {
+    "day": 89,
+    "name": "Inject",
+    "difficulty": "Easy",
+    "os": "Linux",
+    "tags": [
+      "Command Injection",
+      "LFI/RFI",
+      "Web Exploitation"
+    ],
+    "cves": [],
+    "summary": "\"Discovered LFI in website upload feature. Identified RCE vulnerability in Spring Boot module. Exploited Cron to execute \".yml\" files with write permissions.",
+    "slug": "inject",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90cf-8bf2-4310-bb79-c40e0f4e9a51.png"
+  },
+  {
+    "day": 90,
+    "name": "Previse",
+    "difficulty": "Easy",
+    "os": "Linux",
+    "tags": [
+      "Privilege Escalation",
+      "Web Exploitation"
+    ],
+    "cves": [],
+    "summary": "Execution After Redirect (EAR) bypassed access restrictions, revealing restricted content. Discovered a file in the site backup vulnerable to code injection. Cracked user's password from the database. Hijacked $PATH for root access.",
+    "slug": "previse",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d2-4c35-435c-8ccc-e1b6184498a5.png"
+  },
+  {
+    "day": 91,
+    "name": "Doctor",
+    "difficulty": "Easy",
+    "os": "Linux",
+    "tags": [
+      "Command Injection",
+      "SSTI",
+      "Web Exploitation",
+      "Cryptography"
+    ],
+    "cves": [],
+    "summary": "A website with a messaging system, based on Python, vulnerable to SSTI. Discovered user's password in a log file. Exploited Splunk Universal Forwarder (UF) with SplunkWhisperer2 for RCE as root.",
+    "slug": "doctor",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d3-26ff-43d8-af7c-73c79e7bee4a.png"
+  },
+  {
+    "day": 92,
+    "name": "Access",
+    "difficulty": "Easy",
+    "os": "Linux",
+    "tags": [
+      "Network Exploitation"
+    ],
+    "cves": [],
+    "summary": "Found an anonymous FTP server with a database and a zip file. Got the zip password from the database, which had telnet credentials inside. Then used cached admin credentials for access.",
+    "slug": "access",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d5-b5b9-4655-89a5-1169f94c9b7a.png"
+  },
+  {
+    "day": 93,
+    "name": "Writeup",
+    "difficulty": "Easy",
+    "os": "Linux",
+    "tags": [
+      "SQL Injection",
+      "Privilege Escalation"
+    ],
+    "cves": [],
+    "summary": "Exploited blind SQL injection on a CMS Made Simple website to obtain credentials, which were used for SSH access. Finally, exploited path hijacking for root access.",
+    "slug": "writeup",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d5-1e9f-4188-bf13-978934d9b6ac.png"
+  },
+  {
+    "day": 94,
+    "name": "Poision",
+    "difficulty": "Easy",
+    "os": "Linux",
+    "tags": [
+      "Command Injection",
+      "Web Exploitation",
+      "Cryptography"
+    ],
+    "cves": [],
+    "summary": "Redis server running without authentication, so I wrote SSH key to the machine. Found SSH private key of another user, cracked it, and pivoted to that user. Finally, exploited an old version of Webmin for RCE.",
+    "slug": "poison",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d6-c0c2-4a84-8289-e29c15229860.png"
+  },
+  {
+    "day": 95,
+    "name": "Delivery",
+    "difficulty": "Easy",
+    "os": "Linux",
+    "tags": [
+      "Network Exploitation"
+    ],
+    "cves": [],
+    "summary": "\"osTicket\" and \"MatterMost\" were running on the host. Created a ticket and obtained a temporary email, used for MatterMost login. Found the SSH password there. Then found the root password hash in the SQL database.",
+    "slug": "delivery",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d2-d7b1-4402-b7d7-363d8650c5b5.png"
+  },
+  {
+    "day": 96,
+    "name": "Secret",
+    "difficulty": "Easy",
+    "os": "Linux",
+    "tags": [
+      "Command Injection",
+      "Privilege Escalation",
+      "Web Exploitation"
+    ],
+    "cves": [],
+    "summary": "Accessed website's source code ZIP, gained admin privileges. Exploited API for code injection. Utilized SUID binary for root access, reading system files.",
+    "slug": "secret",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d1-2961-4c94-8871-f373833bdae6.png"
+  },
+  {
+    "day": 97,
+    "name": "Driver",
+    "difficulty": "Easy",
+    "os": "Linux",
+    "tags": [
+      "Privilege Escalation",
+      "CVE Exploit",
+      "Password Cracking",
+      "Web Exploitation"
+    ],
+    "cves": [],
+    "summary": "Used a basic website with default credentials (HTTP authentication). Users could upload files to share. Uploaded an 'scf' file, captured and cracked the hash. For Privilege Escalation, exploited a vulnerability in the 'Ricoh printer driver'.",
+    "slug": "driver",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d2-2f1b-487e-86b1-acd1ba7c3767.png"
+  },
+  {
+    "day": 98,
+    "name": "MetaTwo",
+    "difficulty": "Easy",
+    "os": "Linux",
+    "tags": [
+      "SQL Injection",
+      "XXE",
+      "Network Exploitation"
+    ],
+    "cves": [],
+    "summary": "Plugin in WordPress vulnerable to unauthenticated SQL injection, granting access to wp-admin. Exploited XXE in Media Library to obtain FTP creds in WP. Cracked PGP key and exported root pass from \"passpie\".",
+    "slug": "metatwo",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90cf-e76f-4674-9a23-3a1403b78dea.png"
+  },
+  {
+    "day": 99,
+    "name": "Sense",
+    "difficulty": "Easy",
+    "os": "Linux",
+    "tags": [
+      "Command Injection",
+      "Privilege Escalation"
+    ],
+    "cves": [],
+    "summary": "Found pfSense firewall credentials through dirbusting. Logged in and exploited the vulnerability in this version of pfSense by  authenticated RCE, resulting in root access.",
+    "slug": "sense",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d7-1c57-4ad7-bd0f-71cd9a1c30a1.png"
+  },
+  {
+    "day": 100,
+    "name": "ICLEAN",
+    "difficulty": "Medium",
+    "os": "Linux",
+    "tags": [
+      "Web Exploitation"
+    ],
+    "cves": [],
+    "summary": "This box was active at the time of the challenge — no detailed writeup was posted. The entry is preserved for completion.",
+    "slug": "iclean",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90cd-1299-44c0-9e05-4a2d3b2ff0fd.png"
+  },
+  {
+    "day": 101,
+    "name": "FriendZone",
+    "difficulty": "Easy",
+    "os": "Linux",
+    "tags": [
+      "Command Injection",
+      "LFI/RFI",
+      "Web Exploitation"
+    ],
+    "cves": [],
+    "summary": "found vhosts after zone transfer. then creds for an open share. then a lfi in admin panel led to rce. then hijacked the python module for root.",
+    "slug": "friendzone",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d5-697f-4665-9fd9-7d7ff5481eef.png"
+  },
+  {
+    "day": 102,
+    "name": "Omni",
+    "difficulty": "Easy",
+    "os": "Windows",
+    "tags": [
+      "Command Injection",
+      "Web Exploitation"
+    ],
+    "cves": [],
+    "summary": "A Windows version on Raspberry Pi utilized a vulnerable service called \"Sirep Test Service,\" enabling remote code execution. Retrieved the local user password from registry hives for web portal access, and obtained the root password from PowerShell Credential files.",
+    "slug": "omni",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d3-3c85-44f7-94d3-1cf1125528a2.png"
+  },
+  {
+    "day": 103,
+    "name": "Pandora",
+    "difficulty": "Easy",
+    "os": "Linux",
+    "tags": [
+      "SQL Injection",
+      "Command Injection",
+      "Privilege Escalation",
+      "Network Exploitation"
+    ],
+    "cves": [],
+    "summary": "Found SSH creds using snmpwalk. After login, discovered \"Pandora FMS\" service locally. SQL injection for session cookie, then RCE. Hijacked path variable for root access.",
+    "slug": "pandora",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d0-fa01-4eb3-b5b7-e6f3aa47836a.png"
+  },
+  {
+    "day": 104,
+    "name": "RouterSpace",
+    "difficulty": "Easy",
+    "os": "Android",
+    "tags": [
+      "Command Injection",
+      "CVE Exploit",
+      "Web Exploitation"
+    ],
+    "cves": [
+      "CVE-2021-3156"
+    ],
+    "summary": "Downloaded an APK from a webpage, ran it in an Android emulator. Intercepted API request, found code injection vulnerability. . Exploited CVE-2021-3156 \"Sudo Baron Samedit\" for root.",
+    "slug": "routerspace",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d0-b5f8-4636-ac74-e34166315c14.png"
+  },
+  {
+    "day": 105,
+    "name": "Teacher",
+    "difficulty": "Easy",
+    "os": "Linux",
+    "tags": [
+      "Network Exploitation"
+    ],
+    "cves": [],
+    "summary": "Found a PNG file, actually a TXT file, hinting at password for \"Moodle\" instance. Exploited quiz feature for code injection. Then exploited a root cron running a backup script.",
+    "slug": "teacher",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d5-8e62-47c9-a80f-aaed7bde1d7a.png"
+  },
+  {
+    "day": 106,
+    "name": "Usage",
+    "difficulty": "Easy",
+    "os": "Linux",
+    "tags": [
+      "Web Exploitation"
+    ],
+    "cves": [],
+    "summary": "This box was active at the time of the challenge — no detailed writeup was posted. The entry is preserved for completion.",
+    "slug": "usage",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90cd-0daa-4015-a550-ef68224d1eeb.png"
+  },
+  {
+    "day": 107,
+    "name": "Networked",
+    "difficulty": "Easy",
+    "os": "Linux",
+    "tags": [
+      "Web Exploitation"
+    ],
+    "cves": [],
+    "summary": "Uploaded a PHP one-liner, manipulating magic bytes for shell access. A cleanup script ran via crontab, granting access to another user. Then, obtained permission to execute a specific file as root.",
+    "slug": "networked",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d4-db49-46ae-8a1b-e0225146c030.png"
+  },
+  {
+    "day": 108,
+    "name": "Stocker",
+    "difficulty": "Easy",
+    "os": "Linux",
+    "tags": [
+      "SQL Injection"
+    ],
+    "cves": [],
+    "summary": "Got access to e-shop portal via NoSQL injection. HTML injection during PDF generation revealed SSH creds. Then, obtained root permissions to run Node.js scripts.",
+    "slug": "stocker",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90cf-af47-4ac5-968c-5abb064fd963.png"
+  },
+  {
+    "day": 109,
+    "name": "MonitorsTwo",
+    "difficulty": "Easy",
+    "os": "Linux",
+    "tags": [
+      "Command Injection",
+      "Privilege Escalation",
+      "Container Escape"
+    ],
+    "cves": [],
+    "summary": "Unauthenticated RCE in 'Cacti 1.2.22' led me to Docker, with root access via a SUID binary. Discovered SSH creds in machine's SQL databases. Utilized an old Docker version to create a SetUID binary within the container for root access on the host.",
+    "slug": "monitorstwo",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90cf-6b7d-4cbc-acad-ca1ef22b7740.png"
+  },
+  {
+    "day": 110,
+    "name": "Nest",
+    "difficulty": "Easy",
+    "os": "Linux",
+    "tags": [
+      "Active Directory",
+      "Web Exploitation",
+      "Network Exploitation"
+    ],
+    "cves": [],
+    "summary": "Discovered low-privileged user creds via guest access in SMB shares. Encrypted password of another user found within shares. Service running leaked LDAP password for admin.",
+    "slug": "nest",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d4-785c-484a-8f4d-8534de6abf3a.png"
+  },
+  {
+    "day": 111,
+    "name": "Spectra",
+    "difficulty": "Easy",
+    "os": "Linux",
+    "tags": [
+      "Privilege Escalation",
+      "Web Exploitation",
+      "Network Exploitation"
+    ],
+    "cves": [],
+    "summary": "Directory listing in WordPress leaks some credentials, which are used to access the admin panel. Executing a PHP one-liner in a template file results in shell access. Control over the init daemon with sudo is abused for root access.",
+    "slug": "spectra",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d2-b67f-4118-9a52-1f1a9a9e0a3c.png"
+  },
+  {
+    "day": 112,
+    "name": "Curling",
+    "difficulty": "Easy",
+    "os": "Linux",
+    "tags": [
+      "Privilege Escalation",
+      "Web Exploitation"
+    ],
+    "cves": [],
+    "summary": "HTML comment in Joomla revealed user password. Accessed admin panel, uploaded webshell for shell. Exploited cron for root access.",
+    "slug": "curling",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d5-a3f3-4f90-8bb5-af2df8714cb8.png"
+  },
+  {
+    "day": 113,
+    "name": "Magic",
+    "difficulty": "Medium",
+    "os": "Linux",
+    "tags": [
+      "SQL Injection",
+      "Privilege Escalation"
+    ],
+    "cves": [],
+    "summary": "Bypassed login with SQLi, uploaded PHP shell bypassing extension filtering. Found user passwords in the database. Exploited a SUID binary calling 'popen' without full path, hijacked path for root.",
+    "slug": "magic",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d4-4495-4121-a223-01e64faa51e2.png"
+  },
+  {
+    "day": 114,
+    "name": "Runner",
+    "difficulty": "Medium",
+    "os": "Linux",
+    "tags": [
+      "Web Exploitation"
+    ],
+    "cves": [],
+    "summary": "This box was active at the time of the challenge — no detailed writeup was posted. The entry is preserved for completion.",
+    "slug": "runner",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90cd-07cd-43a6-b173-ca66583dccee.png"
+  },
+  {
+    "day": 115,
+    "name": "Sunday",
+    "difficulty": "Easy",
+    "os": "Linux",
+    "tags": [
+      "Network Exploitation"
+    ],
+    "cves": [],
+    "summary": "Enumerated users via 'Finger' Service, logged in with guessed SSH password. Cracked password hashes from backup files. Had sudo permission to run 'wget'.",
+    "slug": "sunday",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d6-1270-445f-a7d1-33194f4d8a82.png"
+  },
+  {
+    "day": 116,
+    "name": "Admirer",
+    "difficulty": "Easy",
+    "os": "Linux",
+    "tags": [
+      "Command Injection",
+      "Web Exploitation",
+      "Network Exploitation"
+    ],
+    "cves": [],
+    "summary": "Found 'Admirer' running via FTP backup, FTP credentials discovered through dirbusting. In 'Admirer', read the SSH pass from source code. Exploited poorly configured sudo, Python library hijack.",
+    "slug": "admirer",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d4-3a5d-42c6-bbd7-28dbe9f7f17d.png"
+  },
+  {
+    "day": 117,
+    "name": "Help",
+    "difficulty": "Easy",
+    "os": "Linux",
+    "tags": [
+      "SQL Injection",
+      "Web Exploitation"
+    ],
+    "cves": [],
+    "summary": "Found credentials during enumeration of the 'GraphQL' endpoint, used for 'HelpDeskZ' login. Authenticated SQLi exposed SSH credentials, followed by kernel exploit for root.",
+    "slug": "help",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d5-782b-45be-9aea-8867a49a70d4.png"
+  },
+  {
+    "day": 118,
+    "name": "Bounty",
+    "difficulty": "Easy",
+    "os": "Linux",
+    "tags": [
+      "Command Injection",
+      "Web Exploitation"
+    ],
+    "cves": [],
+    "summary": "While enumerating, found an upload form. Achieved code execution by uploading ASP code with some tricks. Then, escalated privileges to administrator using the 'ms10_092_schelevator' Kernel Exploit.",
+    "slug": "bounty",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d5-f7c0-4f9b-b6af-4b67ed5a2f29.png"
+  },
+  {
+    "day": 119,
+    "name": "Heist",
+    "difficulty": "Easy",
+    "os": "Linux",
+    "tags": [
+      "Command Injection",
+      "Active Directory",
+      "Password Cracking",
+      "Web Exploitation"
+    ],
+    "cves": [],
+    "summary": "Found Cisco config with password hashes and users on site. One of those worked for RPC. More users found by SID bruteforce. WinRM session after bruteforcing. ProcDump used to dump Firefox process memory for admin password.",
+    "slug": "heist",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d4-e9ed-4d50-81c2-df8facb45e40.png"
+  },
+  {
+    "day": 120,
+    "name": "Poison",
+    "difficulty": "Medium",
+    "os": "Linux",
+    "tags": [
+      "Command Injection",
+      "LFI/RFI",
+      "Web Exploitation"
+    ],
+    "cves": [],
+    "summary": "LFI and log poisoning led to RCE. Discovered a base64-encoded SSH password in the shell. Found VNC running locally as root on the machine, so connected to it after tunneling.",
+    "slug": "poison",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d6-c0c2-4a84-8289-e29c15229860.png"
+  },
+  {
+    "day": 121,
+    "name": "Meta",
+    "difficulty": "Medium",
+    "os": "Linux",
+    "tags": [
+      "Command Injection",
+      "CVE Exploit",
+      "Web Exploitation"
+    ],
+    "cves": [
+      "CVE-2020-29599"
+    ],
+    "summary": "Enumeration, found a subdomain. Site was running exiftool on uploaded images, which was vulnerable to code execution. Cron, running 'Mogrify', vulnerable to code injection. Sudo-NoPasswd-NeoFetch.",
+    "slug": "meta",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d0-ec81-407d-a4f9-dd2a02f41690.png"
+  },
+  {
+    "day": 122,
+    "name": "Bastard",
+    "difficulty": "Medium",
+    "os": "Windows",
+    "tags": [
+      "Command Injection",
+      "Web Exploitation"
+    ],
+    "cves": [],
+    "summary": "Windows machine, running Drupal 7, vulnerable to RCE known as 'Drupalgeddon2'. After obtaining shell, utilized a kernel exploit 'MS15-051', leading to ntauthority system access.",
+    "slug": "bastard",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d7-8ee7-407c-af36-2bc35724f00d.png"
+  },
+  {
+    "day": 123,
+    "name": "Trick",
+    "difficulty": "Easy",
+    "os": "Linux",
+    "tags": [
+      "LFI/RFI",
+      "Web Exploitation"
+    ],
+    "cves": [],
+    "summary": "Found many vhosts after enumeration. LFI in one exposed SSH key. Another method gave shell access. Had sudo privilege for 'fail2ban' without password for root.",
+    "slug": "trick",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d0-4dae-4eb1-8b0e-b84d1102149c.png"
+  },
+  {
+    "day": 124,
+    "name": "Passage",
+    "difficulty": "Medium",
+    "os": "Linux",
+    "tags": [
+      "Command Injection"
+    ],
+    "cves": [],
+    "summary": "RCE in 'CuteNews' got me shell. Found user passwd hash for SSH access. Shared SSH key helped pivot. For root, exploited USBCreator, ran sudo without passwd.",
+    "slug": "passage",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d3-319b-4e14-bda1-597aa2c0c85d.png"
+  },
+  {
+    "day": 125,
+    "name": "Time",
+    "difficulty": "Medium",
+    "os": "Linux",
+    "tags": [
+      "CVE Exploit",
+      "Web Exploitation",
+      "Deserialization"
+    ],
+    "cves": [
+      "CVE-2019-12384"
+    ],
+    "summary": "A JSON parser web application, based on Java, revealed a CVE-2019-12384 through error messages. Exploited a JSON deserialization vulnerability to gain shell access. Discovered a script running as root, which was world-writable.",
+    "slug": "time",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d3-1560-4833-a76c-17a29ad69417.png"
+  },
+  {
+    "day": 126,
+    "name": "Mailing",
+    "difficulty": "Easy",
+    "os": "Linux",
+    "tags": [
+      "Web Exploitation"
+    ],
+    "cves": [],
+    "summary": "This box was active at the time of the challenge — no detailed writeup was posted. The entry is preserved for completion.",
+    "slug": "mailing",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90cc-f7cc-4027-a942-67b4ae8e16a6.png"
+  },
+  {
+    "day": 127,
+    "name": "Popcorn",
+    "difficulty": "Medium",
+    "os": "Linux",
+    "tags": [
+      "Web Exploitation"
+    ],
+    "cves": [],
+    "summary": "'Torrent Hoster' instance allowed shell via PHP one-liner upload which was uploaded by manipulating file extensions.",
+    "slug": "popcorn",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d7-99c9-437b-98c9-3dcddb505cf6.png"
+  },
+  {
+    "day": 128,
+    "name": "Celestial",
+    "difficulty": "Medium",
+    "os": "Linux",
+    "tags": [
+      "CVE Exploit",
+      "Deserialization"
+    ],
+    "cves": [
+      "CVE-2017-5941"
+    ],
+    "summary": "'Node.js Express framework' on port 3000. Deserialization vulnerability (CVE-2017-5941) led to shell. Root cron was running a Python script owned by me.",
+    "slug": "celestial",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d6-c821-4904-b5bf-b9fca6c10110.png"
+  },
+  {
+    "day": 129,
+    "name": "Haricut",
+    "difficulty": "Medium",
+    "os": "Linux",
+    "tags": [
+      "Command Injection",
+      "Privilege Escalation",
+      "Web Exploitation"
+    ],
+    "cves": [],
+    "summary": "Found PHP site using cURL on given URL. Wrote webshell via injection for code execution. SUID set on vulnerable version of Screen for root access.",
+    "slug": "haircut",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d7-6081-488f-84e0-c3fb232202c0.png"
+  },
+  {
+    "day": 130,
+    "name": "Apocalyst",
+    "difficulty": "Medium",
+    "os": "Linux",
+    "tags": [
+      "Command Injection",
+      "Privilege Escalation",
+      "Web Exploitation",
+      "Network Exploitation"
+    ],
+    "cves": [],
+    "summary": "\"Used 'cewl' to create custom wordlist from WordPress site, found directory with image, extracted password list using 'steghide'. Successfully brute-forced wp-admin login. For root access, exploited writeable /etc/passwd.",
+    "slug": "apocalyst",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d7-3ca7-422e-b5df-2b7a53dfa5a4.png"
+  },
+  {
+    "day": 131,
+    "name": "Nineveh",
+    "difficulty": "Medium",
+    "os": "Linux",
+    "tags": [
+      "Command Injection",
+      "LFI/RFI",
+      "Web Exploitation"
+    ],
+    "cves": [],
+    "summary": "Exploited 'phpLiteAdmin' for a writing webshell, then LFI in other site, for the RCE. Steg on an image, for pivoting to other user.Cron job 'chkroot' for root.",
+    "slug": "nineveh",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d7-3fbc-499a-a7dc-0f88d972c2d8.png"
+  },
+  {
+    "day": 132,
+    "name": "SolidState",
+    "difficulty": "Medium",
+    "os": "Linux",
+    "tags": [
+      "Command Injection"
+    ],
+    "cves": [],
+    "summary": "James Server 2.3.2 RCE (authenticated) triggered upon SSH login. Got SSH pass while exploring the mail server, granting unrestricted shell. Root cron job, script writable by me.",
+    "slug": "solidstate",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d7-32c9-4704-aa42-fbfef2d95cf7.png"
+  },
+  {
+    "day": 133,
+    "name": "Luke",
+    "difficulty": "Medium",
+    "os": "Linux",
+    "tags": [
+      "Privilege Escalation",
+      "Web Exploitation"
+    ],
+    "cves": [],
+    "summary": "Found password in config file via dirbusting. Used it with Node.js server API to get another credential, for HttpBasicAuth Dir.  Found 'Ajenti' password securing user and root access.",
+    "slug": "luke",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d5-278e-46e1-a582-f0d5087d4daf.png"
+  },
+  {
+    "day": 134,
+    "name": "Ambassador",
+    "difficulty": "Medium",
+    "os": "Linux",
+    "tags": [
+      "Privilege Escalation",
+      "Web Exploitation"
+    ],
+    "cves": [],
+    "summary": "Grafana's instance vulnerable to arbitrary File Read. Discovered creds for Grafana login, revealing MySQL credentials. MySQL contained SSH password. Git leaked Consul token, granting root access.",
+    "slug": "ambassador",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d0-0006-46d1-829d-2763947b7f2f.png"
+  },
+  {
+    "day": 135,
+    "name": "Ready",
+    "difficulty": "Medium",
+    "os": "Linux",
+    "tags": [
+      "SSRF",
+      "Privilege Escalation",
+      "Web Exploitation",
+      "Container Escape",
+      "CRLF Injection"
+    ],
+    "cves": [],
+    "summary": "Gitlab 11.4.7 [SSRF & CRLF.",
+    "slug": "ready",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d2-df0d-4ae0-a482-ebed080176f1.png"
+  },
+  {
+    "day": 136,
+    "name": "Mango",
+    "difficulty": "Medium",
+    "os": "Linux",
+    "tags": [
+      "SQL Injection",
+      "Privilege Escalation",
+      "Web Exploitation"
+    ],
+    "cves": [],
+    "summary": "Discovered subdomain via SSL certificate inspection. Exploited NoSQL Injection in Login Form to obtain SSH credentials. Identified SUID Binary 'jjs' for root access in subsequent steps.",
+    "slug": "mango",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d4-ac31-49b2-806d-4a1d0739470e.png"
+  },
+  {
+    "day": 137,
+    "name": "SolarLab",
+    "difficulty": "Medium",
+    "os": "Linux",
+    "tags": [
+      "Network Exploitation"
+    ],
+    "cves": [],
+    "summary": "This box was active at the time of the challenge — no detailed writeup was posted. The entry is preserved for completion.",
+    "slug": "solarlab",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90cc-f1e5-44dc-9244-4ed6f4d7b477.png"
+  },
+  {
+    "day": 138,
+    "name": "Jarvis",
+    "difficulty": "Medium",
+    "os": "Linux",
+    "tags": [
+      "SQL Injection",
+      "Command Injection",
+      "Privilege Escalation",
+      "Web Exploitation"
+    ],
+    "cves": [],
+    "summary": "Performed SQL injection on a website using SqlMap, wrote a webshell, and gained access. Exploited command injection in a Python file to pivot to another user. For root access, used a SUID binary 'Systemctl'.",
+    "slug": "jarvis",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d5-160c-4570-be60-c1895351b9a2.png"
+  },
+  {
+    "day": 139,
+    "name": "Haystack",
+    "difficulty": "Easy",
+    "os": "Linux",
+    "tags": [
+      "Privilege Escalation",
+      "Web Exploitation"
+    ],
+    "cves": [],
+    "summary": "Found hint in image on the website, leading to SSH credentials in the running instance of 'Elasticsearch'. CVE in the locally running 'Kibana' to pivot to another user. For root, misconfiguration in Logstash's conf.",
+    "slug": "haystack",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d5-0fc7-48b6-8c89-7f951371db2c.png"
+  },
+  {
+    "day": 140,
+    "name": "Forge",
+    "difficulty": "Medium",
+    "os": "Linux",
+    "tags": [
+      "SSRF",
+      "Privilege Escalation",
+      "Web Exploitation",
+      "Network Exploitation"
+    ],
+    "cves": [],
+    "summary": "SSRF on the main webpage accessed a vhost restricted to localhost. Then, found another SSRF in the vhost, accessed the internal FTP server, and obtained the SSH key. PrivEsc, exploited SUDO permissions on a Python file.",
+    "slug": "forge",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d2-40fc-43c1-9ec0-9b77d4122a79.png"
+  },
+  {
+    "day": 141,
+    "name": "Union",
+    "difficulty": "Medium",
+    "os": "Linux",
+    "tags": [
+      "SQL Injection",
+      "Privilege Escalation",
+      "Web Exploitation"
+    ],
+    "cves": [],
+    "summary": "SQL injection on the main site led to file read and SSH password. After logging in, found www-data performing privileged actions. Injected command via X-Forwarded-For header to gain root access.",
+    "slug": "union",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d1-074a-4d15-a1dc-0a2dfcd8dc9d.png"
+  },
+  {
+    "day": 142,
+    "name": "Socket",
+    "difficulty": "Medium",
+    "os": "Linux",
+    "tags": [
+      "Command Injection",
+      "Web Exploitation"
+    ],
+    "cves": [],
+    "summary": "Downloaded a binary (QrCode Gen), ran it, and intercepted WebSocket traffic with Burp. Found SSH password in the vulnerable connection. For root, my user had privileges to run pyinstaller as root.",
+    "slug": "socket",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90cf-836c-4acc-83e7-c7affcd7d9d5.png"
+  },
+  {
+    "day": 143,
+    "name": "DevOops",
+    "difficulty": "Medium",
+    "os": "Linux",
+    "tags": [
+      "XXE",
+      "Privilege Escalation",
+      "Web Exploitation"
+    ],
+    "cves": [],
+    "summary": "After enumeration, found an upload page allowing XML. Got user’s SSH key using XXE injection. For privilege escalation, found root’s SSH key in old Git commits.",
+    "slug": "devoops",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d6-00af-49be-9423-5287aa4db00b.png"
+  },
+  {
+    "day": 144,
+    "name": "TheNotebook",
+    "difficulty": "Medium",
+    "os": "Linux",
+    "tags": [
+      "CVE Exploit",
+      "Web Exploitation"
+    ],
+    "cves": [
+      "CVE-2019-5736"
+    ],
+    "summary": "The website used JWT. Convinced the server to use a key on my machine, accessed the admin panel, and got a shell by uploading PHP. For root, exploited RunC-CVE-2019-5736.",
+    "slug": "thenotebook",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d2-b1de-4c6d-bc85-b1671117dd9e.png"
+  },
+  {
+    "day": 145,
+    "name": "Sneaky",
+    "difficulty": "Medium",
+    "os": "Linux",
+    "tags": [
+      "SQL Injection",
+      "Buffer Overflow",
+      "Network Exploitation",
+      "Cryptography"
+    ],
+    "cves": [],
+    "summary": "Got SSH key via SQL injection, but box wasn't listening on IPv4. Found IPv6 address with snmpwalk. Logged in and used PwnKit for root. Intended way was buffer overflow.",
+    "slug": "sneaky",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d7-6c7d-4a22-af65-331ba19ee1a5.png"
+  },
+  {
+    "day": 146,
+    "name": "Cascade",
+    "difficulty": "Medium",
+    "os": "Windows",
+    "tags": [
+      "Active Directory",
+      "Web Exploitation",
+      "Network Exploitation"
+    ],
+    "cves": [],
+    "summary": "Enumerated LDAP, found user credentials. Accessed SMB, a ‘VNC-config’ Registry file. Logged in after decrypting the pass. Decompiled .NET app to get another user's password.",
+    "slug": "cascade",
+    "images": "419",
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d4-5491-4de9-a577-b0df64c09939.png"
+  },
+  {
+    "day": 147,
+    "name": "BoardLight",
+    "difficulty": "Easy",
+    "os": "Linux",
+    "tags": [
+      "Web Exploitation"
+    ],
+    "cves": [],
+    "summary": "This box was active at the time of the challenge — no detailed writeup was posted. The entry is preserved for completion.",
+    "slug": "boardlight",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90cc-e7cc-4496-8fa7-f0b984891c78.png"
+  },
+  {
+    "day": 148,
+    "name": "Bart",
+    "difficulty": "Medium",
+    "os": "Windows",
+    "tags": [
+      "LFI/RFI",
+      "Web Exploitation"
+    ],
+    "cves": [],
+    "summary": "Enumeration found another vhost. Bypassed two logins and used LFI with log poisoning for a shell. For root, found creds in the registry for autologon.",
+    "slug": "bart",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d6-cffb-4584-b82e-7a1ba8ead530.png"
+  },
+  {
+    "day": 149,
+    "name": "Tenet",
+    "difficulty": "Medium",
+    "os": "Linux",
+    "tags": [
+      "Network Exploitation",
+      "Deserialization"
+    ],
+    "cves": [],
+    "summary": "Got hint to a PHP backup file from WordPress posts. The PHP file was vulnerable to deserialization, leading to shell access. Found user's password in wp-config.php. For root, I had sudo permission on a specific file.",
+    "slug": "tenet",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d2-d3d4-46a4-a73a-7f0f86efb261.png"
+  },
+  {
+    "day": 150,
+    "name": "Cache",
+    "difficulty": "Medium",
+    "os": "Linux",
+    "tags": [
+      "SQL Injection",
+      "Command Injection",
+      "Web Exploitation",
+      "Container Escape"
+    ],
+    "cves": [],
+    "summary": "Enumeration revealed another site running 'OpenEMR'. Bypassed login, used SQLi to dump hashes, then exploited authenticated RCE. My user was part of the docker group.",
+    "slug": "cache",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d3-8251-403c-901f-d544e43f5b8e.png"
+  },
+  {
+    "day": 151,
+    "name": "SecNotes",
+    "difficulty": "Medium",
+    "os": "Windows",
+    "tags": [
+      "SQL Injection",
+      "Command Injection",
+      "Web Exploitation",
+      "Network Exploitation"
+    ],
+    "cves": [],
+    "summary": "Got SMB creds through XSRF on the site; unintended second-order SQLi also yielded the creds. Dropped a webshell in the SMB share for code execution. Root, found admin's pass in the history file inside Linux Subsystem for Windows.",
+    "slug": "secnotes",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d5-cb9e-44cc-8753-f883bb2a1f92.png"
+  },
+  {
+    "day": 152,
+    "name": "OpenKeyS",
+    "difficulty": "Medium",
+    "os": "Linux",
+    "tags": [
+      "CVE Exploit",
+      "Web Exploitation"
+    ],
+    "cves": [
+      "CVE-2019-19520"
+    ],
+    "summary": "Found vim swap during enumeration, revealing login mechanism. Bypassed login, obtained user's SSH key. OS version vulnerable to CVE-2019-19520 for root.",
+    "slug": "openkeys",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d3-5272-4472-a0be-c5aaa24f7911.png"
+  },
+  {
+    "day": 153,
+    "name": "Schooled",
+    "difficulty": "Medium",
+    "os": "Linux",
+    "tags": [
+      "Command Injection",
+      "XSS",
+      "Web Exploitation"
+    ],
+    "cves": [],
+    "summary": "Moodle instance vulnerable to two CVEs. Used XSS to steal cookie, followed by Authenticated RCE. Found and cracked user hash in DB for login. For root, had permission to run package manager as root.",
+    "slug": "schooled",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d2-a090-4c50-a0ad-2bc4603a1b14.png"
+  },
+  {
+    "day": 154,
+    "name": "TartarSauce",
+    "difficulty": "Medium",
+    "os": "Linux",
+    "tags": [
+      "Privilege Escalation",
+      "Network Exploitation",
+      "Cryptography"
+    ],
+    "cves": [],
+    "summary": "Many rabbit holes. initial access via vulnerable WordPress plugin 'gwolle-gb'. PrivEsc to another user using tar with sudo. For root, manipulated an archive that was being extracted through a cron with tar as root.",
+    "slug": "tartarsauce",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d6-0970-486b-8207-deae2ec392df.png"
+  },
+  {
+    "day": 155,
+    "name": "Sandworm",
+    "difficulty": "Medium",
+    "os": "Linux",
+    "tags": [
+      "Command Injection",
+      "SSTI",
+      "CVE Exploit",
+      "Web Exploitation"
+    ],
+    "cves": [
+      "CVE-2022-31214"
+    ],
+    "summary": "Python webapp: SSTI to RCE, landing in 'firejail'. Found cleartext creds, SSH to another user. CVE-2022-31214 in 'Firejail' led to root.",
+    "slug": "sandworm",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90cd-c461-4ca6-af51-d292e6f82376.png"
+  },
+  {
+    "day": 156,
+    "name": "Bolt",
+    "difficulty": "Medium",
+    "os": "Linux",
+    "tags": [
+      "SQL Injection",
+      "SSTI",
+      "Web Exploitation",
+      "Container Escape"
+    ],
+    "cves": [],
+    "summary": "Downloaded Docker image with SQLite DB containing site creds. SSTI led to shell. Retrieved PGP key from filesystem for 'PASSBOLT' password manager, leading to root password.",
+    "slug": "bolt",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d2-32ae-416d-872d-9c968b8fe197.png"
+  },
+  {
+    "day": 157,
+    "name": "Bitlab",
+    "difficulty": "Medium",
+    "os": "Windows",
+    "tags": [
+      "Web Exploitation"
+    ],
+    "cves": [],
+    "summary": "Gitlab server. Found creds on the site. Logged in and had write access to the repository, so got access via PHP shell. User's creds inside PostgreSQL server. Root password inside a Windows exe.",
+    "slug": "bitlab",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d4-d0b3-4a5d-b4b1-15e2b5c96a6a.png"
+  },
+  {
+    "day": 158,
+    "name": "Inception",
+    "difficulty": "Medium",
+    "os": "Linux",
+    "tags": [
+      "LFI/RFI",
+      "Web Exploitation",
+      "Network Exploitation"
+    ],
+    "cves": [],
+    "summary": "'dompdf' vulnerable to LFI, found creds for WebDAV, used to get shell. Password reuse led to root in the container. Tweaked a file via FTP, running as root by cron.",
+    "slug": "inception",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d6-fa21-4bf0-8101-073243192505.png"
+  },
+  {
+    "day": 159,
+    "name": "Stratosphere",
+    "difficulty": "Medium",
+    "os": "Linux",
+    "tags": [
+      "Web Exploitation"
+    ],
+    "cves": [],
+    "summary": "Vulnerable to Apache Struts2 S2-045, got command execution. Found user creds in MySQL DB and logged in via SSH. Python library hijacking on a file with sudo access.",
+    "slug": "stratosphere",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d6-cc6f-4cc7-9adf-ac341fcb2b9d.png"
+  },
+  {
+    "day": 160,
+    "name": "Freelancer",
+    "difficulty": "Hard",
+    "os": "Linux",
+    "tags": [
+      "Web Exploitation"
+    ],
+    "cves": [],
+    "summary": "This box was active at the time of the challenge — no detailed writeup was posted. The entry is preserved for completion.",
+    "slug": "freelancer",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90cc-e294-423f-86a9-a4c1004b1b3b.png"
+  },
+  {
+    "day": 161,
+    "name": "Lightweight",
+    "difficulty": "Medium",
+    "os": "Linux",
+    "tags": [
+      "Active Directory",
+      "Cryptography"
+    ],
+    "cves": [],
+    "summary": "Upon visiting the site, an SSH account for me was added to the box via LDAP. After logging in, sniffed LDAP traffic and captured creds for another user. For root, exploited 'openssl' with Linux capabilities.",
+    "slug": "lightweight",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d5-89f2-463d-8671-b5f43e33f473.png"
+  },
+  {
+    "day": 162,
+    "name": "Craft",
+    "difficulty": "Medium",
+    "os": "Linux",
+    "tags": [
+      "Command Injection",
+      "Web Exploitation"
+    ],
+    "cves": [],
+    "summary": "Found API source and creds in Gogs instance, used them for API. API vulnerability gave code execution. Found another user's creds, used in Gogs to find repo with SSH key.",
+    "slug": "craft",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d5-05bb-4795-8c39-eb15451d3100.png"
+  },
+  {
+    "day": 163,
+    "name": "AI",
+    "difficulty": "Medium",
+    "os": "Linux",
+    "tags": [
+      "SQL Injection",
+      "Command Injection"
+    ],
+    "cves": [],
+    "summary": "Speech recognition AI with wav upload, exploited via SQLi for SSH creds. Found JDWP debugging running locally as root. Forwarded port and exploited for code execution.",
+    "slug": "ai",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d4-a2b5-41ea-9749-9d8753cc705a.png"
+  },
+  {
+    "day": 164,
+    "name": "Wall",
+    "difficulty": "Medium",
+    "os": "Linux",
+    "tags": [
+      "Command Injection",
+      "Privilege Escalation",
+      "Password Cracking",
+      "Web Exploitation"
+    ],
+    "cves": [],
+    "summary": "Found Centreon instance via HTTP VERB tampering on HTTPBasicAUTH. Decompiled a Python file for user password, SSH login. Used SUID bit on 'Screen' binary for root.",
+    "slug": "wall",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d4-cbb1-4795-8976-ab4b80ef873e.png"
+  },
+  {
+    "day": 165,
+    "name": "Book",
+    "difficulty": "Medium",
+    "os": "Linux",
+    "tags": [
+      "XSS",
+      "Web Exploitation"
+    ],
+    "cves": [],
+    "summary": "Got admin account using SQL attacks. Used XSS against 'PDF Exports' to read the user's SSH key. For root, 'logrotate' cron.",
+    "slug": "book",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d4-6b36-4655-bf87-fdbf3c99d910.png"
+  },
+  {
+    "day": 166,
+    "name": "Aragog",
+    "difficulty": "Medium",
+    "os": "Linux",
+    "tags": [
+      "XXE",
+      "Web Exploitation"
+    ],
+    "cves": [],
+    "summary": "After some enumeration, found that the PHP file on the site was vulnerable to XXE, so I grabbed the SSH key. Then, from a hint on the WP site, tweaked wp-config.php to capture the creds.",
+    "slug": "aragog",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d6-d791-455d-9823-7ee66b47f652.png"
+  },
+  {
+    "day": 167,
+    "name": "Blurry",
+    "difficulty": "Medium",
+    "os": "Linux",
+    "tags": [
+      "Web Exploitation"
+    ],
+    "cves": [],
+    "summary": "This box was active at the time of the challenge — no detailed writeup was posted. The entry is preserved for completion.",
+    "slug": "blurry",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90cc-ddfc-497c-ae61-fcea63870aca.png"
+  },
+  {
+    "day": 168,
+    "name": "Editorial",
+    "difficulty": "Easy",
+    "os": "Linux",
+    "tags": [
+      "Web Exploitation"
+    ],
+    "cves": [],
+    "summary": "This box was active at the time of the challenge — no detailed writeup was posted. The entry is preserved for completion.",
+    "slug": "editorial",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90cc-d90c-4269-b8a6-dcafb3f2ea7c.png"
+  },
+  {
+    "day": 169,
+    "name": "YPuffy",
+    "difficulty": "Medium",
+    "os": "Linux",
+    "tags": [
+      "Privilege Escalation",
+      "Active Directory",
+      "Web Exploitation",
+      "Network Exploitation"
+    ],
+    "cves": [],
+    "summary": "Due to LDAP null sessions, found a user's hash and accessed an SMB share, got the SSH key to login. For root, 'doas' on ssh-keygen, leading to SSH CA authentication privilege escalation.",
+    "slug": "ypuffy",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d5-be28-47af-802e-71e145dccb38.png"
+  },
+  {
+    "day": 170,
+    "name": "Chatterbox",
+    "difficulty": "Medium",
+    "os": "Windows",
+    "tags": [
+      "Buffer Overflow",
+      "Web Exploitation",
+      "Network Exploitation"
+    ],
+    "cves": [],
+    "summary": "after a full nmap scan, found Achat 0.150 on two ports, vulnerable to Buffer Overflow, which led to shell easily. Administrator creds found via AutoLogon credentials in the registry.",
+    "slug": "chatterbox",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d6-e01f-43e6-a053-9d3b28e15a6d.png"
+  },
+  {
+    "day": 171,
+    "name": "Fuse",
+    "difficulty": "Medium",
+    "os": "Linux",
+    "tags": [
+      "Web Exploitation"
+    ],
+    "cves": [],
+    "summary": "Collected usernames from the site and used 'cewl' for a wordlist, got two accounts. Through RPC, found creds for another user, logged in. For root: SeLoadDriverPrivilege enabled.",
+    "slug": "fuse",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d3-6a22-4bb1-b493-37d02c630038.png"
+  },
+  {
+    "day": 172,
+    "name": "SneakyMailer",
+    "difficulty": "Medium",
+    "os": "Linux",
+    "tags": [
+      "Web Exploitation",
+      "Network Exploitation"
+    ],
+    "cves": [],
+    "summary": "With enumeration and phishing, found creds leading to a mailbox with FTP creds. Uploaded a file via FTP to gain foothold. For root, used pip to install a package.",
+    "slug": "sneakymailer",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d3-5a53-4f20-a91c-b556edec285e.png"
+  },
+  {
+    "day": 173,
+    "name": "Hawk",
+    "difficulty": "Medium",
+    "os": "Linux",
+    "tags": [
+      "Command Injection",
+      "Web Exploitation",
+      "Network Exploitation"
+    ],
+    "cves": [],
+    "summary": "Got Drupal site creds from FTP anon access. Used them to access the admin panel and gain code execution. For root, exploited H2 DBMS running locally.",
+    "slug": "hawk",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d5-e5d6-4da0-992a-7e110629898a.png"
+  },
+  {
+    "day": 174,
+    "name": "Shared",
+    "difficulty": "Medium",
+    "os": "Linux",
+    "tags": [
+      "SQL Injection",
+      "CVE Exploit",
+      "Web Exploitation"
+    ],
+    "cves": [
+      "CVE-2022-0543"
+    ],
+    "summary": "SQL injection in cookie value led to SSH creds. Pivoted to another user by exploiting a vulnerability in iPython. For root, exploited CVE-2022-0543 in Redis.",
+    "slug": "shared",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d0-31da-4731-9768-80d8c2d9cf0e.png"
+  },
+  {
+    "day": 175,
+    "name": "Olympus",
+    "difficulty": "Medium",
+    "os": "Linux",
+    "tags": [
+      "Command Injection",
+      "Web Exploitation",
+      "Container Escape"
+    ],
+    "cves": [],
+    "summary": "HTTP headers revealed Xdebug 2.5.5, vulnerable to RCE. Landed in container, found a .cap file of a WiFi handshake, cracked it and reused the password. For root, I was in the docker group.",
+    "slug": "olympus",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d6-16f2-4e9d-b570-627e80d460ab.png"
+  },
+  {
+    "day": 176,
+    "name": "Lazy",
+    "difficulty": "Medium",
+    "os": "Linux",
+    "tags": [
+      "Privilege Escalation",
+      "Web Exploitation"
+    ],
+    "cves": [],
+    "summary": "Logged in as admin via Padding Oracle Attack on cookie value. Found SSH key on site, logged in. For root, SetUID binary vulnerable to path hijack.",
+    "slug": "lazy",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d7-6fd5-4e8f-b244-1b1db0df28af.png"
+  },
+  {
+    "day": 177,
+    "name": "Resolute",
+    "difficulty": "Medium",
+    "os": "Linux",
+    "tags": [
+      "Active Directory",
+      "Web Exploitation"
+    ],
+    "cves": [],
+    "summary": "Enumerated LDAP/RPC, found password in comments, got list of users. Password spraying got one user, logged in. Member of 'DnsAdmins' group. Gained administrator by loading a custom plugin DLL.",
+    "slug": "resolute",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d4-9008-4d9f-ab4f-746b4229e17a.png"
+  },
+  {
+    "day": 178,
+    "name": "Monteverde",
+    "difficulty": "Medium",
+    "os": "Linux",
+    "tags": [
+      "Network Exploitation"
+    ],
+    "cves": [],
+    "summary": "RPC enumeration listed users, password spraying found one user, username as password. Found XML config with creds in shares, logged in, abused Azure AD Connect for admin.",
+    "slug": "monteverde",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d4-8297-4405-8ebf-14f6bd0792bd.png"
+  },
+  {
+    "day": 179,
+    "name": "Seal",
+    "difficulty": "Medium",
+    "os": "Linux",
+    "tags": [
+      "Web Exploitation"
+    ],
+    "cves": [],
+    "summary": "Gitbucket revealed Tomcat creds. Nginx path normalization accessed Tomcat manager, uploaded .war payload for shell. For root, ran ansible-playbook as root.",
+    "slug": "seal",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d2-61f7-46e9-b02e-76d2321d5a06.png"
+  },
+  {
+    "day": 180,
+    "name": "UpDown",
+    "difficulty": "Medium",
+    "os": "Linux",
+    "tags": [
+      "Command Injection",
+      "Web Exploitation"
+    ],
+    "cves": [],
+    "summary": "Found git repo during enumeration; source code revealed bypass for Apache filtering to access subdomain. Got RCE via PHP wrapper. Root via sudo on 'easy_install'.",
+    "slug": "updown",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d0-123b-4404-8538-0e303e13d346.png"
+  },
+  {
+    "day": 181,
+    "name": "Bucket",
+    "difficulty": "Medium",
+    "os": "Linux",
+    "tags": [
+      "Web Exploitation"
+    ],
+    "cves": [],
+    "summary": "S3 Bucket hosting site with unauthenticated read/write access. Uploaded webshell, landed on box. Local app allowed root read, escalated to root shell.",
+    "slug": "bucket",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d3-1911-495a-8b8a-42ccc08fee69.png"
+  },
+  {
+    "day": 182,
+    "name": "Ophiuchi",
+    "difficulty": "Medium",
+    "os": "Linux",
+    "tags": [
+      "Web Exploitation",
+      "Deserialization"
+    ],
+    "cves": [],
+    "summary": "Tomcat hosting a Java site; YAML Parser vulnerable to deserialization. Got shell, found admin creds in Tomcat config. Admin had sudo rights to run a program as root.",
+    "slug": "ophiuchi",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d2-c2e1-4300-944a-68987c316a81.png"
+  },
+  {
+    "day": 183,
+    "name": "PIT",
+    "difficulty": "Medium",
+    "os": "Linux",
+    "tags": [
+      "Command Injection",
+      "Web Exploitation",
+      "File Upload",
+      "Network Exploitation"
+    ],
+    "cves": [],
+    "summary": "SNMP revealed webserver location 'SeedDMS'. Uploaded PHP webshell for code execution. Found writable directory for scripts executed by SNMP as root.",
+    "slug": "pit",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d2-7f10-4935-b25c-86d488d6f053.png"
+  },
+  {
+    "day": 184,
+    "name": "Shibboleth",
+    "difficulty": "Medium",
+    "os": "Android",
+    "tags": [
+      "Web Exploitation"
+    ],
+    "cves": [],
+    "summary": "IPMI authentication vulnerable, got hash and cracked it. Logged into Zabbix, gained foothold by running system command. For root, exploited MariaDB CVE.",
+    "slug": "shibboleth",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d1-20f3-4b47-89ae-35029c3e305f.png"
+  },
+  {
+    "day": 185,
+    "name": "Atom",
+    "difficulty": "Medium",
+    "os": "Windows",
+    "tags": [
+      "Active Directory",
+      "CVE Exploit",
+      "Web Exploitation",
+      "Network Exploitation"
+    ],
+    "cves": [
+      "CVE-2021-34527"
+    ],
+    "summary": "Software update from insecure SMB share. Got execution during update. For root, exploited Portable-Kanban. Atom also vulnerable to CVE-2021-34527 (PrintNightmare).",
+    "slug": "atom",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d2-935a-49f9-9cfd-87bbb365cf58.png"
+  },
+  {
+    "day": 186,
+    "name": "Dynstr",
+    "difficulty": "Medium",
+    "os": "Linux",
+    "tags": [
+      "Command Injection",
+      "Web Exploitation"
+    ],
+    "cves": [],
+    "summary": "Gained foothold via API command injection. Found SSH key, pivoted to another user. For root, exploited wildcard injection in a bash script.",
+    "slug": "dynstr",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d2-7035-4a3a-9a92-daeb0f95c2c5.png"
+  },
+  {
+    "day": 187,
+    "name": "GoBox",
+    "difficulty": "Medium",
+    "os": "Linux",
+    "tags": [
+      "Command Injection",
+      "SSTI",
+      "Web Exploitation",
+      "File Upload"
+    ],
+    "cves": [],
+    "summary": "SSTI in Golang webserver led to code execution, identified site on AWS bucket. Uploaded PHP webshell, got shell back. For root, NginxExecute module was enabled.",
+    "slug": "gobox",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d2-3d5a-4fd3-b09f-9a7481cd6a4a.png"
+  },
+  {
+    "day": 188,
+    "name": "October",
+    "difficulty": "Medium",
+    "os": "Linux",
+    "tags": [
+      "Buffer Overflow",
+      "Privilege Escalation",
+      "Web Exploitation"
+    ],
+    "cves": [],
+    "summary": "October CMS running with default creds, accessed admin panel, uploaded '.php5' for shell. For root, buffer overflow on SetUID binary.",
+    "slug": "october",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d7-773a-4a38-8fd6-6e687497fa24.png"
+  },
+  {
+    "day": 189,
+    "name": "PermX",
+    "difficulty": "Easy",
+    "os": "Linux",
+    "tags": [
+      "Web Exploitation"
+    ],
+    "cves": [],
+    "summary": "This box was active at the time of the challenge — no detailed writeup was posted. The entry is preserved for completion.",
+    "slug": "permx",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90cc-d0d5-4d03-a772-ee0ef65ef8bc.png"
+  },
+  {
+    "day": 190,
+    "name": "Europa",
+    "difficulty": "Medium",
+    "os": "Linux",
+    "tags": [
+      "SQL Injection",
+      "Command Injection",
+      "Web Exploitation"
+    ],
+    "cves": [],
+    "summary": "SQLi on login portal to dump DB with SqlMap. Logged in with creds, exploited preg_replace() for RCE. For root, created a missing file executed by cron.",
+    "slug": "europa",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d7-53f4-4576-a276-e68949d1eeb8.png"
+  },
+  {
+    "day": 191,
+    "name": "SteamCloud",
+    "difficulty": "Medium",
+    "os": "Linux",
+    "tags": [
+      "Web Exploitation",
+      "Container Escape"
+    ],
+    "cves": [],
+    "summary": "\"Nmap revealed many Kubernetes ports. With anonymous access, listed running pods. Used 'kubeletctl' to execute commands on 'nginx'. Got keys and spawned a malicious pod.",
+    "slug": "steamcloud",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d0-b9f9-4003-91d2-391611258ec7.png"
+  },
+  {
+    "day": 192,
+    "name": "Irked",
+    "difficulty": "Easy",
+    "os": "Linux",
+    "tags": [
+      "Privilege Escalation"
+    ],
+    "cves": [],
+    "summary": "Nmap revealed IRC ports. Connected with 'ncat' and found it’s version; Backdoor Command Execution. Found custom SetUID binary executing a missing file.",
+    "slug": "irked",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d5-9701-4807-a6bd-99932cb7498a.png"
+  },
+  {
+    "day": 193,
+    "name": "Bastion",
+    "difficulty": "Easy",
+    "os": "Linux",
+    "tags": [
+      "Web Exploitation",
+      "Network Exploitation"
+    ],
+    "cves": [],
+    "summary": "Found backup VHDs in SMB share. Mounted to get SYSTEM and SAM files, extracted user creds to log in. Decrypted admin password from 'mRemoteNG' conf files.",
+    "slug": "bastion",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d5-3924-470f-bd41-5132a92d6a5f.png"
+  },
+  {
+    "day": 194,
+    "name": "Explore",
+    "difficulty": "Easy",
+    "os": "Android",
+    "tags": [
+      "Network Exploitation"
+    ],
+    "cves": [],
+    "summary": "Android Nmap revealed ES File Explorer ports with easy arbitrary file read CVE and filtered ADB (5555). Found a photo with SSH creds, forwarded ADB port via SSH, connected through ADB, and executed commands as root.",
+    "slug": "explore",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d2-6900-412f-8050-5e06bdf85c1d.png"
+  },
+  {
+    "day": 195,
+    "name": "NodeBlog",
+    "difficulty": "Easy",
+    "os": "Linux",
+    "tags": [
+      "Command Injection",
+      "XXE",
+      "Web Exploitation",
+      "Deserialization"
+    ],
+    "cves": [],
+    "summary": "Login portal bypassed using NoSQL. XXE leaked filesystem, found deserialization vulnerability in source code, got RCE. For root, found password in DB.",
+    "slug": "nodeblog",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d0-e874-4392-88d4-60082f83771f.png"
+  },
+  {
+    "day": 196,
+    "name": "Backend",
+    "difficulty": "Medium",
+    "os": "Linux",
+    "tags": [
+      "Web Exploitation"
+    ],
+    "cves": [],
+    "summary": "This box was active at the time of the challenge — no detailed writeup was posted. The entry is preserved for completion.",
+    "slug": "backend",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d0-7ba4-4690-95f9-4294e9536c0e.png"
+  },
+  {
+    "day": 197,
+    "name": "Mantis",
+    "difficulty": "Hard",
+    "os": "Linux",
+    "tags": [
+      "Network Exploitation"
+    ],
+    "cves": [],
+    "summary": "Found password for SQL Server in a hidden directory on the webserver. DB contained clear text user creds. Performed MS14-068 (Knock and Pass) attack to gain NT Authority.",
+    "slug": "mantis",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d7-2f75-48b9-98bc-f9b94d1d9fc8.png"
+  },
+  {
+    "day": 198,
+    "name": "Safe",
+    "difficulty": "Easy",
+    "os": "Linux",
+    "tags": [
+      "Buffer Overflow",
+      "Web Exploitation"
+    ],
+    "cves": [],
+    "summary": "A binary running on port 1337 was vulnerable to buffer overflow. Exploited it to get a shell. Found KeePass database, cracked it with John, and got root's password.",
+    "slug": "safe",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d4-f772-46ce-9457-e4bec569c583.png"
+  },
+  {
+    "day": 199,
+    "name": "Search",
+    "difficulty": "Hard",
+    "os": "Linux",
+    "tags": [
+      "Active Directory",
+      "Web Exploitation"
+    ],
+    "cves": [],
+    "summary": "Found user creds in an image on the website. Ran Bloodhound Ingestor, found user vulnerable to Kerberoast, cracked hash. Password sprayed and got another user with a protected .xlsx containing creds for a user with 'ReadGMSAPassword' on Admins.",
+    "slug": "search",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d0-fe5e-4087-b97d-cb2a38291b51.png"
+  },
+  {
+    "day": 200,
+    "name": "FluxCapacitor",
+    "difficulty": "Medium",
+    "os": "Linux",
+    "tags": [
+      "Web Exploitation"
+    ],
+    "cves": [],
+    "summary": "200 Boxes Done.",
+    "slug": "fluxcapacitor",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d6-f2ac-40b1-94c4-8c870a71a620.png"
+  },
+  {
+    "day": 201,
+    "name": "StreamIO",
+    "difficulty": "Medium",
+    "os": "Linux",
+    "tags": [
+      "SQL Injection",
+      "Command Injection",
+      "Web Exploitation"
+    ],
+    "cves": [],
+    "summary": "SQLi to admin panel, RCE led to shell. Decoded Firefox saved creds, got another user. Added myself to group with 'ReadLAPSPassword' on DC.",
+    "slug": "streamio",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d0-560c-47c7-9704-e8d336539e3e.png"
+  },
+  {
+    "day": 202,
+    "name": "Giddy",
+    "difficulty": "Medium",
+    "os": "Windows",
+    "tags": [
+      "SQL Injection",
+      "Web Exploitation",
+      "Network Exploitation"
+    ],
+    "cves": [],
+    "summary": "Exploited SQLi to steal NTLM hash via SMB connection, cracked pass, logged in via PowerShell web console. For root, Local PE CVE in UniFi Video.",
+    "slug": "giddy",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d5-c29d-496a-8106-898bc9835dbc.png"
+  },
+  {
+    "day": 203,
+    "name": "GreenHorn",
+    "difficulty": "Easy",
+    "os": "Linux",
+    "tags": [
+      "Web Exploitation"
+    ],
+    "cves": [],
+    "summary": "This box was active at the time of the challenge — no detailed writeup was posted. The entry is preserved for completion.",
+    "slug": "greenhorn",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90cc-c46c-4d98-a7b8-27b6fd07aeac.png"
+  },
+  {
+    "day": 204,
+    "name": "Worker",
+    "difficulty": "Medium",
+    "os": "Linux",
+    "tags": [
+      "Active Directory",
+      "Web Exploitation"
+    ],
+    "cves": [],
+    "summary": "Found creds in repository, used them to log into Azure DevOps. Uploaded webshell, got a shell, found more creds. Used WinRM for shell, created pipelines for root execution.",
+    "slug": "worker",
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d3-407f-4556-82ab-96539baa13d3.png"
+  },
+  {
+    "day": 205,
+    "name": "P O O",
+    "difficulty": "Unknown",
+    "os": "Windows",
+    "tags": [
+      "Active Directory"
+    ],
+    "cves": [],
+    "summary": "DS_STORE files, Windows short filenames, MSSQL instance, xp_cmdshell, Python in MSSQL, WinRM over IPv6, SharpHound, Kerberoast, Generic All on Domain Admins.",
+    "slug": "p-o-o",
+    "images": null
+  },
+  {
+    "day": 206,
+    "name": "Epsilon",
+    "difficulty": "Medium",
+    "os": "Linux",
+    "tags": [
+      "Web Exploitation"
+    ],
+    "cves": [],
+    "summary": "This box was active at the time of the challenge — no detailed writeup was posted. The entry is preserved for completion.",
+    "slug": "epsilon",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d0-be07-4684-baf1-34ebb0d8e6c2.png"
+  },
+  {
+    "day": 207,
+    "name": "Querier",
+    "difficulty": "Medium",
+    "os": "Windows",
+    "tags": [
+      "Web Exploitation",
+      "Network Exploitation"
+    ],
+    "cves": [],
+    "summary": "Inside SMB share, found .xlsm with SQL creds. Used them to steal NTLM hash, cracked it. PowerUp revealed clear text admin pass.",
+    "slug": "querier",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d5-6521-449c-a350-2de143c18e4e.png"
+  },
+  {
+    "day": 208,
+    "name": "canape",
+    "difficulty": "Medium",
+    "os": "Linux",
+    "tags": [
+      "Command Injection",
+      "Web Exploitation",
+      "Deserialization"
+    ],
+    "cves": [],
+    "summary": " .git exposed on webserver. Got source code, found Python pickle deserialization vulnerability, led to shell. Pivoted to another user via CouchDB CVE, then had sudo on 'pip'.",
+    "slug": "canape",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d6-b83d-4bc6-9a4f-c13169bc2ff4.png"
+  },
+  {
+    "day": 209,
+    "name": "RedCross",
+    "difficulty": "Medium",
+    "os": "Linux",
+    "tags": [
+      "XSS",
+      "Privilege Escalation",
+      "Web Exploitation"
+    ],
+    "cves": [],
+    "summary": "XSS to access admin panel, whitelisted my IP. Exploited 'Haraka SMTP' for shell. Privilege escalation via PAM/NSS.",
+    "slug": "redcross",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d5-9b4a-483d-a512-4b43f6b11364.png"
+  },
+  {
+    "day": 210,
+    "name": "Blazorized",
+    "difficulty": "Medium",
+    "os": "Linux",
+    "tags": [
+      "Web Exploitation"
+    ],
+    "cves": [],
+    "summary": "This box was active at the time of the challenge — no detailed writeup was posted. The entry is preserved for completion.",
+    "slug": "blazorized",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90cc-cccb-4bd2-990c-0672805f6712.png"
+  },
+  {
+    "day": 211,
+    "name": "BroScience",
+    "difficulty": "Medium",
+    "os": "Linux",
+    "tags": [
+      "Command Injection",
+      "Web Exploitation"
+    ],
+    "cves": [],
+    "summary": "Activated account by analyzing activation code generation via source code (File Read Vulnerability). For root, injected into a certificate-checking script.",
+    "slug": "broscience",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90cf-b538-4b34-89f0-727f79a063a7.png"
+  },
+  {
+    "day": 212,
+    "name": "Writer",
+    "difficulty": "Medium",
+    "os": "Linux",
+    "tags": [
+      "SQL Injection",
+      "Command Injection",
+      "SSRF"
+    ],
+    "cves": [],
+    "summary": "SQL injection led to file read. SSRF gave code execution and shell. Abused postfix to pivot to another user. For root, editable 'apt-get' config.",
+    "slug": "writer",
+    "images": null,
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d2-573d-48dd-8e79-990349d44e8c.png"
+  },
+  {
+    "day": 213,
+    "name": "Scrambled",
+    "difficulty": "Medium",
+    "os": "Unknown",
+    "tags": [],
+    "cves": [],
+    "summary": "Kerberoasting attack to get and crack hash. Generated silver ticket for MSSQL access, found more creds. DNSpy revealed deserialization vulnerability in .exe binary.",
+    "slug": "scrambled",
+    "images": [],
+    "avatar": "https://cdn.services-k8s.prod.aws.htb.systems/content/machines/avatar/9e4d90d0-51de-4059-a9dd-cc09146f4488.png"
+  }
+]

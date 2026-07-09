@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5">
+    <title>Foothold — 365 Days of Hacking | 0x1Ak4sh</title>
+    <meta name="description" content="365 Days of Hacking on HackTheBox. Akash Kumar solved 213+ machines throughout 2024 — browse machine writeup summaries, exploits, and techniques.">
+    <meta name="robots" content="index,follow">
+    <link rel="canonical" href="https://mrakashkumar.in/projects/foothold/">
+
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://mrakashkumar.in/projects/foothold/">
+    <meta property="og:title" content="Foothold — 365 Days of Hacking | 0x1Ak4sh">
+    <meta property="og:description" content="213+ HackTheBox machines solved in 365 days. Browse attack paths, CVEs, and exploitation techniques.">
+    <meta property="og:image" content="https://mrakashkumar.in/projects/foothold/assets/thumbnail.png">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Foothold — 365 Days of Hacking | 0x1Ak4sh">
+    <meta name="twitter:description" content="213+ HackTheBox machines solved in 365 days.">
+    <meta name="twitter:image" content="https://mrakashkumar.in/projects/foothold/assets/thumbnail.png">
+
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/8d67cb621b.js" crossorigin="anonymous"></script>
+
+    <link rel="stylesheet" href="/css/article.css">
+    <link rel="stylesheet" href="foothold.css">
+</head>
+
+<body class="article-page foothold-page">
+
+    <!-- Background canvas (snake animation from main site) -->
+    <div id="canvas_snake" class="canvas canvas-snake" data-colorone="#0b1115" data-colortwo="#a4ff91"
+        style="position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;opacity:0.12;pointer-events:none;"></div>
+
+    <!-- Reading progress bar -->
+    <div class="reading-progress" id="readingProgress"></div>
+
+    <!-- Navigation -->
+    <nav class="article-nav" id="mainNav">
+        <div class="nav-left">
+            <a href="/" class="nav-back"><i class="fas fa-arrow-left"></i><span>Back</span></a>
+            <a href="/" class="nav-logo">0x1Ak4sh</a>
+        </div>
+        <div class="nav-right">
+            <span class="nav-badge">
+                <i class="fas fa-terminal"></i>
+                <span id="machineCount">213</span> Machines
+            </span>
+            <button class="random-btn" id="randomBtn" title="Random Machine">
+                <i class="fas fa-dice"></i>
+                <span>Random</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="foothold-hero">
+        <div class="hero-bg-grid"></div>
+        <div class="hero-content">
+            <div class="hero-eyebrow">
+                <span class="eyebrow-badge"><i class="fas fa-shield-halved"></i> HackTheBox</span>
+                <span class="eyebrow-year">2024</span>
+            </div>
+            <h1 class="hero-title">
+                <span class="title-accent">Foothold</span>
+            </h1>
+            <p class="hero-sub">365 Days of Hacking — One machine a day.<br>
+                <span class="hero-highlight">213+ machines pwned</span> and counting.</p>
+
+            <!-- Live stats -->
+            <div class="hero-stats">
+                <div class="stat-card">
+                    <div class="stat-num" id="statTotal">213</div>
+                    <div class="stat-lbl">Machines</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-num" id="statEasy">—</div>
+                    <div class="stat-lbl">Easy</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-num" id="statMedium">—</div>
+                    <div class="stat-lbl">Medium</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-num" id="statHard">—</div>
+                    <div class="stat-lbl">Hard</div>
+                </div>
+            </div>
+
+            <!-- Tweet-style featured machine (random on load) -->
+            <div class="featured-machine" id="featuredMachine">
+                <div class="featured-label"><i class="fas fa-star"></i> Featured Machine</div>
+                <div class="featured-inner">
+                    <img class="featured-avatar" id="featAvatar" alt="">
+                    <div class="featured-inner-text">
+                    <div class="featured-meta">
+                        <span class="featured-day" id="featDay">Day 000</span>
+                        <span class="featured-name" id="featName">Loading...</span>
+                        <span class="badge-diff" id="featDiff">Easy</span>
+                    </div>
+                    <p class="featured-summary" id="featSummary">Loading machine summary...</p>
+                    <div class="featured-tags" id="featTags"></div>
+                    <a class="featured-cta" id="featLink" href="#">
+                        <span>View Details</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Story Section -->
+    <section class="story-section">
+        <div class="story-inner">
+            <h2 class="story-title">Why This Exists</h2>
+            <img src="213machines.jpeg" alt="213 machines in a directory listing" class="story-img" id="storyImg" loading="lazy">
+            <p class="story-text">
+                On January 1, 2024 I made a New Year resolution to solve one Hack The Box machine every single day for a year. It felt like an overconfident goal at first but I committed to myself and never missed a day for <strong>7 straight months</strong>. That is <strong>213 machines in 213 days</strong>. At 58.36 percent of the goal with 152 machines left I decided to stop, but those months taught me more about consistency and productivity than anything else.
+            </p>
+            <p class="story-text">
+                This page is a searchable record of every machine I solved. Each entry has the techniques, tools, CVEs, and attack paths I used along with screenshots from the actual sessions. I built this so I can look up a machine or technique whenever it comes to mind and hopefully it helps someone else too.
+            </p>
+            <div class="story-links">
+                <a href="https://app.hackthebox.com/users/1243635" target="_blank" rel="noopener" class="story-link story-htb">
+                    <i class="fas fa-shield-halved"></i> HackTheBox Profile
+                </a>
+                <a href="https://x.com/0x1ak4sh" target="_blank" rel="noopener" class="story-link story-x">
+                    <i class="fab fa-x-twitter"></i> @0x1ak4sh
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Image Lightbox -->
+    <div class="img-lightbox" id="imgLightbox">
+        <button class="img-lightbox-close" id="imgLightboxClose"><i class="fas fa-times"></i></button>
+        <img class="img-lightbox-content" id="imgLightboxContent" alt="">
+    </div>
+
+    <!-- Filter/Search Section -->
+    <section class="filter-section" id="filterSection">
+        <div class="filter-inner">
+            <!-- Search -->
+            <div class="search-wrap">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" id="searchInput" placeholder="Search machines, CVEs, techniques..." autocomplete="off">
+                <button class="search-clear" id="searchClear" style="display:none;">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <!-- Difficulty filter -->
+            <div class="filter-pills" id="diffFilter">
+                <span class="pill-label">Difficulty:</span>
+                <button class="pill active" data-diff="all">All</button>
+                <button class="pill easy" data-diff="Easy">Easy</button>
+                <button class="pill medium" data-diff="Medium">Medium</button>
+                <button class="pill hard" data-diff="Hard">Hard</button>
+                <button class="pill insane" data-diff="Insane">Insane</button>
+            </div>
+
+            <!-- OS filter -->
+            <div class="filter-pills" id="osFilter">
+                <span class="pill-label">OS:</span>
+                <button class="pill active" data-os="all">All</button>
+                <button class="pill" data-os="Linux"><i class="fab fa-linux"></i> Linux</button>
+                <button class="pill" data-os="Windows"><i class="fab fa-windows"></i> Windows</button>
+            </div>
+
+            <!-- Results count -->
+            <div class="results-count">
+                <span id="resultsLabel">Showing <strong id="resultNum">213</strong> machines</span>
+            </div>
+        </div>
+
+        <!-- Tag cloud toggle (mobile) -->
+        <div class="tag-cloud-toggle" id="tagCloudToggle">
+            <button class="tag-toggle-btn">
+                <span>Tags</span>
+                <i class="fas fa-chevron-down"></i>
+            </button>
+        </div>
+        <!-- Tag cloud -->
+        <div class="tag-cloud-wrap" id="tagCloudWrap">
+            <span class="pill-label">Tags:</span>
+            <div class="tag-cloud" id="tagCloud"></div>
+        </div>
+    </section>
+
+    <!-- Machines Grid -->
+    <section class="machines-section">
+        <div class="machines-grid" id="machinesGrid">
+            <!-- Cards injected by JS -->
+        </div>
+        <div class="no-results" id="noResults" style="display:none;">
+            <i class="fas fa-search"></i>
+            <p>No machines found. Try a different search or filter.</p>
+            <button class="pill active" onclick="resetFilters()">Clear Filters</button>
+        </div>
+        <div class="load-more-wrap" id="loadMoreWrap">
+            <button class="load-more-btn" id="loadMoreBtn">
+                <i class="fas fa-chevron-down"></i>
+                Load More Machines
+            </button>
+        </div>
+    </section>
+
+    <!-- Machine Detail Modal -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal-box" id="modalBox">
+            <button class="modal-close" id="modalClose"><i class="fas fa-times"></i></button>
+            <div class="modal-header">
+                <img class="modal-avatar" id="mAvatar" alt="">
+                <div class="modal-header-text">
+                    <div class="modal-meta">
+                        <span class="modal-day" id="mDay"></span>
+                        <span class="badge-diff" id="mDiff"></span>
+                        <span class="modal-os" id="mOS"></span>
+                    </div>
+                    <h2 class="modal-title" id="mName"></h2>
+                </div>
+            </div>
+            <div class="modal-cves" id="mCVEs" style="display:none;"></div>
+            <p class="modal-summary" id="mSummary"></p>
+            <div class="modal-tags" id="mTags"></div>
+            <div class="modal-footer">
+                <span class="modal-note"><i class="fas fa-info-circle"></i> Summary based on my 2024 tweet thread</span>
+                <div class="modal-links">
+                    <a class="modal-link modal-htb-link" id="mHTBLink" href="#" target="_blank" rel="noopener">
+                        <i class="fas fa-external-link-alt"></i> HackTheBox
+                    </a>
+                    <a class="modal-link modal-tweet-link" id="mTweetLink" href="#" target="_blank" rel="noopener">
+                        <i class="fab fa-x-twitter"></i> View Thread
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast notification -->
+    <div class="toast" id="toast"></div>
+
+    <!-- Scripts -->
+    <script src="/js/snake.js"></script>
+    <script src="foothold.js"></script>
+</body>
+</html>
