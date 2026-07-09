@@ -20,6 +20,7 @@
             category: 'Setup Guide',
             language: 'Multi-Cloud AD',
             date: '2026-06-28',
+            order: 2,
             tags: ['active-directory', 'wireguard', 'exchange-server', 'azure-entra', 'multi-cloud'],
             image: '/projects/hybrid-ad-lab/img/AdHybridLab.png',
             url: '/projects/hybrid-ad-lab/'
@@ -32,6 +33,7 @@
             category: 'Setup Guide',
             language: 'Threat Intel',
             date: '2026-06-20',
+            order: 4,
             tags: ['honeypot', 'vultr', 'detection', 'blueteam'],
             image: '/media/HomePageOfTPot.png',
             url: '/projects/honeypot-tpot-setup/'
@@ -44,6 +46,7 @@
             category: 'Tool',
             language: 'Wi-Fi Security',
             date: '2026-06-30',
+            order: 5,
             tags: ['wifi', 'pentesting', 'virtual-lab', 'vagrant'],
             image: '/media/beaconhub/logo.png',
             url: '/projects/beaconhub/'
@@ -56,6 +59,7 @@
             category: 'Setup Guide',
             language: 'Physical Access',
             date: '2026-07-07',
+            order: 3,
             tags: ['raspberry-pi', 'tailscale', 'dropbox', 'redteam', 'vpn', 'pivoting'],
             image: '/projects/dropbox-raspberry-pi/assets/dropbox-thumbnail.png',
             url: '/projects/dropbox-raspberry-pi/'
@@ -95,6 +99,7 @@
             category: 'Setup Guide',
             language: 'Physical Access',
             date: '2026-07-07',
+            order: 1,
             tags: ['p4wnp1', 'raspberry-pi', 'hid', 'usb', 'redteam', 'physical-access'],
             image: '/projects/p4wnp1-aloha/assets/p4wnp1-thumbnail.png',
             url: '/projects/p4wnp1-aloha/'
@@ -107,6 +112,7 @@
             category: 'Tool',
             language: 'HTB Machines',
             date: '2026-07-10',
+            order: 6,
             tags: ['hackthebox', 'ctf', 'penetration-testing', 'exploitation', 'cve', 'oscp'],
             image: '/projects/foothold/assets/thumbnail.png',
             url: '/projects/foothold/'
@@ -129,8 +135,11 @@
             return item.type === type;
         });
 
-        // Sort by date (newest first)
+        // Sort: projects use explicit order, articles use date (newest first)
         items.sort(function (a, b) {
+            if (type === 'project' && a.order != null && b.order != null) {
+                return a.order - b.order;
+            }
             return new Date(b.date) - new Date(a.date);
         });
 
