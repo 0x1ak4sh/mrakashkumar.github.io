@@ -334,7 +334,7 @@
             '<span class="c-key">Certs</span> CPENT, CRTA, PT1, eJPT',
             '<span class="c-key">Uptime</span> learning since 2018',
             '<span class="c-key">Shell</span> 0x1sh 1.0',
-            '<span class="c-key">Open to</span> Pentest, Red Team, Instructor, Trainer, Tutor',
+            '<span class="c-key">Open to</span> Pentest, Red Team, Instructor, Trainer',
             '<span class="cmd-swatch"><i></i><i></i><i></i><i></i><i></i><i></i></span>'
         ];
         return enqueue(function () {
@@ -508,7 +508,7 @@
             type('Akash Kumar (0x1Ak4sh)', 'c-accent', 22);
             print(['Penetration tester, red teamer and docente di cybersecurity based in Milan, Italy.',
                 'CPENT · CRTA · PT1 · eJPT',
-                '<span class="c-dim">Open to pentest, red team, cybersecurity instructor, trainer and tutor roles.</span>']);
+                '<span class="c-dim">Open to pentest, red team, cybersecurity instructor and trainer roles.</span>']);
         } },
         neofetch: { group: 'info', desc: 'system info, with my logo', run: function () { neofetch(); } },
         certs: { group: 'info', desc: 'my certifications', run: function () {

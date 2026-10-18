@@ -149,6 +149,48 @@
 .qc-social a { color: var(--qn-dim); font-size: 16px; transition: color 0.2s; }
 .qc-social a:hover { color: var(--qn-accent); }
 
+/* Projects and articles index at the bottom of the panel */
+.qc-index {
+    width: 100%;
+    margin-top: 10px;
+    padding-top: 16px;
+    border-top: 1px solid var(--qn-line);
+    text-align: left;
+}
+.qc-index-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: var(--qn-dim);
+    margin: 4px 0 6px;
+}
+.qc-index-title i { color: var(--qn-accent); font-size: 12px; }
+.qc-index ul { list-style: none; margin: 0 0 12px; padding: 0; }
+.qc-index li { margin: 0; padding: 0; }
+.qc-index li::before { display: none; }
+.qc-index a {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 8px 10px;
+    border-radius: 8px;
+    font-size: 13px;
+    line-height: 1.35;
+    color: var(--qn-text);
+    text-decoration: none;
+    transition: background 0.2s, color 0.2s;
+}
+.qc-index a i { font-size: 12px; color: var(--qn-dim); transition: transform 0.2s, color 0.2s; }
+.qc-index a:hover,
+.qc-index a:focus-visible { background: rgba(164, 255, 145, 0.07); color: var(--qn-accent); outline: none; }
+.qc-index a:hover i,
+.qc-index a:focus-visible i { color: var(--qn-accent); transform: translateX(3px); }
+
 /* Panel fits narrow phones (close button stays on screen) */
 @media (max-width: 480px) {
     .content-sidebar { width: calc(100% - 68px); left: -110%; }
@@ -176,6 +218,10 @@
 @media (max-width: 1120px) {
     #brevo-conversations.brevo-conversations--side-bottom { bottom: 84px !important; right: 14px !important; }
 }
+
+/* Chat bubble steps aside while the panel or the terminal is open */
+html.sidebar-open #brevo-conversations,
+html.cmd-lock #brevo-conversations { visibility: hidden !important; }
 
 /* Keyboard hints mean nothing on touch screens */
 @media (hover: none) {
