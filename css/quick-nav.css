@@ -50,6 +50,14 @@
     100% { box-shadow: 0 0 0 0 rgba(164, 255, 145, 0); }
 }
 
+.qc-open {
+    font-size: 12.5px;
+    line-height: 1.5;
+    color: var(--qn-text);
+    margin-top: -6px;
+    max-width: 260px;
+}
+
 .qc-avatar {
     width: 84px;
     height: 84px;

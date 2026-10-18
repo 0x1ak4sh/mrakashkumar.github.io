@@ -10,8 +10,6 @@
     var LINKS = {
         linkedin: 'https://www.linkedin.com/in/0x1ak4sh',
         github: 'https://github.com/0x1ak4sh',
-        htb: 'https://app.hackthebox.com/profile/1243635',
-        thm: 'https://tryhackme.com/p/0x1Ak4sh',
         x: 'https://twitter.com/0x1ak4sh/',
         telegram: 'https://t.me/Ak4sh0x1'
     };
@@ -104,7 +102,7 @@
         { name: 'contact', desc: 'go to contact form' },
         { name: 'foothold', desc: '213 HackTheBox machines' },
         { name: 'email', desc: 'copy my email' },
-        { name: 'socials', desc: 'linkedin, github, htb, thm, x' },
+        { name: 'socials', desc: 'linkedin, github, x, telegram' },
         { name: 'ls', desc: 'list projects and articles' },
         { name: 'clear', desc: 'clear the screen' },
         { name: 'exit', desc: 'close the terminal' }
@@ -269,7 +267,8 @@
             case 'whoami':
                 print('<span class="c-accent">Akash Kumar</span> (0x1Ak4sh)<br>' +
                     'Penetration tester, red teamer and docente di cybersecurity based in Milan, Italy.<br>' +
-                    'CPENT &middot; CRTA &middot; PT1 &middot; eJPT &middot; HTB Pro Hacker &middot; THM Top 1%', cmd);
+                    'CPENT &middot; CRTA &middot; PT1 &middot; eJPT<br>' +
+                    '<span class="c-dim">Open to pentest, red team, cybersecurity instructor, trainer and tutor roles.</span>', cmd);
                 break;
             case 'cv':
             case 'resume.pdf':
@@ -279,7 +278,6 @@
             case 'certs':
                 print('CPENT &ndash; Certified Penetration Testing Professional (EC-Council)<br>' +
                     'CRTA &ndash; Certified Red Team Analyst (CyberWarFare Labs)<br>' +
-                    'MCRTA &ndash; Multi-Cloud Red Team Analyst (CyberWarFare Labs)<br>' +
                     'PT1 &ndash; Junior Penetration Tester (TryHackMe)<br>' +
                     'eJPT &ndash; Junior Penetration Tester (INE Security)', cmd);
                 break;
@@ -310,7 +308,7 @@
                     return '<span class="c-accent cmd-col">' + k + '</span><a class="cmd-link" href="' + LINKS[k] + '" target="_blank" rel="noopener">' + LINKS[k].replace(/^https:\/\/(www\.)?/, '') + '</a>';
                 }).join('<br>'), cmd);
                 break;
-            case 'linkedin': case 'github': case 'htb': case 'thm': case 'x': case 'telegram':
+            case 'linkedin': case 'github': case 'x': case 'telegram':
                 print('Opening ' + name + '&hellip;', cmd);
                 window.open(LINKS[name], '_blank', 'noopener');
                 break;
