@@ -1,6 +1,6 @@
 # 0x1Ak4sh — Akash Kumar
 
-> Red teamer, penetration tester, and cybersecurity professional. Portfolio and lab documentation site built with GitHub Pages.
+> Red teamer, penetration tester, and cybersecurity instructor (docente di cybersecurity) based in Milan, Italy. Portfolio and lab documentation site built with GitHub Pages.
 
 ## Projects
 
