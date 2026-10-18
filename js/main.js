@@ -33,19 +33,17 @@
 
         // ---- One-Page Navigation ----
         if ($('.top-menu-onepage').length) {
-            $('.top-menu').on('click', 'a', function () {
+            $('.top-menu').on('click', 'a', function (e) {
+                // Terminal item is handled by quick-nav.js; let the click bubble up
+                if ($(this).hasClass('cmd-open')) { e.preventDefault(); return; }
                 var width = $(window).width();
                 var id = $(this).attr('href');
-                if (id == '') id = '#home';
+                if (id == '') id = '#about';
                 var card_item = $('#card-' + id.replace('#', ''));
                 var h = parseFloat(card_item.offset().top);
                 var menu_item = $(this).closest('li');
 
-                if (id != '#home') {
-                    window.location.hash = id;
-                } else {
-                    history.replaceState(null, null, ' ');
-                }
+                history.replaceState(null, '', id);
 
                 if (width >= 1121) {
                     if (!menu_item.hasClass('current-menu-item')) {
@@ -149,22 +147,32 @@
         });
 
         // ---- Mobile Scroll Tracking ----
+        // Highlights the last section whose top has passed under the header;
+        // at the very bottom of the page the last section (Contact) wins.
         if ((width < 1121) && $('.top-menu-onepage').length) {
-            $(window).on('scroll', function () {
+            var trackSection = function () {
                 var scrollPos = $(window).scrollTop();
+                // Menu clicks land a section header_offset_top below the top edge
+                var headerH = Math.max($('.header').outerHeight() || 0, header_offset_top);
+                var current = null;
                 $('.top-menu ul li a').each(function () {
-                    var currLink = $(this);
-                    var currHref = currLink.attr('href');
-                    if (currHref == '') currHref = '#home';
-                    if (currHref.charAt(0) == "#") {
-                        var refElement = $('#card-' + currHref.replace('#', ''));
-                        if (refElement.length && refElement.offset().top - header_offset_top - 2 <= scrollPos) {
-                            $('.top-menu ul li').removeClass("current-menu-item");
-                            currLink.closest('li').addClass("current-menu-item");
-                        }
+                    var href = $(this).attr('href');
+                    if (!href || href.charAt(0) != '#') return;
+                    var refElement = $('#card-' + href.slice(1));
+                    if (refElement.length && refElement.offset().top - headerH - 40 <= scrollPos) {
+                        current = $(this);
                     }
                 });
-            });
+                if (scrollPos + $(window).height() >= $(document).height() - 4) {
+                    current = $('.top-menu ul li a[href="#contact"]');
+                }
+                if (current && current.length && !current.closest('li').hasClass('current-menu-item')) {
+                    $('.top-menu ul li').removeClass('current-menu-item');
+                    current.closest('li').addClass('current-menu-item');
+                }
+            };
+            $(window).on('scroll', trackSection);
+            setTimeout(trackSection, 600);
         }
 
         // ---- Fixed Header on Small Mobile ----

@@ -76,6 +76,15 @@
     }
     </script>
 
+    <!-- Old section links (#works, #blog, #home) -> clean names -->
+    <script>
+        (function () {
+            var map = { works: 'projects', blog: 'articles', home: 'about' };
+            var h = location.hash.slice(1);
+            if (map[h]) history.replaceState(null, '', location.pathname + location.search + '#' + map[h]);
+        })();
+    </script>
+
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
 
@@ -94,6 +103,7 @@
     <link rel="stylesheet" href="/css/vendor.css">
     <link rel="stylesheet" href="/css/style.css">
     <link rel="stylesheet" href="/css/article.css?v=1.5">
+    <link rel="stylesheet" href="/css/quick-nav.css?v=5">
 
     <!-- Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-GCHL0J4VZ0"></script>
@@ -163,7 +173,7 @@
                     <div class="menu-main-menu-container">
                         <ul id="menu-main-menu" class="menu">
                             <li class="menu-item current-menu-item">
-                                <a href="" class="one-page-menu-item">
+                                <a href="#about" class="one-page-menu-item">
                                     <span class="icon ion-ios-person-outline"></span>
                                     <span class="name">About</span>
                                 </a>
@@ -175,13 +185,13 @@
                                 </a>
                             </li>
                             <li class="menu-item">
-                                <a href="#works" class="one-page-menu-item">
+                                <a href="#projects" class="one-page-menu-item">
                                     <span class="icon ion-ios-folder-outline"></span>
                                     <span class="name">Projects</span>
                                 </a>
                             </li>
                             <li class="menu-item">
-                                <a href="#blog" class="one-page-menu-item">
+                                <a href="#articles" class="one-page-menu-item">
                                     <span class="icon ion-ios-paper-outline"></span>
                                     <span class="name">Articles</span>
                                 </a>
@@ -190,6 +200,12 @@
                                 <a href="#contact" class="one-page-menu-item">
                                     <span class="icon ion-ios-email-outline"></span>
                                     <span class="name">Contact</span>
+                                </a>
+                            </li>
+                            <li class="menu-item cmd-item">
+                                <a href="#terminal" class="one-page-menu-item cmd-open" aria-label="Open terminal (press /)">
+                                    <span class="icon cmd-icon" aria-hidden="true">&gt;_</span>
+                                    <span class="name">Terminal</span>
                                 </a>
                             </li>
                         </ul>
@@ -245,15 +261,40 @@
 
             <div class="content-sidebar">
                 <div class="sidebar-wrap">
-                    <aside>
-                        <p>This website is a work in progress! Got any tips or advice? Feel free to share!</p>
+                    <aside class="quick-card" aria-label="Quick card">
+                        <div class="qc-status"><span class="qc-dot"></span>Open to pentest &amp; red team roles</div>
+                        <img class="qc-avatar" src="/media/avatar.png" alt="Akash Kumar" loading="lazy">
+                        <div class="qc-name">Akash Kumar</div>
+                        <div class="qc-role">Penetration Tester &middot; Docente di Cybersecurity</div>
+                        <div class="qc-meta">
+                            <span><i class="fas fa-location-dot" aria-hidden="true"></i>Milan, Italy &middot; Remote</span>
+                            <span><i class="fas fa-chalkboard-teacher" aria-hidden="true"></i>ITS Academy D.E.MO.S.</span>
+                        </div>
+                        <div class="qc-badges">
+                            <span>CPENT</span><span>CRTA</span><span>PT1</span><span>eJPT</span>
+                            <span>HTB Pro Hacker</span><span>THM Top 1%</span>
+                        </div>
+                        <div class="qc-actions">
+                            <a href="/resume.pdf" target="_blank" rel="noopener" class="qc-btn qc-primary"><i class="fas fa-download" aria-hidden="true"></i>Download CV</a>
+                            <button type="button" class="qc-btn qc-copy" data-copy="admin@mrakashkumar.in"><i class="fas fa-copy" aria-hidden="true"></i><span>Copy email</span></button>
+                            <a href="#contact" class="qc-btn qc-goto"><i class="fas fa-paper-plane" aria-hidden="true"></i>Send a message</a>
+                            <button type="button" class="qc-btn cmd-open"><span class="qc-term" aria-hidden="true">&gt;_</span>Open terminal <kbd>/</kbd></button>
+                        </div>
+                        <div class="qc-social">
+                            <a target="_blank" rel="noopener" href="https://www.linkedin.com/in/0x1ak4sh" aria-label="LinkedIn"><span class="fab fa-linkedin"></span></a>
+                            <a target="_blank" rel="noopener" href="https://github.com/0x1ak4sh" aria-label="GitHub"><span class="fab fa-github"></span></a>
+                            <a target="_blank" rel="noopener" href="https://app.hackthebox.com/profile/1243635" aria-label="HackTheBox"><span class="fas fa-cube"></span></a>
+                            <a target="_blank" rel="noopener" href="https://tryhackme.com/p/0x1Ak4sh" aria-label="TryHackMe"><span class="fas fa-flag"></span></a>
+                            <a target="_blank" rel="noopener" href="https://t.me/Ak4sh0x1" aria-label="Telegram"><span class="fab fa-telegram"></span></a>
+                            <a target="_blank" rel="noopener" href="https://twitter.com/0x1ak4sh/" aria-label="X"><span class="fab fa-x-twitter"></span></a>
+                        </div>
                     </aside>
                 </div>
                 <span class="close"></span>
             </div>
 
             <!-- ==================== ABOUT ==================== -->
-            <div class="card-inner animated active" id="card-home">
+            <div class="card-inner animated active" id="card-about">
                 <div class="card-wrap">
 
                     <!-- About Me -->
@@ -865,7 +906,7 @@
             </div>
 
             <!-- ==================== PROJECTS ==================== -->
-            <div class="card-inner" id="card-works">
+            <div class="card-inner" id="card-projects">
                 <div class="card-wrap">
                     <div class="content works content-grid-section">
                         <div class="title"><span>Projects</span></div>
@@ -879,7 +920,7 @@
             </div>
 
             <!-- ==================== ARTICLES ==================== -->
-            <div class="card-inner" id="card-blog">
+            <div class="card-inner" id="card-articles">
                 <div class="card-wrap">
                     <div class="content blog content-grid-section">
                         <div class="title"><span>Articles</span></div>
@@ -985,8 +1026,9 @@
 
     <!-- Site Scripts -->
     <script defer src="/js/snake.js"></script>
-    <script defer src="/js/main.js"></script>
-    <script defer src="/js/content-loader.js"></script>
+    <script defer src="/js/main.js?v=4"></script>
+    <script defer src="/js/content-loader.js?v=2"></script>
+    <script defer src="/js/quick-nav.js?v=3"></script>
 </body>
 
 </html>

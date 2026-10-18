@@ -119,6 +119,9 @@
         }
     ];
 
+    // Shared with quick-nav.js (terminal search)
+    window.SITE_CONTENT = contentData;
+
     // =============================================
     // INITIALIZATION
     // =============================================
