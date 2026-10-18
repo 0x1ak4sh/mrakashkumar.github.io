@@ -16,7 +16,7 @@
             type: 'project',
             slug: 'hybrid-ad-lab',
             title: 'Hybrid Active Directory Enterprise Lab',
-            description: 'A multi-cloud hybrid Active Directory lab spanning Vultr, AWS, and Azure. Features AD DS forest configuration, WireGuard mesh VPN network stitching, Exchange 2019 mail flow, and Azure Entra ID hybrid sync.',
+            description: 'A multi-cloud hybrid Active Directory lab spanning Vultr, Oracle Cloud, AWS, and Azure. Features AD DS forest configuration, WireGuard mesh VPN network stitching, Exchange 2019 mail flow, and Azure Entra ID hybrid sync.',
             category: 'Setup Guide',
             language: 'Multi-Cloud AD',
             date: '2026-06-28',
