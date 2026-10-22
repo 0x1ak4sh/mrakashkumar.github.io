@@ -206,12 +206,9 @@
     line-height: 1;
 }
 
-/* ---------- Mobile: six menu items share the row ---------- */
+/* ---------- Mobile: Terminal stays out of the top bar (open it from the menu panel) ---------- */
 @media (max-width: 1120px) {
-    .header .top-menu ul li { min-width: 0; flex: 1 1 0; }
-}
-@media (max-width: 420px) {
-    .header .top-menu ul li a .name { font-size: 10px; letter-spacing: 0; }
+    .header .top-menu ul li.cmd-item { display: none; }
 }
 
 /* ---------- Mobile: keep the chat bubble off the profile buttons ---------- */
